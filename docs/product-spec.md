@@ -1,181 +1,243 @@
-# Visual AI Studio - Product Specification
+# Visual AI Studio - Spécification produit v0.1.0
 
 ## 1. Vision
 
-Visual AI Studio est un studio de création visuelle local permettant à un utilisateur de transformer une idée en livrables visuels structurés avec l'aide d'un agent IA.
+Visual AI Studio est une application Windows locale permettant de structurer
+un projet de création visuelle depuis le brief jusqu'à la validation et
+l'export des livrables.
 
-Le produit ne dépend d'aucun workflow personnel, compte social ou espace documentaire spécifique.
+La génération est réalisée avec un composant conversationnel séparé nommé
+**Studio Visuel**.
 
-## 2. Workflow principal
+Visual AI Studio n'effectue aucun appel direct à une API OpenAI.
 
-Brief
-→ Mode de sortie
-→ Agent IA
-→ Proposition
-→ Validation utilisateur
-→ Génération ou import du visuel
-→ Contrôles
-→ Validation finale
-→ Export
-→ Automatisation facultative
+Le produit suit une approche **local-first** et reste utilisable sans service
+cloud, sans Docker et sans automatisation externe.
 
-## 3. Modes de sortie
+## 2. Composants
 
-### Generic
+### Visual AI Studio
 
-Création visuelle sans dépendance à une plateforme.
+L'application Windows prend en charge :
 
-L'utilisateur peut choisir un preset ou un format personnalisé.
+- la création des projets ;
+- la saisie du brief ;
+- la préparation du prompt de lancement ;
+- l'import des résultats ;
+- le contrôle des fichiers ;
+- la galerie d'images ;
+- la validation humaine ;
+- l'export local ;
+- l'envoi facultatif vers un webhook.
+
+### Studio Visuel
+
+Studio Visuel est l'agent conversationnel utilisé dans ChatGPT.
+
+Il prend en charge :
+
+- la reformulation du brief ;
+- la direction artistique ;
+- la préparation du prompt image ;
+- les contraintes négatives ;
+- les contenus de publication ;
+- la génération visuelle ;
+- la livraison des résultats.
+
+Le Skill `visual-content-studio` constitue la source de vérité fonctionnelle
+de Studio Visuel.
+
+## 3. Workflow principal
+
+1. créer ou ouvrir un projet ;
+2. saisir le brief créatif ;
+3. sélectionner le mode de sortie ;
+4. préparer le prompt destiné à Studio Visuel ;
+5. copier le prompt ;
+6. ouvrir Studio Visuel dans ChatGPT ;
+7. suivre le workflow conversationnel ;
+8. récupérer les fichiers produits ;
+9. importer les fichiers dans Visual AI Studio ;
+10. contrôler les résultats ;
+11. valider humainement le résultat ;
+12. exporter les livrables.
+
+Le passage entre Visual AI Studio et Studio Visuel reste volontairement
+manuel.
+
+## 4. Modes de sortie
+
+Trois modes sont disponibles.
 
 ### Pinterest
 
-L'agent adapte le résultat à une publication Pinterest.
+Le brief peut être orienté vers une création destinée à Pinterest.
 
-Sorties possibles :
-
-- image ;
-- titre ;
-- description ;
-- texte alternatif ;
-- métadonnées.
+Studio Visuel adapte alors sa proposition au contexte de publication.
 
 ### Instagram
 
-L'agent adapte le résultat à une publication Instagram.
+Le brief peut être orienté vers une création destinée à Instagram.
 
-Sorties possibles :
+Studio Visuel adapte alors sa proposition au contexte de publication.
 
-- image ;
-- légende ;
-- texte alternatif ;
-- hashtags ;
-- métadonnées.
+### Autre / personnalisé
 
-### Custom
+L'utilisateur peut définir librement :
 
-L'utilisateur définit librement :
+- les dimensions ;
+- le ratio ;
+- le style ;
+- les contraintes ;
+- le texte dans l'image ;
+- la destination ou l'usage prévu.
 
-- dimensions ;
-- ratio ;
-- contraintes ;
-- texte ;
-- destination.
+## 5. Statuts des projets
 
-## 4. Contrat Agent -> Application
+Visual AI Studio utilise trois statuts métier visibles :
 
-L'agent doit retourner une structure stable indépendante de la plateforme.
+- **Brief**
+- **Validé**
+- **Archivé**
 
-Structure logique cible :
+Aucun statut technique n'est exposé à l'utilisateur.
 
-{
-  "schema_version": "1.0",
-  "mode": "generic|pinterest|instagram|custom",
-  "concept": {
-    "title": "",
-    "intent": "",
-    "audience": ""
-  },
-  "visual": {
-    "width": null,
-    "height": null,
-    "aspect_ratio": "",
-    "prompt": "",
-    "negative_prompt": "",
-    "text_overlay": ""
-  },
-  "publication": {
-    "title": "",
-    "caption": "",
-    "alt_text": "",
-    "hashtags": []
-  }
-}
+## 6. Brief créatif
 
-Les champs non applicables peuvent être vides.
+Le brief peut notamment contenir :
 
-## 5. Branding
+- le nom du projet ;
+- la collection ou campagne ;
+- l'idée ou la demande ;
+- l'audience ;
+- le style ;
+- le texte souhaité dans l'image ;
+- les dimensions ;
+- le ratio ;
+- des notes ;
+- des éléments obligatoires ;
+- des éléments interdits ;
+- des indications de direction créative.
 
-Le branding utilisateur est optionnel.
+Le brief reste modifiable tant que le projet est en préparation.
 
-Configuration possible :
+## 7. Préparation Studio Visuel
 
-- activation ;
-- texte de signature ;
-- logo ;
-- position ;
-- opacité.
+Visual AI Studio génère un **prompt de lancement**.
 
-Aucun branding n'est activé par défaut.
+Ce prompt :
 
-## 6. Automatisation
+- transmet le contexte du projet ;
+- indique le mode de sortie ;
+- reprend les informations utiles du brief ;
+- demande à Studio Visuel d'utiliser son Skill ;
+- demande de commencer par la reformulation du brief ;
+- impose une validation utilisateur avant la poursuite du workflow.
 
-L'automatisation n'est jamais obligatoire.
+Visual AI Studio ne duplique pas dans l'application la logique créative du
+Skill Studio Visuel.
 
-Visual AI Studio fournit un connecteur webhook générique.
+## 8. Import et validation
 
-Configuration :
+Les fichiers pris en charge comprennent notamment :
 
-- activé / désactivé ;
-- nom ;
-- URL ;
-- méthode d'authentification ;
-- secret ;
-- timeout ;
-- test de connexion.
+### Images
 
-Les secrets sont stockés dans le coffre système.
+- PNG
+- JPG
+- JPEG
+- WebP
 
-## 7. n8n
+### Fichiers complémentaires
 
-n8n est une automatisation possible, pas une dépendance du produit.
+- Markdown
+- TXT
+- JSON
 
-Visual AI Studio transmet un payload générique.
+Plusieurs images peuvent être importées pour un même projet.
 
-Le workflow n8n décide ensuite de la destination :
+Les images sont présentées dans une galerie de validation.
 
-- réseau social ;
-- Notion ;
-- stockage ;
-- API ;
-- autre service.
+Les contrôles automatiques peuvent produire des avertissements ou des erreurs.
 
-## 8. Hors périmètre V1
+La validation finale est explicite et humaine :
 
-La V1 ne fournit pas directement :
+**Je valide ce résultat**
 
-- authentification Pinterest ;
-- authentification Instagram ;
-- authentification Notion ;
-- publication directe vers les réseaux sociaux ;
-- hébergement cloud ;
-- multi-utilisateur ;
-- abonnement SaaS ;
-- marketplace.
+## 9. Export
 
-## 9. Distribution cible
+Un projet validé peut être exporté localement.
 
-Application Windows autonome.
+L'export crée un dossier dédié contenant les fichiers du projet et ses
+informations utiles.
 
-Objectif final :
+Un envoi vers un webhook peut également être utilisé lorsqu'une configuration
+technique correspondante existe.
 
-Visual-AI-Studio-Setup.exe
+Le webhook n'est pas nécessaire au fonctionnement standard de l'application.
 
-L'utilisateur ne doit pas avoir besoin :
+## 10. Stockage local
 
-- de Python ;
-- de Git ;
-- de Docker ;
-- de n8n.
+Les projets et fichiers de travail sont conservés localement.
 
-## 10. Etapes de développement
+L'utilisateur peut choisir le dossier de stockage depuis les paramètres de
+Visual AI Studio.
 
-1. neutralisation complète de l'application ;
-2. modèle de données universel ;
-3. modes Generic / Pinterest / Instagram / Custom ;
-4. contrat JSON agent ;
-5. agent Visual AI ;
-6. génération IA ;
-7. branding optionnel ;
-8. webhook générique facultatif ;
-9. tests ;
-10. packaging Windows.
+Les paramètres visibles restent volontairement réduits afin de privilégier
+l'usage métier.
+
+## 11. Hors périmètre v0.1.0
+
+La version 0.1.0 ne fournit pas directement :
+
+- d'authentification Pinterest ;
+- d'authentification Instagram ;
+- de publication automatique vers un réseau social ;
+- d'appel direct à une API OpenAI ;
+- d'hébergement cloud ;
+- de fonctionnement multi-utilisateur ;
+- d'abonnement SaaS ;
+- de marketplace.
+
+## 12. Architecture technique
+
+Visual AI Studio repose notamment sur :
+
+- Python 3.11+
+- PySide6
+- Pydantic
+- SQLAlchemy
+- SQLite
+- Pillow
+- platformdirs
+- keyring
+- PyInstaller
+- Inno Setup
+
+## 13. Distribution Windows
+
+Visual AI Studio est distribué sous forme d'application Windows autonome.
+
+L'installateur de la version 0.1.0 est :
+
+`Visual-AI-Studio-Setup-0.1.0.exe`
+
+L'utilisateur final n'a pas besoin d'installer :
+
+- Python ;
+- Git ;
+- Docker.
+
+Le package Studio Visuel est distribué séparément dans la même GitHub Release.
+
+## 14. Licence
+
+Visual AI Studio, sa documentation et le package Studio Visuel sont distribués
+sous licence MIT.
+
+## 15. État
+
+Version produit : **0.1.0**
+
+La version 0.1.0 constitue la première distribution publique Windows de
+Visual AI Studio.
