@@ -1,4 +1,4 @@
-# Studio Visuel
+﻿# Studio Visuel
 
 Visual AI Studio fonctionne avec un agent conversationnel séparé nommé **Studio Visuel**.
 
@@ -46,3 +46,9 @@ Studio Visuel et Visual AI Studio sont deux composants distincts :
 - **Studio Visuel** réalise le workflow conversationnel de création visuelle.
 
 Aucune clé API OpenAI n'est nécessaire dans Visual AI Studio.
+## Licence
+
+Studio Visuel et le Skill `visual-content-studio` fournis dans ce package
+sont distribués sous **licence MIT**.
+
+Le fichier `LICENSE` est inclus dans le package distribué.

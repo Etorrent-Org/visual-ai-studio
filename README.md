@@ -337,6 +337,18 @@ Pour le signalement d'une vulnérabilité ou les règles de sécurité du projet
 
 ---
 
+## Licence
+
+Visual AI Studio est distribué sous **licence MIT**.
+
+Le code, la documentation et le package Studio Visuel présents dans ce dépôt
+peuvent être utilisés, modifiés et redistribués conformément aux conditions
+de la licence.
+
+Consultez [`LICENSE`](LICENSE) pour le texte complet.
+
+---
+
 ## Version
 
 Version de travail actuelle : **0.1.0**
