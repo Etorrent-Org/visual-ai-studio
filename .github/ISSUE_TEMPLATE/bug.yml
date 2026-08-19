@@ -1,0 +1,75 @@
+name: Signaler un bug
+description: Signaler un problème reproductible dans Visual AI Studio.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de décrire le problème le plus précisément possible. Ne joignez jamais de clé, mot de passe ou donnée sensible.
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version de Visual AI Studio
+      options:
+        - v0.1.0
+        - Version de développement
+        - Autre
+    validations:
+      required: true
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Version de Windows
+      options:
+        - Windows 11
+        - Windows 10
+        - Autre
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème rencontré
+      description: Que se passe-t-il ?
+      placeholder: Décrivez le comportement observé.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      placeholder: |
+        1. Ouvrir ...
+        2. Cliquer sur ...
+        3. Observer ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Résultat attendu
+      placeholder: Ce qui aurait dû se produire.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Résultat obtenu
+      placeholder: Ce qui s'est réellement produit.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou message d'erreur
+      description: Facultatif. Retirez toute information sensible avant de coller un log.
+      render: shell
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Vérifications
+      options:
+        - label: J'ai vérifié qu'un ticket identique n'existe pas déjà.
+          required: true
+        - label: J'ai retiré les données sensibles de mon message.
+          required: true

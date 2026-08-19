@@ -1,0 +1,55 @@
+name: Proposer une amélioration
+description: Proposer une idée ou une amélioration pour Visual AI Studio.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de décrire le besoin avant la solution. Une idée peut être discutée avant d'entrer au backlog.
+  - type: textarea
+    id: need
+    attributes:
+      label: Besoin utilisateur
+      description: Quel problème ou quelle friction souhaitez-vous résoudre ?
+      placeholder: Décrivez le besoin concret.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposition
+      description: Comment imaginez-vous l'amélioration ?
+      placeholder: Décrivez la solution souhaitée.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Valeur attendue
+      description: Quel bénéfice apporterait cette amélioration ?
+      placeholder: Gain de temps, simplification, qualité, nouveau cas d'usage...
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Zone concernée
+      options:
+        - Projets
+        - Brief
+        - Studio Visuel
+        - Validation
+        - Export
+        - Paramètres
+        - Installation / packaging
+        - Documentation
+        - Autre
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Vérification
+      options:
+        - label: J'ai vérifié qu'une demande similaire n'existe pas déjà.
+          required: true
