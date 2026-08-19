@@ -47,6 +47,8 @@ L'application Windows prend en charge :
 
 Studio Visuel est l'agent conversationnel utilisé dans ChatGPT.
 
+Un accès à ChatGPT et à Studio Visuel est nécessaire pour la phase de génération.
+
 Il prend en charge notamment :
 
 - la reformulation du brief ;
@@ -207,6 +209,20 @@ Aucun compte cloud n'est requis par l'application.
 
 ---
 
+## Télécharger
+
+La version Windows actuelle est **v0.1.0**.
+
+➡️ [Accéder à la dernière GitHub Release](https://github.com/Etorrent-Org/visual-ai-studio/releases/latest)
+
+La Release contient :
+
+- `Visual-AI-Studio-Setup-0.1.0.exe` : installateur Windows ;
+- `studio-visuel-agent.zip` : package Studio Visuel ;
+- `SHA256SUMS.txt` : empreintes de contrôle des fichiers distribués.
+
+---
+
 ## Installation Windows
 
 Visual AI Studio est distribué sous forme d'application Windows autonome.
@@ -221,7 +237,7 @@ L'installation crée l'application Windows ainsi qu'un raccourci dans le menu D�
 
 Un raccourci Bureau peut également être créé depuis l'installateur.
 
-La première version publique sera distribuée via **GitHub Releases**.
+La version publique est distribuée via **GitHub Releases**.
 
 ---
 
@@ -351,9 +367,9 @@ Consultez [`LICENSE`](LICENSE) pour le texte complet.
 
 ## Version
 
-Version de travail actuelle : **0.1.0**
+Version publique actuelle : **0.1.0**
 
-La première distribution publique Windows est en préparation.
+La version **v0.1.0** constitue la première distribution publique Windows.
 
 ---
 
