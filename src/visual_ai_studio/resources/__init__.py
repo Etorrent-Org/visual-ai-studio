@@ -1,0 +1,1 @@
+"""Ressources embarquées et versionnées."""

@@ -1,0 +1,53 @@
+INTENTION : CREATION_IMAGE
+AGENT CIBLE : Studio Visuel
+SORTIE : {{mode}}
+
+PROJET
+Titre : {{title}}
+Collection / campagne : {{collection}}
+
+BRIEF
+Idée / demande : {{raw_idea}}
+Objectif : {{intent}}
+Audience : {{audience}}
+Sujet principal : {{subject}}
+Style : {{style}}
+Décor : {{setting}}
+Ambiance : {{ambience}}
+Palette : {{palette}}
+Lumière : {{lighting}}
+Matières : {{materials}}
+Composition : {{composition}}
+Niveau de détail : {{detail_level}}
+Éléments obligatoires : {{required_elements}}
+Éléments interdits : {{forbidden_elements}}
+Texte demandé dans l'image : {{text_overlay}}
+
+FORMAT
+Canal : {{channel}}
+Dimensions : {{dimensions}}
+Ratio : {{aspect_ratio}}
+
+RÉFÉRENCE
+Image de référence : {{has_reference}}
+Note de référence : {{reference_note}}
+
+NOTES
+{{notes}}
+
+INSTRUCTION DE DÉMARRAGE
+
+Utilise le Skill `visual-content-studio` comme source de vérité.
+
+Traite cette demande comme une création d'image.
+
+Respecte le workflow conversationnel de Studio Visuel :
+- une seule étape par réponse ;
+- validation explicite avant l'étape suivante ;
+- aucune génération d'image avant validation du brief et de la direction artistique ;
+- aucun branding, logo, watermark ou signature non demandé ;
+- aucun texte ajouté dans l'image sauf demande explicite ci-dessus.
+
+Commence maintenant par l'Étape 1 — Brief.
+
+Reformule le brief et attends ma validation avant de poursuivre.
