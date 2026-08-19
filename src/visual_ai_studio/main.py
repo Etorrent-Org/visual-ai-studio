@@ -4,6 +4,7 @@ import sys
 from importlib.resources import files
 
 from PySide6.QtCore import QCoreApplication, Qt
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 
 from visual_ai_studio.application import build_application
@@ -17,6 +18,14 @@ def main() -> int:
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough
     )
     app = QApplication(sys.argv)
+    app.setWindowIcon(
+        QIcon(
+            str(
+                files("visual_ai_studio.resources")
+                .joinpath("visual-ai-studio.ico")
+            )
+        )
+    )
     app.setStyle("Fusion")
     app.setStyleSheet(
         files("visual_ai_studio.resources").joinpath("styles.qss").read_text(encoding="utf-8")
