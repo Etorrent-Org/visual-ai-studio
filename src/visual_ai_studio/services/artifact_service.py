@@ -30,11 +30,7 @@ class ArtifactService:
         self.artifacts = artifacts
         self.projects = projects
         self.projects_dir = projects_dir
-        self.max_bytes = (
-            max_file_size_mb
-            * 1024
-            * 1024
-        )
+        self.max_bytes = max_file_size_mb * 1024 * 1024
 
     def import_package(
         self,
@@ -42,22 +38,10 @@ class ArtifactService:
         source_paths: list[Path],
     ) -> ValidationReport:
         for path in source_paths:
-            if (
-                path.is_file()
-                and path.stat().st_size
-                > self.max_bytes
-            ):
-                raise ValueError(
-                    f"{path.name} dépasse "
-                    "la limite de taille autorisée."
-                )
+            if path.is_file() and path.stat().st_size > self.max_bytes:
+                raise ValueError(f"{path.name} dépasse la limite de taille autorisée.")
 
-        target = (
-            self.projects_dir
-            / str(project.id)
-            / f"v{project.version}"
-            / "artifacts"
-        )
+        target = self.projects_dir / str(project.id) / f"v{project.version}" / "artifacts"
 
         target.mkdir(
             parents=True,
@@ -70,29 +54,20 @@ class ArtifactService:
             if not source.is_file():
                 continue
 
-            destination = (
-                target
-                / source.name
-            )
+            destination = target / source.name
 
             shutil.copy2(
                 source,
                 destination,
             )
 
-            copied.append(
-                destination
-            )
+            copied.append(destination)
 
         report = validate_artifact_package(
             project.id,
             copied,
-            expected_width=(
-                project.brief.target_width
-            ),
-            expected_height=(
-                project.brief.target_height
-            ),
+            expected_width=(project.brief.target_width),
+            expected_height=(project.brief.target_height),
         )
 
         self.artifacts.replace_for_project(
@@ -123,8 +98,4 @@ def collect_package_paths(
         ".json",
     }
 
-    return sorted(
-        path
-        for path in folder.iterdir()
-        if path.suffix.lower() in allowed
-    )
+    return sorted(path for path in folder.iterdir() if path.suffix.lower() in allowed)

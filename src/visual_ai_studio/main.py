@@ -19,12 +19,7 @@ def main() -> int:
     )
     app = QApplication(sys.argv)
     app.setWindowIcon(
-        QIcon(
-            str(
-                files("visual_ai_studio.resources")
-                .joinpath("visual-ai-studio.ico")
-            )
-        )
+        QIcon(str(files("visual_ai_studio.resources").joinpath("visual-ai-studio.ico")))
     )
     app.setStyle("Fusion")
     app.setStyleSheet(

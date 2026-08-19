@@ -39,10 +39,6 @@ def test_export_project_bundle(
 
     assert target.is_dir()
 
-    assert (
-        target / "resultat.png"
-    ).read_bytes() == b"visual-ai"
+    assert (target / "resultat.png").read_bytes() == b"visual-ai"
 
-    assert (
-        target / "project.json"
-    ).is_file()
+    assert (target / "project.json").is_file()

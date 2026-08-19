@@ -9,9 +9,7 @@ def test_validation_page_is_generic(
     page = ImportPage()
     qtbot.addWidget(page)
 
-    assert page.approved.text() == (
-        "Je valide ce résultat"
-    )
+    assert page.approved.text() == ("Je valide ce résultat")
 
     confirmations = page.confirmations()
 

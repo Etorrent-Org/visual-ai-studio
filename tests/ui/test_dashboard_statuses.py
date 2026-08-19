@@ -7,10 +7,7 @@ def test_dashboard_exposes_only_business_statuses(qtbot: QtBot) -> None:
     page = DashboardPage()
     qtbot.addWidget(page)
 
-    labels = [
-        page.status_filter.itemText(index)
-        for index in range(page.status_filter.count())
-    ]
+    labels = [page.status_filter.itemText(index) for index in range(page.status_filter.count())]
 
     assert labels == [
         "Tous les statuts",

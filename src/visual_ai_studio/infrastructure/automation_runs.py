@@ -27,13 +27,9 @@ class AutomationRunRepository:
             session.add(
                 AutomationRunRow(
                     id=run_id,
-                    project_id=str(
-                        project_id
-                    ),
+                    project_id=str(project_id),
                     idempotency_key=key,
-                    request_at=datetime.now(
-                        UTC
-                    ),
+                    request_at=datetime.now(UTC),
                     status="pending",
                 )
             )
@@ -57,18 +53,11 @@ class AutomationRunRepository:
             )
 
             if row is None:
-                raise LookupError(
-                    "Exécution webhook inconnue : "
-                    f"{run_id}"
-                )
+                raise LookupError(f"Exécution webhook inconnue : {run_id}")
 
-            row.response_at = datetime.now(
-                UTC
-            )
+            row.response_at = datetime.now(UTC)
             row.status = status
             row.http_status = http_status
             row.execution_id = execution_id
             row.remote_url = remote_url
-            row.error_message = (
-                error_message
-            )
+            row.error_message = error_message

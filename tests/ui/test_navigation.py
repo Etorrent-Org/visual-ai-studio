@@ -15,10 +15,7 @@ def test_main_navigation_is_simple(
     window = MainWindow(context)
     qtbot.addWidget(window)
 
-    labels = [
-        button.text()
-        for button in window.nav_buttons
-    ]
+    labels = [button.text() for button in window.nav_buttons]
 
     assert labels == [
         "Projets",

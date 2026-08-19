@@ -21,12 +21,6 @@ def test_settings_page_uses_generic_webhook(
         has_secret=False,
     )
 
-    assert (
-        page.header.text()
-        == "X-Visual-AI-Token"
-    )
+    assert page.header.text() == "X-Visual-AI-Token"
 
-    assert (
-        page.values().auth_header_name
-        == "X-Visual-AI-Token"
-    )
+    assert page.values().auth_header_name == "X-Visual-AI-Token"

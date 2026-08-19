@@ -23,16 +23,12 @@ def brief_fingerprint(
     brief: Brief,
 ) -> str:
     data = json.dumps(
-        brief.model_dump(
-            mode="json"
-        ),
+        brief.model_dump(mode="json"),
         sort_keys=True,
         ensure_ascii=False,
     )
 
-    return hashlib.sha256(
-        data.encode("utf-8")
-    ).hexdigest()
+    return hashlib.sha256(data.encode("utf-8")).hexdigest()
 
 
 def _value(
@@ -51,10 +47,7 @@ def _dimensions(
     width: int | None,
     height: int | None,
 ) -> str:
-    if (
-        width is not None
-        and height is not None
-    ):
+    if width is not None and height is not None:
         return f"{width} x {height} px"
 
     return "À préciser avec Studio Visuel"
@@ -65,24 +58,14 @@ def build_prompt(
     template: str | None = None,
 ) -> PromptResult:
     if not brief.title.strip():
-        raise ValueError(
-            "Le nom du projet est obligatoire "
-            "pour préparer le prompt."
-        )
+        raise ValueError("Le nom du projet est obligatoire pour préparer le prompt.")
 
     if not brief.raw_idea.strip():
-        raise ValueError(
-            "L'idée brute est obligatoire "
-            "pour préparer le prompt."
-        )
+        raise ValueError("L'idée brute est obligatoire pour préparer le prompt.")
 
-    mode = OutputMode(
-        brief.mode
-    )
+    mode = OutputMode(brief.mode)
 
-    preset = preset_for(
-        mode
-    )
+    preset = preset_for(mode)
 
     width = brief.target_width
 
@@ -104,15 +87,9 @@ def build_prompt(
 
     if template is None:
         template = (
-            files(
-                "visual_ai_studio.resources"
-            )
-            .joinpath(
-                "prompt-template.txt"
-            )
-            .read_text(
-                encoding="utf-8"
-            )
+            files("visual_ai_studio.resources")
+            .joinpath("prompt-template.txt")
+            .read_text(encoding="utf-8")
         )
 
     has_reference = "NON"
@@ -200,17 +177,10 @@ def build_prompt(
             str(value),
         )
 
-    rendered = (
-        rendered.strip()
-        + "\n"
-    )
+    rendered = rendered.strip() + "\n"
 
     return PromptResult(
         text=rendered,
-        sha256=hashlib.sha256(
-            rendered.encode("utf-8")
-        ).hexdigest(),
-        brief_sha256=brief_fingerprint(
-            brief
-        ),
+        sha256=hashlib.sha256(rendered.encode("utf-8")).hexdigest(),
+        brief_sha256=brief_fingerprint(brief),
     )

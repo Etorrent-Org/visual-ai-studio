@@ -15,25 +15,13 @@ def test_dashboard_keeps_business_statuses(
 ) -> None:
     page = DashboardPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    values = [
-        page.status_filter.itemText(
-            index
-        )
-        for index in range(
-            page.status_filter.count()
-        )
-    ]
+    values = [page.status_filter.itemText(index) for index in range(page.status_filter.count())]
 
     assert values == [
         "Tous les statuts",
-        *[
-            status.value
-            for status in ProjectStatus
-        ],
+        *[status.value for status in ProjectStatus],
     ]
 
 
@@ -42,19 +30,11 @@ def test_status_menu_is_compact(
 ) -> None:
     page = DashboardPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    assert (
-        page.status_filter.maximumHeight()
-        == 36
-    )
+    assert page.status_filter.maximumHeight() == 36
 
-    assert (
-        page.status_filter.view().maximumHeight()
-        == 150
-    )
+    assert page.status_filter.view().maximumHeight() == 150
 
 
 def test_dashboard_actions_keep_current_terms(
@@ -62,48 +42,21 @@ def test_dashboard_actions_keep_current_terms(
 ) -> None:
     page = DashboardPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    assert (
-        page.new_button.text()
-        == "Nouveau projet"
-    )
+    assert page.new_button.text() == "Nouveau projet"
 
-    assert (
-        page.open_button.text()
-        == "Ouvrir"
-    )
+    assert page.open_button.text() == "Ouvrir"
 
-    assert (
-        page.duplicate_button.text()
-        == "Dupliquer"
-    )
+    assert page.duplicate_button.text() == "Dupliquer"
 
-    assert (
-        page.archive_button.text()
-        == "Archiver"
-    )
+    assert page.archive_button.text() == "Archiver"
 
 
 def test_design_system_contains_modern_tokens() -> None:
-    qss = (
-        files(
-            "visual_ai_studio.resources"
-        )
-        .joinpath(
-            "styles.qss"
-        )
-        .read_text(
-            encoding="utf-8"
-        )
-    )
+    qss = files("visual_ai_studio.resources").joinpath("styles.qss").read_text(encoding="utf-8")
 
-    assert (
-        "Segoe UI Variable Text"
-        in qss
-    )
+    assert "Segoe UI Variable Text" in qss
 
     assert "#7C3AED" in qss
     assert "#08111F" in qss

@@ -22,9 +22,7 @@ def idempotency_key(
 ) -> str:
     value = f"{project_id}:{version}"
 
-    return hashlib.sha256(
-        value.encode()
-    ).hexdigest()
+    return hashlib.sha256(value.encode()).hexdigest()
 
 
 def build_metadata(
@@ -61,16 +59,9 @@ def build_metadata(
             for item in artifacts
         ],
         "validation": {
-            "automatic_checks_passed": (
-                report.automatic_checks_passed
-            ),
-            "human_approved": (
-                confirmations.all_confirmed
-            ),
-            "issues": [
-                issue.model_dump()
-                for issue in report.issues
-            ],
+            "automatic_checks_passed": (report.automatic_checks_passed),
+            "human_approved": (confirmations.all_confirmed),
+            "issues": [issue.model_dump() for issue in report.issues],
         },
     }
 
@@ -78,9 +69,7 @@ def build_metadata(
 def _mime_type(
     filename: str,
 ) -> str:
-    suffix = Path(
-        filename
-    ).suffix.lower()
+    suffix = Path(filename).suffix.lower()
 
     mapping = {
         ".png": "image/png",
@@ -120,16 +109,10 @@ class WebhookClient:
         report: ValidationReport,
         confirmations: HumanConfirmations,
     ) -> SubmissionOutcome:
-        if (
-            not report.automatic_checks_passed
-            or not confirmations.all_confirmed
-        ):
+        if not report.automatic_checks_passed or not confirmations.all_confirmed:
             return SubmissionOutcome(
                 status="error",
-                message=(
-                    "Le résultat doit être validé "
-                    "avant l'envoi."
-                ),
+                message=("Le résultat doit être validé avant l'envoi."),
             )
 
         key = idempotency_key(
@@ -144,14 +127,10 @@ class WebhookClient:
             confirmations,
         )
 
-        headers = {
-            "Idempotency-Key": key
-        }
+        headers = {"Idempotency-Key": key}
 
         if self.secret:
-            headers[
-                self.auth_header_name
-            ] = self.secret
+            headers[self.auth_header_name] = self.secret
 
         opened: list[Any] = []
 
@@ -161,25 +140,15 @@ class WebhookClient:
         ] = {}
 
         try:
-            for index, artifact in enumerate(
-                artifacts
-            ):
-                stream = Path(
-                    artifact.local_path
-                ).open("rb")
+            for index, artifact in enumerate(artifacts):
+                stream = Path(artifact.local_path).open("rb")  # noqa: SIM115
 
-                opened.append(
-                    stream
-                )
+                opened.append(stream)
 
-                files[
-                    f"artifact_{index}"
-                ] = (
+                files[f"artifact_{index}"] = (
                     artifact.filename,
                     stream,
-                    _mime_type(
-                        artifact.filename
-                    ),
+                    _mime_type(artifact.filename),
                 )
 
             files["metadata"] = (
@@ -207,10 +176,7 @@ class WebhookClient:
                 status="unknown",
                 retryable=True,
                 unknown=True,
-                message=(
-                    "Délai dépassé : le statut "
-                    "distant est inconnu."
-                ),
+                message=("Délai dépassé : le statut distant est inconnu."),
             )
 
         except (
@@ -233,16 +199,9 @@ class WebhookClient:
         except ValueError:
             return SubmissionOutcome(
                 status="error",
-                retryable=(
-                    response.status_code >= 500
-                ),
-                message=(
-                    "La réponse du webhook "
-                    "n'est pas un JSON valide."
-                ),
-                http_status=(
-                    response.status_code
-                ),
+                retryable=(response.status_code >= 500),
+                message=("La réponse du webhook n'est pas un JSON valide."),
+                http_status=(response.status_code),
             )
 
         if not isinstance(
@@ -251,28 +210,16 @@ class WebhookClient:
         ):
             return SubmissionOutcome(
                 status="error",
-                message=(
-                    "La réponse JSON du webhook "
-                    "n'est pas un objet."
-                ),
-                http_status=(
-                    response.status_code
-                ),
+                message=("La réponse JSON du webhook n'est pas un objet."),
+                http_status=(response.status_code),
             )
 
-        remote_url = str(
-            payload.get("remote_url")
-            or ""
-        )
+        remote_url = str(payload.get("remote_url") or "")
 
-        success_status = (
-            response.is_success
-            and payload.get("status")
-            in {
-                "success",
-                "duplicate",
-            }
-        )
+        success_status = response.is_success and payload.get("status") in {
+            "success",
+            "duplicate",
+        }
 
         if success_status:
             return SubmissionOutcome(
@@ -290,17 +237,9 @@ class WebhookClient:
                         "Envoi terminé.",
                     )
                 ),
-                http_status=(
-                    response.status_code
-                ),
+                http_status=(response.status_code),
                 duplicate_avoided=(
-                    payload.get("status")
-                    == "duplicate"
-                    or bool(
-                        payload.get(
-                            "duplicate_avoided"
-                        )
-                    )
+                    payload.get("status") == "duplicate" or bool(payload.get("duplicate_avoided"))
                 ),
             )
 
@@ -322,15 +261,10 @@ class WebhookClient:
             message=str(
                 payload.get(
                     "message",
-                    (
-                        "Erreur webhook HTTP "
-                        f"{response.status_code}."
-                    ),
+                    (f"Erreur webhook HTTP {response.status_code}."),
                 )
             ),
-            http_status=(
-                response.status_code
-            ),
+            http_status=(response.status_code),
         )
 
     def test_connection(
@@ -339,9 +273,7 @@ class WebhookClient:
         headers: dict[str, str] = {}
 
         if self.secret:
-            headers[
-                self.auth_header_name
-            ] = self.secret
+            headers[self.auth_header_name] = self.secret
 
         try:
             with httpx.Client(
@@ -351,9 +283,7 @@ class WebhookClient:
                 response = client.get(
                     self.webhook_url,
                     headers=headers,
-                    params={
-                        "probe": "true"
-                    },
+                    params={"probe": "true"},
                 )
 
             status = "error"
@@ -363,16 +293,9 @@ class WebhookClient:
 
             return SubmissionOutcome(
                 status=status,
-                retryable=(
-                    response.status_code >= 500
-                ),
-                http_status=(
-                    response.status_code
-                ),
-                message=(
-                    "Réponse webhook HTTP "
-                    f"{response.status_code}."
-                ),
+                retryable=(response.status_code >= 500),
+                http_status=(response.status_code),
+                message=(f"Réponse webhook HTTP {response.status_code}."),
             )
 
         except httpx.HTTPError as exc:

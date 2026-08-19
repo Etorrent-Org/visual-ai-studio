@@ -26,11 +26,7 @@ def can_submit(
     report: ValidationReport | None,
     confirmations: HumanConfirmations,
 ) -> bool:
-    return bool(
-        report
-        and report.automatic_checks_passed
-        and confirmations.all_confirmed
-    )
+    return bool(report and report.automatic_checks_passed and confirmations.all_confirmed)
 
 
 class SubmissionService:
@@ -57,10 +53,7 @@ class SubmissionService:
         ):
             return SubmissionOutcome(
                 status="error",
-                message=(
-                    "Le résultat doit être validé "
-                    "avant l'envoi."
-                ),
+                message=("Le résultat doit être validé avant l'envoi."),
             )
 
         key = idempotency_key(
@@ -84,31 +77,16 @@ class SubmissionService:
             run_id,
             status=outcome.status,
             http_status=outcome.http_status,
-            execution_id=(
-                outcome.execution_id
-            ),
-            remote_url=(
-                outcome.remote_url
-            ),
-            error_message=(
-                ""
-                if outcome.status
-                == "success"
-                else outcome.message
-            ),
+            execution_id=(outcome.execution_id),
+            remote_url=(outcome.remote_url),
+            error_message=("" if outcome.status == "success" else outcome.message),
         )
 
-        project.status = (
-            ProjectStatus.VALIDATED
-        )
+        project.status = ProjectStatus.VALIDATED
 
         if outcome.status == "success":
-            project.remote_url = (
-                outcome.remote_url
-            )
+            project.remote_url = outcome.remote_url
 
-        self.projects.save(
-            project
-        )
+        self.projects.save(project)
 
         return outcome

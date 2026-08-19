@@ -7,7 +7,18 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, create_engine, inspect, select, text
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    create_engine,
+    inspect,
+    select,
+    text,
+)
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import (
     DeclarativeBase,
@@ -97,80 +108,41 @@ class AutomationRunRow(Base):
     error_message: Mapped[str] = mapped_column(Text, default="")
 
 
-
 def _migrate_legacy_schema(
     engine: Engine,
 ) -> None:
     inspector = inspect(engine)
 
-    tables = set(
-        inspector.get_table_names()
-    )
+    tables = set(inspector.get_table_names())
 
     if "projects" in tables:
-        columns = {
-            item["name"]
-            for item in inspector.get_columns(
-                "projects"
-            )
-        }
+        columns = {item["name"] for item in inspector.get_columns("projects")}
 
-        if (
-            "notion_page_url" in columns
-            and "remote_url" not in columns
-        ):
+        if "notion_page_url" in columns and "remote_url" not in columns:
             with engine.begin() as connection:
                 connection.execute(
-                    text(
-                        "ALTER TABLE projects "
-                        "RENAME COLUMN notion_page_url "
-                        "TO remote_url"
-                    )
+                    text("ALTER TABLE projects RENAME COLUMN notion_page_url TO remote_url")
                 )
 
     inspector = inspect(engine)
 
-    tables = set(
-        inspector.get_table_names()
-    )
+    tables = set(inspector.get_table_names())
 
-    if (
-        "n8n_runs" in tables
-        and "automation_runs" not in tables
-    ):
+    if "n8n_runs" in tables and "automation_runs" not in tables:
         with engine.begin() as connection:
-            connection.execute(
-                text(
-                    "ALTER TABLE n8n_runs "
-                    "RENAME TO automation_runs"
-                )
-            )
+            connection.execute(text("ALTER TABLE n8n_runs RENAME TO automation_runs"))
 
     inspector = inspect(engine)
 
-    tables = set(
-        inspector.get_table_names()
-    )
+    tables = set(inspector.get_table_names())
 
     if "automation_runs" in tables:
-        columns = {
-            item["name"]
-            for item in inspector.get_columns(
-                "automation_runs"
-            )
-        }
+        columns = {item["name"] for item in inspector.get_columns("automation_runs")}
 
-        if (
-            "notion_page_url" in columns
-            and "remote_url" not in columns
-        ):
+        if "notion_page_url" in columns and "remote_url" not in columns:
             with engine.begin() as connection:
                 connection.execute(
-                    text(
-                        "ALTER TABLE automation_runs "
-                        "RENAME COLUMN notion_page_url "
-                        "TO remote_url"
-                    )
+                    text("ALTER TABLE automation_runs RENAME COLUMN notion_page_url TO remote_url")
                 )
 
 
@@ -182,13 +154,10 @@ class Database:
         self._sessions = sessionmaker(self.engine, expire_on_commit=False)
 
     def initialize(self) -> None:
-        _migrate_legacy_schema(
-            self.engine
-        )
+        _migrate_legacy_schema(self.engine)
 
-        Base.metadata.create_all(
-            self.engine
-        )
+        Base.metadata.create_all(self.engine)
+
     def backup(self) -> Path | None:
         if not self.path.exists():
             return None

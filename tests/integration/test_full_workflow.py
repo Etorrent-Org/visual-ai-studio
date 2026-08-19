@@ -38,19 +38,13 @@ def test_complete_local_workflow_with_fake_webhook(
     tmp_path: Path,
     artifact_package: object,
 ) -> None:
-    database = Database(
-        tmp_path / "workflow.db"
-    )
+    database = Database(tmp_path / "workflow.db")
 
     database.initialize()
 
-    projects = ProjectRepository(
-        database
-    )
+    projects = ProjectRepository(database)
 
-    references = ReferenceRepository(
-        database
-    )
+    references = ReferenceRepository(database)
 
     project_service = ProjectService(
         projects,
@@ -63,64 +57,38 @@ def test_complete_local_workflow_with_fake_webhook(
         tmp_path / "projects",
     )
 
-    project = (
-        project_service.create_project(
-            "Demo visual"
-        )
+    project = project_service.create_project("Demo visual")
+
+    project = project_service.save_brief(
+        project,
+        Brief(
+            title="Demo visual",
+            collection="Campagne demo",
+            style="Editorial",
+            raw_idea=("Une scène visuelle test"),
+        ),
     )
 
-    project = (
-        project_service.save_brief(
-            project,
-            Brief(
-                title="Demo visual",
-                collection="Campagne demo",
-                style="Editorial",
-                raw_idea=(
-                    "Une scène visuelle test"
-                ),
-            ),
-        )
+    project = project_service.generate_prompt(project)
+
+    project = project_service.mark_sent_to_agent(project)
+
+    report = artifact_service.import_package(
+        project,
+        artifact_package(),
     )
 
-    project = (
-        project_service.generate_prompt(
-            project
-        )
-    )
+    assert report.automatic_checks_passed
 
-    project = (
-        project_service.mark_sent_to_agent(
-            project
-        )
-    )
-
-    report = (
-        artifact_service.import_package(
-            project,
-            artifact_package(),
-        )
-    )
-
-    assert (
-        report.automatic_checks_passed
-    )
-
-    confirmations = HumanConfirmations(
-        approved=True
-    )
+    confirmations = HumanConfirmations(approved=True)
 
     transport = httpx.MockTransport(
         lambda _request: httpx.Response(
             200,
             json={
                 "status": "success",
-                "execution_id": (
-                    "fake-exec-42"
-                ),
-                "remote_url": (
-                    "https://example.test/fake-result"
-                ),
+                "execution_id": ("fake-exec-42"),
+                "remote_url": ("https://example.test/fake-result"),
             },
         )
     )
@@ -132,9 +100,7 @@ def test_complete_local_workflow_with_fake_webhook(
             "test-only-secret",
             transport=transport,
         ),
-        AutomationRunRepository(
-            database
-        ),
+        AutomationRunRepository(database),
         projects,
     )
 
@@ -145,25 +111,14 @@ def test_complete_local_workflow_with_fake_webhook(
         confirmations,
     )
 
-    reloaded = projects.get(
-        project.id
-    )
+    reloaded = projects.get(project.id)
 
     assert outcome.status == "success"
 
-    assert (
-        outcome.execution_id
-        == "fake-exec-42"
-    )
+    assert outcome.execution_id == "fake-exec-42"
 
     assert reloaded is not None
 
-    assert (
-        reloaded.status
-        is ProjectStatus.VALIDATED
-    )
+    assert reloaded.status is ProjectStatus.VALIDATED
 
-    assert (
-        reloaded.remote_url
-        == "https://example.test/fake-result"
-    )
+    assert reloaded.remote_url == "https://example.test/fake-result"

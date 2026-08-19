@@ -38,33 +38,19 @@ def test_old_database_names_are_migrated(
 
     database.initialize()
 
-    inspector = inspect(
-        database.engine
-    )
+    inspector = inspect(database.engine)
 
-    tables = set(
-        inspector.get_table_names()
-    )
+    tables = set(inspector.get_table_names())
 
     assert "automation_runs" in tables
     assert "n8n_runs" not in tables
 
-    project_columns = {
-        item["name"]
-        for item in inspector.get_columns(
-            "projects"
-        )
-    }
+    project_columns = {item["name"] for item in inspector.get_columns("projects")}
 
     assert "remote_url" in project_columns
     assert "notion_page_url" not in project_columns
 
-    automation_columns = {
-        item["name"]
-        for item in inspector.get_columns(
-            "automation_runs"
-        )
-    }
+    automation_columns = {item["name"] for item in inspector.get_columns("automation_runs")}
 
     assert "remote_url" in automation_columns
     assert "notion_page_url" not in automation_columns

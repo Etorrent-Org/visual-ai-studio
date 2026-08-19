@@ -51,22 +51,13 @@ class SettingsPage(QWidget):
         # En-tête
         # ------------------------------------------
 
-        title = QLabel(
-            "Paramètres"
-        )
+        title = QLabel("Paramètres")
 
-        title.setObjectName(
-            "pageTitle"
-        )
+        title.setObjectName("pageTitle")
 
-        subtitle = QLabel(
-            "Choisissez l’emplacement de stockage "
-            "de vos projets."
-        )
+        subtitle = QLabel("Choisissez l’emplacement de stockage de vos projets.")
 
-        subtitle.setObjectName(
-            "muted"
-        )
+        subtitle.setObjectName("muted")
 
         # ------------------------------------------
         # Carte stockage
@@ -74,13 +65,9 @@ class SettingsPage(QWidget):
 
         card = QFrame()
 
-        card.setObjectName(
-            "settingsCard"
-        )
+        card.setObjectName("settingsCard")
 
-        card_layout = QVBoxLayout(
-            card
-        )
+        card_layout = QVBoxLayout(card)
 
         card_layout.setContentsMargins(
             22,
@@ -89,156 +76,92 @@ class SettingsPage(QWidget):
             22,
         )
 
-        card_layout.setSpacing(
-            14
-        )
+        card_layout.setSpacing(14)
 
-        section_title = QLabel(
-            "Stockage local"
-        )
+        section_title = QLabel("Stockage local")
 
-        section_title.setObjectName(
-            "sectionTitle"
-        )
+        section_title.setObjectName("sectionTitle")
 
         section_text = QLabel(
-            "Emplacement utilisé par Visual AI Studio "
-            "pour conserver les projets et leurs fichiers."
+            "Emplacement utilisé par Visual AI Studio pour conserver les projets et leurs fichiers."
         )
 
-        section_text.setObjectName(
-            "muted"
-        )
+        section_text.setObjectName("muted")
 
-        section_text.setWordWrap(
-            True
-        )
+        section_text.setWordWrap(True)
 
-        folder_label = QLabel(
-            "Dossier des projets"
-        )
+        folder_label = QLabel("Dossier des projets")
 
-        folder_label.setObjectName(
-            "fieldLabel"
-        )
+        folder_label.setObjectName("fieldLabel")
 
         self.projects_dir = QLineEdit()
 
-        self.projects_dir.setPlaceholderText(
-            "Choisissez un dossier…"
-        )
+        self.projects_dir.setPlaceholderText("Choisissez un dossier…")
 
-        choose = QPushButton(
-            "Choisir…"
-        )
+        choose = QPushButton("Choisir…")
 
-        choose.setMinimumWidth(
-            100
-        )
+        choose.setMinimumWidth(100)
 
-        choose.clicked.connect(
-            self._choose_projects_dir
-        )
+        choose.clicked.connect(self._choose_projects_dir)
 
         folder_row = QHBoxLayout()
 
-        folder_row.setSpacing(
-            8
-        )
+        folder_row.setSpacing(8)
 
         folder_row.addWidget(
             self.projects_dir,
             1,
         )
 
-        folder_row.addWidget(
-            choose
-        )
+        folder_row.addWidget(choose)
 
-        privacy = QLabel(
-            "Les données de travail restent stockées "
-            "localement sur votre ordinateur."
-        )
+        privacy = QLabel("Les données de travail restent stockées localement sur votre ordinateur.")
 
-        privacy.setObjectName(
-            "settingsHint"
-        )
+        privacy.setObjectName("settingsHint")
 
-        privacy.setWordWrap(
-            True
-        )
+        privacy.setWordWrap(True)
 
-        card_layout.addWidget(
-            section_title
-        )
+        card_layout.addWidget(section_title)
 
-        card_layout.addWidget(
-            section_text
-        )
+        card_layout.addWidget(section_text)
 
-        card_layout.addSpacing(
-            6
-        )
+        card_layout.addSpacing(6)
 
-        card_layout.addWidget(
-            folder_label
-        )
+        card_layout.addWidget(folder_label)
 
-        card_layout.addLayout(
-            folder_row
-        )
+        card_layout.addLayout(folder_row)
 
-        card_layout.addWidget(
-            privacy
-        )
+        card_layout.addWidget(privacy)
 
         # ------------------------------------------
         # Action
         # ------------------------------------------
 
-        save = QPushButton(
-            "Enregistrer"
-        )
+        save = QPushButton("Enregistrer")
 
-        save.setObjectName(
-            "primaryButton"
-        )
+        save.setObjectName("primaryButton")
 
-        save.setMinimumWidth(
-            120
-        )
+        save.setMinimumWidth(120)
 
-        save.clicked.connect(
-            self._emit_save
-        )
+        save.clicked.connect(self._emit_save)
 
         actions = QHBoxLayout()
 
         actions.addStretch()
 
-        actions.addWidget(
-            save
-        )
+        actions.addWidget(save)
 
-        self.feedback = QLabel(
-            ""
-        )
+        self.feedback = QLabel("")
 
-        self.feedback.setObjectName(
-            "settingsFeedback"
-        )
+        self.feedback.setObjectName("settingsFeedback")
 
-        self.feedback.setWordWrap(
-            True
-        )
+        self.feedback.setWordWrap(True)
 
         # ------------------------------------------
         # Layout principal
         # ------------------------------------------
 
-        layout = QVBoxLayout(
-            self
-        )
+        layout = QVBoxLayout(self)
 
         layout.setContentsMargins(
             28,
@@ -247,35 +170,21 @@ class SettingsPage(QWidget):
             24,
         )
 
-        layout.setSpacing(
-            14
-        )
+        layout.setSpacing(14)
 
-        layout.addWidget(
-            title
-        )
+        layout.addWidget(title)
 
-        layout.addWidget(
-            subtitle
-        )
+        layout.addWidget(subtitle)
 
-        layout.addSpacing(
-            4
-        )
+        layout.addSpacing(4)
 
-        layout.addWidget(
-            card
-        )
+        layout.addWidget(card)
 
         layout.addStretch()
 
-        layout.addWidget(
-            self.feedback
-        )
+        layout.addWidget(self.feedback)
 
-        layout.addLayout(
-            actions
-        )
+        layout.addLayout(actions)
 
         # ------------------------------------------
         # Compatibilité interne
@@ -286,33 +195,19 @@ class SettingsPage(QWidget):
         # sans modifier MainWindow ou AppSettings.
         # ------------------------------------------
 
-        self.webhook = QLineEdit(
-            self
-        )
+        self.webhook = QLineEdit(self)
 
-        self.secret = QLineEdit(
-            self
-        )
+        self.secret = QLineEdit(self)
 
-        self.header = QLineEdit(
-            self
-        )
+        self.header = QLineEdit(self)
 
-        self.timeout = QDoubleSpinBox(
-            self
-        )
+        self.timeout = QDoubleSpinBox(self)
 
-        self.agent_url = QLineEdit(
-            self
-        )
+        self.agent_url = QLineEdit(self)
 
-        self.max_file = QSpinBox(
-            self
-        )
+        self.max_file = QSpinBox(self)
 
-        self.new_collection = QLineEdit(
-            self
-        )
+        self.new_collection = QLineEdit(self)
 
         self._compat_widgets = [
             self.webhook,
@@ -332,67 +227,36 @@ class SettingsPage(QWidget):
         settings: AppSettings,
         has_secret: bool,
     ) -> None:
-        self._settings = settings.model_copy(
-            deep=True
-        )
+        self._settings = settings.model_copy(deep=True)
 
-        self.projects_dir.setText(
-            str(
-                settings.projects_dir
-            )
-        )
+        self.projects_dir.setText(str(settings.projects_dir))
 
         # Maintien silencieux des paramètres
         # techniques existants.
 
-        self.webhook.setText(
-            str(
-                settings.webhook_url
-                or ""
-            )
-        )
+        self.webhook.setText(str(settings.webhook_url or ""))
 
-        self.header.setText(
-            settings.auth_header_name
-        )
+        self.header.setText(settings.auth_header_name)
 
-        self.timeout.setValue(
-            settings.timeout_seconds
-        )
+        self.timeout.setValue(settings.timeout_seconds)
 
-        self.agent_url.setText(
-            str(
-                settings.agent_url
-                or ""
-            )
-        )
+        self.agent_url.setText(str(settings.agent_url or ""))
 
-        self.max_file.setValue(
-            settings.max_file_size_mb
-        )
+        self.max_file.setValue(settings.max_file_size_mb)
 
         if has_secret:
-            self.secret.setPlaceholderText(
-                "Secret configuré"
-            )
+            self.secret.setPlaceholderText("Secret configuré")
 
         if not has_secret:
-            self.secret.setPlaceholderText(
-                ""
-            )
+            self.secret.setPlaceholderText("")
 
     def values(
         self,
     ) -> AppSettings:
-        path = (
-            self.projects_dir.text()
-            .strip()
-        )
+        path = self.projects_dir.text().strip()
 
         if not path:
-            path = str(
-                self._settings.projects_dir
-            )
+            path = str(self._settings.projects_dir)
 
         return self._settings.model_copy(
             update={
@@ -412,20 +276,13 @@ class SettingsPage(QWidget):
     def _choose_projects_dir(
         self,
     ) -> None:
-        current = (
-            self.projects_dir.text()
-            .strip()
-        )
+        current = self.projects_dir.text().strip()
 
-        path = (
-            QFileDialog.getExistingDirectory(
-                self,
-                "Choisir le dossier des projets",
-                current,
-            )
+        path = QFileDialog.getExistingDirectory(
+            self,
+            "Choisir le dossier des projets",
+            current,
         )
 
         if path:
-            self.projects_dir.setText(
-                path
-            )
+            self.projects_dir.setText(path)

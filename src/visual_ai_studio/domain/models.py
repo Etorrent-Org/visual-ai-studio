@@ -122,6 +122,7 @@ class HumanConfirmations(BaseModel):
     def all_confirmed(self) -> bool:
         return self.approved
 
+
 class SubmissionOutcome(BaseModel):
     status: str
     retryable: bool = False

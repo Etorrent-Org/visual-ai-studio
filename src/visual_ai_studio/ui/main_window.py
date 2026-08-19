@@ -22,9 +22,9 @@ from visual_ai_studio.application import ApplicationContext
 from visual_ai_studio.domain.models import Brief, HumanConfirmations, Project, ValidationReport
 from visual_ai_studio.domain.normalization import find_close_values, normalize_value
 from visual_ai_studio.domain.statuses import ProjectStatus
-from visual_ai_studio.infrastructure.webhook_client import WebhookClient
 from visual_ai_studio.infrastructure.automation_runs import AutomationRunRepository
 from visual_ai_studio.infrastructure.settings import SettingsStore
+from visual_ai_studio.infrastructure.webhook_client import WebhookClient
 from visual_ai_studio.services.export_service import export_project_bundle
 from visual_ai_studio.services.submission_service import SubmissionService, can_submit
 from visual_ai_studio.ui.brief_page import BriefPage
@@ -33,8 +33,6 @@ from visual_ai_studio.ui.import_page import ImportPage
 from visual_ai_studio.ui.prompt_page import PromptPage
 from visual_ai_studio.ui.settings_page import SettingsPage
 from visual_ai_studio.ui.submission_page import SubmissionPage
-
-
 from visual_ai_studio.ui.theme import polish_widget_tree
 
 
@@ -81,9 +79,7 @@ class MainWindow(QMainWindow):
             ("Paramètres", 5),
         ]
 
-        self.nav_page_indices = [
-            index for _label, index in nav_items
-        ]
+        self.nav_page_indices = [index for _label, index in nav_items]
 
         self.nav_buttons: list[QPushButton] = []
         for label, index in nav_items:
@@ -162,6 +158,7 @@ class MainWindow(QMainWindow):
             )
             button.style().unpolish(button)
             button.style().polish(button)
+
     def _load_settings(self) -> None:
         try:
             has_secret = bool(self.context.settings_store.get_secret())
@@ -173,7 +170,9 @@ class MainWindow(QMainWindow):
 
     def _update_webhook_indicator(self) -> None:
         configured = bool(self.context.settings.webhook_url)
-        self.webhook_indicator.setText("● Webhook configuré" if configured else "○ Webhook non configuré")
+        self.webhook_indicator.setText(
+            "● Webhook configuré" if configured else "○ Webhook non configuré"
+        )
         self.webhook_indicator.setProperty("configured", configured)
         self.submission.update_state(
             self.current_project,
@@ -344,15 +343,14 @@ class MainWindow(QMainWindow):
 
         if ready and self.current_project is not None:
             self.current_project.status = ProjectStatus.VALIDATED
-            self.context.project_repository.save(
-                self.current_project
-            )
+            self.context.project_repository.save(self.current_project)
             self._refresh_dashboard()
 
         self._update_webhook_indicator()
 
         if ready:
             self.show_page(4)
+
     def _save_settings(self, settings: object, secret: str) -> None:
         try:
             self.context.settings = type(self.context.settings).model_validate(settings)
@@ -448,9 +446,8 @@ class MainWindow(QMainWindow):
             )
             return
 
-        self.submission.set_local_export(
-            str(target)
-        )
+        self.submission.set_local_export(str(target))
+
     def _submit(self) -> None:
         if self.current_project is None or self.report is None:
             return

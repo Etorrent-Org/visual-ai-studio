@@ -19,9 +19,7 @@ def test_only_storage_is_exposed(
 ) -> None:
     page = SettingsPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
     page.set_settings(
         AppSettings(
@@ -48,19 +46,11 @@ def test_visible_actions_are_minimal(
 ) -> None:
     page = SettingsPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
     page.show()
 
-    labels = [
-        button.text()
-        for button in page.findChildren(
-            QPushButton
-        )
-        if button.isVisible()
-    ]
+    labels = [button.text() for button in page.findChildren(QPushButton) if button.isVisible()]
 
     assert labels == [
         "Choisir…",
@@ -74,19 +64,13 @@ def test_storage_change_preserves_internal_settings(
 ) -> None:
     page = SettingsPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
     original = AppSettings(
-        webhook_url=(
-            "https://example.test/webhook"
-        ),
+        webhook_url=("https://example.test/webhook"),
         auth_header_name="X-Test",
         timeout_seconds=45,
-        agent_url=(
-            "https://example.test/agent"
-        ),
+        agent_url=("https://example.test/agent"),
         max_file_size_mb=80,
     )
 
@@ -95,43 +79,20 @@ def test_storage_change_preserves_internal_settings(
         False,
     )
 
-    target = (
-        tmp_path
-        / "projects"
-    )
+    target = tmp_path / "projects"
 
-    page.projects_dir.setText(
-        str(target)
-    )
+    page.projects_dir.setText(str(target))
 
     result = page.values()
 
-    assert (
-        result.projects_dir
-        == target
-    )
+    assert result.projects_dir == target
 
-    assert (
-        result.webhook_url
-        == original.webhook_url
-    )
+    assert result.webhook_url == original.webhook_url
 
-    assert (
-        result.auth_header_name
-        == original.auth_header_name
-    )
+    assert result.auth_header_name == original.auth_header_name
 
-    assert (
-        result.timeout_seconds
-        == original.timeout_seconds
-    )
+    assert result.timeout_seconds == original.timeout_seconds
 
-    assert (
-        result.agent_url
-        == original.agent_url
-    )
+    assert result.agent_url == original.agent_url
 
-    assert (
-        result.max_file_size_mb
-        == original.max_file_size_mb
-    )
+    assert result.max_file_size_mb == original.max_file_size_mb

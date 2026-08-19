@@ -49,17 +49,11 @@ def test_two_images_create_two_previews(
 ) -> None:
     page = ImportPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    first = make_image_artifact(
-        tmp_path / "image-1.png"
-    )
+    first = make_image_artifact(tmp_path / "image-1.png")
 
-    second = make_image_artifact(
-        tmp_path / "image-2.png"
-    )
+    second = make_image_artifact(tmp_path / "image-2.png")
 
     report = ValidationReport(
         artifacts=[
@@ -68,33 +62,14 @@ def test_two_images_create_two_previews(
         ]
     )
 
-    page.set_report(
-        report
-    )
+    page.set_report(report)
 
-    assert (
-        len(page.preview_labels)
-        == 2
-    )
+    assert len(page.preview_labels) == 2
 
-    assert (
-        page.preview_labels[0].pixmap()
-        is not None
-    )
+    assert page.preview_labels[0].pixmap() is not None
 
-    assert (
-        page.preview_labels[1].pixmap()
-        is not None
-    )
+    assert page.preview_labels[1].pixmap() is not None
 
-    assert (
-        not page.preview_labels[0]
-        .pixmap()
-        .isNull()
-    )
+    assert not page.preview_labels[0].pixmap().isNull()
 
-    assert (
-        not page.preview_labels[1]
-        .pixmap()
-        .isNull()
-    )
+    assert not page.preview_labels[1].pixmap().isNull()

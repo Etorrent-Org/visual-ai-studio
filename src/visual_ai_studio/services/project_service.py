@@ -25,7 +25,9 @@ class ProjectService:
 
     def seed_catalog(self) -> None:
         data = json.loads(
-            files("visual_ai_studio.resources").joinpath("references.json").read_text(encoding="utf-8")
+            files("visual_ai_studio.resources")
+            .joinpath("references.json")
+            .read_text(encoding="utf-8")
         )
         values = [
             ReferenceValue(

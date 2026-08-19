@@ -67,6 +67,4 @@ def preset_for(
 ) -> OutputModePreset:
     resolved = OutputMode(mode)
 
-    return OUTPUT_MODE_PRESETS[
-        resolved
-    ]
+    return OUTPUT_MODE_PRESETS[resolved]

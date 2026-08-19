@@ -77,13 +77,9 @@ def submission_data(
             )
         )
 
-    report = ValidationReport(
-        artifacts=artifacts
-    )
+    report = ValidationReport(artifacts=artifacts)
 
-    confirmations = HumanConfirmations(
-        approved=True
-    )
+    confirmations = HumanConfirmations(approved=True)
 
     return (
         project,
@@ -96,25 +92,15 @@ def submission_data(
 def test_metadata_is_generic(
     tmp_path: Path,
 ) -> None:
-    data = submission_data(
-        tmp_path
-    )
+    data = submission_data(tmp_path)
 
-    metadata = build_metadata(
-        *data
-    )
+    metadata = build_metadata(*data)
 
-    assert (
-        metadata["source"]
-        == "visual-ai-studio"
-    )
+    assert metadata["source"] == "visual-ai-studio"
 
     assert "notion" not in metadata
 
-    assert (
-        metadata["output"]["mode"]
-        == "pinterest"
-    )
+    assert metadata["output"]["mode"] == "pinterest"
 
 
 def test_multipart_payload_and_success(
@@ -125,35 +111,25 @@ def test_multipart_payload_and_success(
     def handler(
         request: httpx.Request,
     ) -> httpx.Response:
-        captured["headers"] = (
-            request.headers
-        )
-        captured["body"] = (
-            request.read()
-        )
+        captured["headers"] = request.headers
+        captured["body"] = request.read()
 
         return httpx.Response(
             200,
             json={
                 "status": "success",
                 "execution_id": "exec-123",
-                "remote_url": (
-                    "https://example.test/result"
-                ),
+                "remote_url": ("https://example.test/result"),
             },
         )
 
-    project, artifacts, report, confirmations = (
-        submission_data(tmp_path)
-    )
+    project, artifacts, report, confirmations = submission_data(tmp_path)
 
     client = WebhookClient(
         "https://automation.test/webhook",
         "X-Token",
         "secret-value",
-        transport=httpx.MockTransport(
-            handler
-        ),
+        transport=httpx.MockTransport(handler),
     )
 
     outcome = client.submit(
@@ -165,48 +141,24 @@ def test_multipart_payload_and_success(
 
     assert outcome.status == "success"
 
-    assert (
-        outcome.execution_id
-        == "exec-123"
+    assert outcome.execution_id == "exec-123"
+
+    assert outcome.remote_url == "https://example.test/result"
+
+    assert captured["headers"]["X-Token"] == "secret-value"
+
+    assert captured["headers"]["Idempotency-Key"] == idempotency_key(
+        project.id,
+        1,
     )
 
-    assert (
-        outcome.remote_url
-        == "https://example.test/result"
-    )
+    assert b'name="metadata"' in captured["body"]
 
-    assert (
-        captured["headers"]["X-Token"]
-        == "secret-value"
-    )
+    assert b'name="artifact_0"' in captured["body"]
 
-    assert (
-        captured["headers"]["Idempotency-Key"]
-        == idempotency_key(
-            project.id,
-            1,
-        )
-    )
+    assert b'name="artifact_1"' in captured["body"]
 
-    assert (
-        b'name="metadata"'
-        in captured["body"]
-    )
-
-    assert (
-        b'name="artifact_0"'
-        in captured["body"]
-    )
-
-    assert (
-        b'name="artifact_1"'
-        in captured["body"]
-    )
-
-    assert (
-        b"local_path"
-        not in captured["body"]
-    )
+    assert b"local_path" not in captured["body"]
 
 
 def test_business_error_is_not_retryable(
@@ -224,17 +176,13 @@ def test_business_error_is_not_retryable(
             },
         )
 
-    data = submission_data(
-        tmp_path
-    )
+    data = submission_data(tmp_path)
 
     outcome = WebhookClient(
         "https://automation.test/webhook",
         "X-Token",
         "",
-        transport=httpx.MockTransport(
-            handler
-        ),
+        transport=httpx.MockTransport(handler),
     ).submit(*data)
 
     assert outcome.status == "error"
@@ -253,17 +201,13 @@ def test_timeout_has_unknown_status(
             request=request,
         )
 
-    data = submission_data(
-        tmp_path
-    )
+    data = submission_data(tmp_path)
 
     outcome = WebhookClient(
         "https://automation.test/webhook",
         "X-Token",
         "",
-        transport=httpx.MockTransport(
-            handler
-        ),
+        transport=httpx.MockTransport(handler),
     ).submit(*data)
 
     assert outcome.unknown is True
@@ -280,9 +224,7 @@ def test_invalid_json_is_explicit(
         )
     )
 
-    data = submission_data(
-        tmp_path
-    )
+    data = submission_data(tmp_path)
 
     outcome = WebhookClient(
         "https://automation.test/webhook",
@@ -297,24 +239,18 @@ def test_invalid_json_is_explicit(
 def test_idempotency_is_stable_per_project_version() -> None:
     project = Project()
 
-    assert (
-        idempotency_key(
-            project.id,
-            1,
-        )
-        == idempotency_key(
-            project.id,
-            1,
-        )
+    assert idempotency_key(
+        project.id,
+        1,
+    ) == idempotency_key(
+        project.id,
+        1,
     )
 
-    assert (
-        idempotency_key(
-            project.id,
-            1,
-        )
-        != idempotency_key(
-            project.id,
-            2,
-        )
+    assert idempotency_key(
+        project.id,
+        1,
+    ) != idempotency_key(
+        project.id,
+        2,
     )

@@ -14,7 +14,6 @@ from pydantic import (
     HttpUrl,
 )
 
-
 SERVICE_NAME = "Visual AI Studio"
 SECRET_ACCOUNT = "webhook-secret"
 DEFAULT_AUTH_HEADER = "X-Visual-AI-Token"
@@ -70,11 +69,7 @@ class SettingsStore:
         if not self.path.exists():
             return AppSettings()
 
-        return AppSettings.model_validate_json(
-            self.path.read_text(
-                encoding="utf-8"
-            )
-        )
+        return AppSettings.model_validate_json(self.path.read_text(encoding="utf-8"))
 
     def save(
         self,
@@ -86,9 +81,7 @@ class SettingsStore:
         )
 
         self.path.write_text(
-            settings.model_dump_json(
-                indent=2
-            ),
+            settings.model_dump_json(indent=2),
             encoding="utf-8",
         )
 
@@ -114,9 +107,7 @@ class SettingsStore:
             )
             return
 
-        with contextlib.suppress(
-            keyring.errors.PasswordDeleteError
-        ):
+        with contextlib.suppress(keyring.errors.PasswordDeleteError):
             keyring.delete_password(
                 SERVICE_NAME,
                 SECRET_ACCOUNT,

@@ -16,16 +16,9 @@ def test_brief_page_exposes_agent_modes_only(
 ) -> None:
     page = BriefPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    values = [
-        page.mode_combo.itemData(index)
-        for index in range(
-            page.mode_combo.count()
-        )
-    ]
+    values = [page.mode_combo.itemData(index) for index in range(page.mode_combo.count())]
 
     assert values == [
         OutputMode.PINTEREST.value,
@@ -39,17 +32,11 @@ def test_pinterest_format_is_applied(
 ) -> None:
     page = BriefPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    index = page.mode_combo.findData(
-        OutputMode.PINTEREST.value
-    )
+    index = page.mode_combo.findData(OutputMode.PINTEREST.value)
 
-    page.mode_combo.setCurrentIndex(
-        index
-    )
+    page.mode_combo.setCurrentIndex(index)
 
     assert page.width.value() == 1000
     assert page.height.value() == 1500
@@ -61,17 +48,11 @@ def test_custom_format_is_editable(
 ) -> None:
     page = BriefPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
-    index = page.mode_combo.findData(
-        OutputMode.CUSTOM.value
-    )
+    index = page.mode_combo.findData(OutputMode.CUSTOM.value)
 
-    page.mode_combo.setCurrentIndex(
-        index
-    )
+    page.mode_combo.setCurrentIndex(index)
 
     assert page.width.isEnabled()
     assert page.height.isEnabled()
@@ -83,23 +64,14 @@ def test_project_mode_round_trip(
 ) -> None:
     page = BriefPage()
 
-    qtbot.addWidget(
-        page
-    )
+    qtbot.addWidget(page)
 
     project = Project()
 
-    project.brief.mode = (
-        OutputMode.INSTAGRAM
-    )
+    project.brief.mode = OutputMode.INSTAGRAM
 
-    page.set_project(
-        project
-    )
+    page.set_project(project)
 
     result = page.brief()
 
-    assert (
-        result.mode
-        is OutputMode.INSTAGRAM
-    )
+    assert result.mode is OutputMode.INSTAGRAM

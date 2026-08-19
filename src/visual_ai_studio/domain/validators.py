@@ -10,7 +10,6 @@ from PIL import Image, UnidentifiedImageError
 from .models import Artifact, ValidationIssue, ValidationReport
 from .statuses import ArtifactType
 
-
 IMAGE_EXTENSIONS = {
     ".png",
     ".jpg",
@@ -85,24 +84,15 @@ def _validate_image(
             [
                 ValidationIssue(
                     code="invalid_image",
-                    message=(
-                        f"{path.name} n'est pas "
-                        "une image lisible."
-                    ),
+                    message=(f"{path.name} n'est pas une image lisible."),
                     artifact=path.name,
                 )
             ],
         )
 
-    wrong_width = (
-        expected_width is not None
-        and width != expected_width
-    )
+    wrong_width = expected_width is not None and width != expected_width
 
-    wrong_height = (
-        expected_height is not None
-        and height != expected_height
-    )
+    wrong_height = expected_height is not None and height != expected_height
 
     if wrong_width or wrong_height:
         width_target = "*"
@@ -134,9 +124,7 @@ def _validate_text(
     path: Path,
 ) -> list[ValidationIssue]:
     try:
-        text = path.read_text(
-            encoding="utf-8"
-        )
+        text = path.read_text(encoding="utf-8")
 
     except (
         OSError,
@@ -145,10 +133,7 @@ def _validate_text(
         return [
             ValidationIssue(
                 code="invalid_text",
-                message=(
-                    f"{path.name} n'est pas "
-                    "un fichier texte UTF-8 lisible."
-                ),
+                message=(f"{path.name} n'est pas un fichier texte UTF-8 lisible."),
                 artifact=path.name,
             )
         ]
@@ -157,10 +142,7 @@ def _validate_text(
         return [
             ValidationIssue(
                 code="empty_text",
-                message=(
-                    f"{path.name} ne contient "
-                    "aucun texte exploitable."
-                ),
+                message=(f"{path.name} ne contient aucun texte exploitable."),
                 artifact=path.name,
             )
         ]
@@ -172,11 +154,7 @@ def _validate_json(
     path: Path,
 ) -> list[ValidationIssue]:
     try:
-        payload = json.loads(
-            path.read_text(
-                encoding="utf-8"
-            )
-        )
+        payload = json.loads(path.read_text(encoding="utf-8"))
 
     except (
         OSError,
@@ -186,10 +164,7 @@ def _validate_json(
         return [
             ValidationIssue(
                 code="invalid_json",
-                message=(
-                    f"{path.name} n'est pas "
-                    "un JSON valide."
-                ),
+                message=(f"{path.name} n'est pas un JSON valide."),
                 artifact=path.name,
             )
         ]
@@ -198,10 +173,7 @@ def _validate_json(
         return [
             ValidationIssue(
                 code="invalid_json_object",
-                message=(
-                    f"{path.name} doit contenir "
-                    "un objet JSON."
-                ),
+                message=(f"{path.name} doit contenir un objet JSON."),
                 artifact=path.name,
             )
         ]
@@ -226,27 +198,18 @@ def validate_artifact_package(
             report.issues.append(
                 ValidationIssue(
                     code="unknown_file",
-                    message=(
-                        f"{path.name} est ignoré : "
-                        "format non pris en charge."
-                    ),
+                    message=(f"{path.name} est ignoré : format non pris en charge."),
                     blocking=False,
                     artifact=path.name,
                 )
             )
             continue
 
-        if (
-            not path.is_file()
-            or path.stat().st_size == 0
-        ):
+        if not path.is_file() or path.stat().st_size == 0:
             report.issues.append(
                 ValidationIssue(
                     code="empty_or_unreadable",
-                    message=(
-                        f"{path.name} est vide "
-                        "ou illisible."
-                    ),
+                    message=(f"{path.name} est vide ou illisible."),
                     artifact=path.name,
                 )
             )
@@ -285,10 +248,7 @@ def validate_artifact_package(
             report.issues.append(
                 ValidationIssue(
                     code="hash_failed",
-                    message=(
-                        "Impossible de calculer "
-                        f"l'empreinte de {path.name}."
-                    ),
+                    message=(f"Impossible de calculer l'empreinte de {path.name}."),
                     artifact=path.name,
                 )
             )
@@ -296,10 +256,7 @@ def validate_artifact_package(
 
         validation_status = "valid"
 
-        if any(
-            issue.artifact == path.name
-            for issue in report.blocking_issues
-        ):
+        if any(issue.artifact == path.name for issue in report.blocking_issues):
             validation_status = "invalid"
 
         report.artifacts.append(
@@ -311,43 +268,31 @@ def validate_artifact_package(
                 sha256=digest,
                 width=width,
                 height=height,
-                validation_status=(
-                    validation_status
-                ),
+                validation_status=(validation_status),
             )
         )
 
     image_count = sum(
-        1
-        for artifact in report.artifacts
-        if artifact.artifact_type
-        is ArtifactType.IMAGE
+        1 for artifact in report.artifacts if artifact.artifact_type is ArtifactType.IMAGE
     )
 
     if image_count == 0:
         report.issues.append(
             ValidationIssue(
                 code="missing_image",
-                message=(
-                    "Aucune image n'a été fournie."
-                ),
+                message=("Aucune image n'a été fournie."),
             )
         )
 
     has_manifest = any(
-        artifact.artifact_type
-        is ArtifactType.MANIFEST
-        for artifact in report.artifacts
+        artifact.artifact_type is ArtifactType.MANIFEST for artifact in report.artifacts
     )
 
     if not has_manifest:
         report.issues.append(
             ValidationIssue(
                 code="missing_manifest",
-                message=(
-                    "Le manifeste facultatif "
-                    "est absent."
-                ),
+                message=("Le manifeste facultatif est absent."),
                 blocking=False,
             )
         )

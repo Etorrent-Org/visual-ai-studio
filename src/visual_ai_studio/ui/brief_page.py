@@ -43,17 +43,11 @@ class BriefPage(QWidget):
             ReferenceValue,
         ] = {}
 
-        title = QLabel(
-            "Brief créatif"
-        )
-        title.setObjectName(
-            "pageTitle"
-        )
+        title = QLabel("Brief créatif")
+        title.setObjectName("pageTitle")
 
         self.info = QLabel()
-        self.info.setObjectName(
-            "infoBanner"
-        )
+        self.info.setObjectName("infoBanner")
         self.info.setWordWrap(True)
 
         # ------------------------------------------
@@ -77,9 +71,7 @@ class BriefPage(QWidget):
             OutputMode.CUSTOM.value,
         )
 
-        self.mode_combo.currentIndexChanged.connect(
-            self._mode_changed
-        )
+        self.mode_combo.currentIndexChanged.connect(self._mode_changed)
 
         # ------------------------------------------
         # Brief principal
@@ -96,17 +88,14 @@ class BriefPage(QWidget):
         self.raw_idea = QTextEdit()
 
         self.raw_idea.setPlaceholderText(
-            "Décrivez le visuel à créer, "
-            "son objectif et le résultat attendu…"
+            "Décrivez le visuel à créer, son objectif et le résultat attendu…"
         )
 
         self.audience = QLineEdit()
 
         self.text_overlay = QLineEdit()
 
-        self.text_overlay.setPlaceholderText(
-            "Laisser vide pour aucun texte dans l'image"
-        )
+        self.text_overlay.setPlaceholderText("Laisser vide pour aucun texte dans l'image")
 
         self.notes = QTextEdit()
 
@@ -119,34 +108,22 @@ class BriefPage(QWidget):
             0,
             10000,
         )
-        self.width.setSpecialValueText(
-            "Auto"
-        )
-        self.width.setSuffix(
-            " px"
-        )
+        self.width.setSpecialValueText("Auto")
+        self.width.setSuffix(" px")
 
         self.height = QSpinBox()
         self.height.setRange(
             0,
             10000,
         )
-        self.height.setSpecialValueText(
-            "Auto"
-        )
-        self.height.setSuffix(
-            " px"
-        )
+        self.height.setSpecialValueText("Auto")
+        self.height.setSuffix(" px")
 
         self.aspect_ratio = QLineEdit()
 
-        format_group = QGroupBox(
-            "Format"
-        )
+        format_group = QGroupBox("Format")
 
-        format_layout = QFormLayout(
-            format_group
-        )
+        format_layout = QFormLayout(format_group)
 
         format_layout.addRow(
             "Largeur",
@@ -167,13 +144,9 @@ class BriefPage(QWidget):
         # Direction créative
         # ------------------------------------------
 
-        self.advanced_group = QGroupBox(
-            "Direction créative avancée"
-        )
+        self.advanced_group = QGroupBox("Direction créative avancée")
 
-        advanced_layout = QFormLayout(
-            self.advanced_group
-        )
+        advanced_layout = QFormLayout(self.advanced_group)
 
         self.advanced: dict[
             str,
@@ -198,9 +171,7 @@ class BriefPage(QWidget):
         for key, label in labels.items():
             widget = QLineEdit()
 
-            self.advanced[
-                key
-            ] = widget
+            self.advanced[key] = widget
 
             advanced_layout.addRow(
                 label,
@@ -210,26 +181,18 @@ class BriefPage(QWidget):
         reference_row = QHBoxLayout()
 
         self.reference_image = QLineEdit()
-        self.reference_image.setReadOnly(
-            True
-        )
+        self.reference_image.setReadOnly(True)
 
-        reference_button = QPushButton(
-            "Choisir…"
-        )
+        reference_button = QPushButton("Choisir…")
 
-        reference_button.clicked.connect(
-            self._choose_reference
-        )
+        reference_button.clicked.connect(self._choose_reference)
 
         reference_row.addWidget(
             self.reference_image,
             1,
         )
 
-        reference_row.addWidget(
-            reference_button
-        )
+        reference_row.addWidget(reference_button)
 
         advanced_layout.addRow(
             "Image de référence",
@@ -286,25 +249,15 @@ class BriefPage(QWidget):
         # Actions
         # ------------------------------------------
 
-        save = QPushButton(
-            "Enregistrer le brouillon"
-        )
+        save = QPushButton("Enregistrer le brouillon")
 
-        save.clicked.connect(
-            self._emit_save
-        )
+        save.clicked.connect(self._emit_save)
 
-        generate = QPushButton(
-            "Préparer pour Studio Visuel"
-        )
+        generate = QPushButton("Préparer pour Studio Visuel")
 
-        generate.setObjectName(
-            "primaryButton"
-        )
+        generate.setObjectName("primaryButton")
 
-        generate.clicked.connect(
-            self._emit_generate
-        )
+        generate.clicked.connect(self._emit_generate)
 
         buttons = QHBoxLayout()
         buttons.addStretch()
@@ -313,48 +266,28 @@ class BriefPage(QWidget):
 
         content = QWidget()
 
-        content_layout = QVBoxLayout(
-            content
-        )
+        content_layout = QVBoxLayout(content)
 
-        content_layout.addWidget(
-            title
-        )
+        content_layout.addWidget(title)
 
-        content_layout.addWidget(
-            self.info
-        )
+        content_layout.addWidget(self.info)
 
-        content_layout.addLayout(
-            form
-        )
+        content_layout.addLayout(form)
 
-        content_layout.addWidget(
-            format_group
-        )
+        content_layout.addWidget(format_group)
 
-        content_layout.addWidget(
-            self.advanced_group
-        )
+        content_layout.addWidget(self.advanced_group)
 
-        content_layout.addLayout(
-            buttons
-        )
+        content_layout.addLayout(buttons)
 
         content_layout.addStretch()
 
         scroll = QScrollArea()
-        scroll.setWidgetResizable(
-            True
-        )
-        scroll.setWidget(
-            content
-        )
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(content)
 
         outer = QVBoxLayout(self)
-        outer.addWidget(
-            scroll
-        )
+        outer.addWidget(scroll)
 
         self._mode_changed()
 
@@ -363,22 +296,13 @@ class BriefPage(QWidget):
         collections: list[ReferenceValue],
         styles: list[str],
     ) -> None:
-        self._collection_values = {
-            item.value: item
-            for item in collections
-        }
+        self._collection_values = {item.value: item for item in collections}
 
-        current_collection = (
-            self.collection.currentText()
-        )
+        current_collection = self.collection.currentText()
 
-        current_style = (
-            self.style_combo.currentText()
-        )
+        current_style = self.style_combo.currentText()
 
-        self.collection.blockSignals(
-            True
-        )
+        self.collection.blockSignals(True)
 
         self.collection.clear()
 
@@ -388,22 +312,14 @@ class BriefPage(QWidget):
                 item.value,
             )
 
-        self.collection.setCurrentText(
-            current_collection
-        )
+        self.collection.setCurrentText(current_collection)
 
-        self.collection.blockSignals(
-            False
-        )
+        self.collection.blockSignals(False)
 
         self.style_combo.clear()
-        self.style_combo.addItems(
-            styles
-        )
+        self.style_combo.addItems(styles)
 
-        self.style_combo.setCurrentText(
-            current_style
-        )
+        self.style_combo.setCurrentText(current_style)
 
     def set_project(
         self,
@@ -413,58 +329,32 @@ class BriefPage(QWidget):
 
         brief = project.brief
 
-        index = self.mode_combo.findData(
-            brief.mode.value
-        )
+        index = self.mode_combo.findData(brief.mode.value)
 
         if index >= 0:
-            self.mode_combo.setCurrentIndex(
-                index
-            )
+            self.mode_combo.setCurrentIndex(index)
 
-        self.title_edit.setText(
-            brief.title
-        )
+        self.title_edit.setText(brief.title)
 
-        self.collection.setCurrentText(
-            brief.collection
-        )
+        self.collection.setCurrentText(brief.collection)
 
-        self.style_combo.setCurrentText(
-            brief.style
-        )
+        self.style_combo.setCurrentText(brief.style)
 
-        self.raw_idea.setPlainText(
-            brief.raw_idea
-        )
+        self.raw_idea.setPlainText(brief.raw_idea)
 
-        self.audience.setText(
-            brief.audience
-        )
+        self.audience.setText(brief.audience)
 
-        self.text_overlay.setText(
-            brief.text_overlay
-        )
+        self.text_overlay.setText(brief.text_overlay)
 
-        self.notes.setPlainText(
-            brief.notes
-        )
+        self.notes.setPlainText(brief.notes)
 
-        self.reference_image.setText(
-            brief.reference_image
-        )
+        self.reference_image.setText(brief.reference_image)
 
-        self.width.setValue(
-            brief.target_width or 0
-        )
+        self.width.setValue(brief.target_width or 0)
 
-        self.height.setValue(
-            brief.target_height or 0
-        )
+        self.height.setValue(brief.target_height or 0)
 
-        self.aspect_ratio.setText(
-            brief.aspect_ratio
-        )
+        self.aspect_ratio.setText(brief.aspect_ratio)
 
         for key, widget in self.advanced.items():
             widget.setText(
@@ -477,48 +367,28 @@ class BriefPage(QWidget):
                 )
             )
 
-        self._mode_changed(
-            preserve_values=True
-        )
+        self._mode_changed(preserve_values=True)
 
     def brief(
         self,
     ) -> Brief:
-        selected_collection = (
-            self.collection.currentText().strip()
-        )
+        selected_collection = self.collection.currentText().strip()
 
-        reference = (
-            self._collection_values.get(
-                selected_collection
-            )
-        )
+        reference = self._collection_values.get(selected_collection)
 
-        mode = OutputMode(
-            str(
-                self.mode_combo.currentData()
-            )
-        )
+        mode = OutputMode(str(self.mode_combo.currentData()))
 
-        width: int | None = (
-            self.width.value()
-        )
+        width: int | None = self.width.value()
 
         if width == 0:
             width = None
 
-        height: int | None = (
-            self.height.value()
-        )
+        height: int | None = self.height.value()
 
         if height == 0:
             height = None
 
-        advanced_values = {
-            key: widget.text()
-            for key, widget
-            in self.advanced.items()
-        }
+        advanced_values = {key: widget.text() for key, widget in self.advanced.items()}
 
         return Brief(
             title=self.title_edit.text(),
@@ -529,16 +399,11 @@ class BriefPage(QWidget):
             aspect_ratio=self.aspect_ratio.text(),
             text_overlay=self.text_overlay.text(),
             collection=selected_collection,
-            collection_is_new=bool(
-                reference
-                and reference.is_new
-            ),
+            collection_is_new=bool(reference and reference.is_new),
             style=self.style_combo.currentText(),
             raw_idea=self.raw_idea.toPlainText(),
             notes=self.notes.toPlainText(),
-            reference_image=(
-                self.reference_image.text()
-            ),
+            reference_image=(self.reference_image.text()),
             **advanced_values,
         )
 
@@ -547,83 +412,49 @@ class BriefPage(QWidget):
         _index: int = 0,
         preserve_values: bool = False,
     ) -> None:
-        mode = OutputMode(
-            str(
-                self.mode_combo.currentData()
-            )
-        )
+        mode = OutputMode(str(self.mode_combo.currentData()))
 
-        preset = preset_for(
-            mode
-        )
+        preset = preset_for(mode)
 
-        custom = (
-            mode is OutputMode.CUSTOM
-        )
+        custom = mode is OutputMode.CUSTOM
 
-        self.width.setEnabled(
-            custom
-        )
+        self.width.setEnabled(custom)
 
-        self.height.setEnabled(
-            custom
-        )
+        self.height.setEnabled(custom)
 
-        self.aspect_ratio.setEnabled(
-            custom
-        )
+        self.aspect_ratio.setEnabled(custom)
 
         if not custom:
-            self.width.setValue(
-                preset.width or 0
-            )
+            self.width.setValue(preset.width or 0)
 
-            self.height.setValue(
-                preset.height or 0
-            )
+            self.height.setValue(preset.height or 0)
 
-            self.aspect_ratio.setText(
-                preset.aspect_ratio
-            )
+            self.aspect_ratio.setText(preset.aspect_ratio)
 
         if custom and not preserve_values:
             self.width.setValue(0)
             self.height.setValue(0)
             self.aspect_ratio.clear()
 
-        format_text = (
-            f"{preset.label}"
-        )
+        format_text = f"{preset.label}"
 
         if preset.width and preset.height:
-            format_text += (
-                f" • {preset.width} × "
-                f"{preset.height} • "
-                f"{preset.aspect_ratio}"
-            )
+            format_text += f" • {preset.width} × {preset.height} • {preset.aspect_ratio}"
 
         if custom:
-            format_text += (
-                " • dimensions ou ratio à préciser"
-            )
+            format_text += " • dimensions ou ratio à préciser"
 
-        self.info.setText(
-            format_text
-        )
+        self.info.setText(format_text)
 
     def _emit_save(
         self,
     ) -> None:
-        self.save_requested.emit(
-            self.brief()
-        )
+        self.save_requested.emit(self.brief())
 
     def _emit_generate(
         self,
     ) -> None:
-        self.generate_requested.emit(
-            self.brief()
-        )
+        self.generate_requested.emit(self.brief())
 
     def _choose_reference(
         self,
@@ -636,6 +467,4 @@ class BriefPage(QWidget):
         )
 
         if path:
-            self.reference_image.setText(
-                path
-            )
+            self.reference_image.setText(path)

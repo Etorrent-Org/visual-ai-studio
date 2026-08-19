@@ -16,9 +16,7 @@ def export_project_bundle(
         exist_ok=True,
     )
 
-    target = destination / (
-        f"{project.slug}-v{project.version}"
-    )
+    target = destination / (f"{project.slug}-v{project.version}")
 
     target.mkdir(
         parents=True,

@@ -3,7 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from visual_ai_studio.domain.models import Brief
-from visual_ai_studio.infrastructure.database import Database, ProjectRepository, ReferenceRepository
+from visual_ai_studio.infrastructure.database import (
+    Database,
+    ProjectRepository,
+    ReferenceRepository,
+)
 from visual_ai_studio.services.project_service import ProjectService
 
 

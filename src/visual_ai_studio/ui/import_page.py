@@ -38,23 +38,15 @@ class DropZone(QFrame):
         super().__init__()
 
         self.setAcceptDrops(True)
-        self.setObjectName(
-            "dropZone"
-        )
+        self.setObjectName("dropZone")
 
-        label = QLabel(
-            "Déposez ici les fichiers générés"
-        )
+        label = QLabel("Déposez ici les fichiers générés")
 
-        label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
-        )
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         layout = QVBoxLayout(self)
 
-        layout.addWidget(
-            label
-        )
+        layout.addWidget(label)
 
     def dragEnterEvent(
         self,
@@ -67,30 +59,18 @@ class DropZone(QFrame):
         self,
         event: QDropEvent,
     ) -> None:
-        paths = [
-            Path(
-                url.toLocalFile()
-            )
-            for url
-            in event.mimeData().urls()
-        ]
+        paths = [Path(url.toLocalFile()) for url in event.mimeData().urls()]
 
         expanded: list[Path] = []
 
         for path in paths:
             if path.is_dir():
-                expanded.extend(
-                    path.iterdir()
-                )
+                expanded.extend(path.iterdir())
 
             if path.is_file():
-                expanded.append(
-                    path
-                )
+                expanded.append(path)
 
-        self.paths_dropped.emit(
-            expanded
-        )
+        self.paths_dropped.emit(expanded)
 
         event.acceptProposedAction()
 
@@ -108,21 +88,13 @@ class ImportPage(QWidget):
         # En-tête
         # ------------------------------------------
 
-        title = QLabel(
-            "Validation du résultat"
-        )
+        title = QLabel("Validation du résultat")
 
-        title.setObjectName(
-            "pageTitle"
-        )
+        title.setObjectName("pageTitle")
 
-        subtitle = QLabel(
-            "Contrôlez le résultat avant de valider le projet."
-        )
+        subtitle = QLabel("Contrôlez le résultat avant de valider le projet.")
 
-        subtitle.setObjectName(
-            "muted"
-        )
+        subtitle.setObjectName("muted")
 
         # ------------------------------------------
         # Import
@@ -130,35 +102,21 @@ class ImportPage(QWidget):
 
         self.drop_zone = DropZone()
 
-        self.drop_zone.paths_dropped.connect(
-            self.import_requested
-        )
+        self.drop_zone.paths_dropped.connect(self.import_requested)
 
-        choose_files = QPushButton(
-            "Choisir des fichiers…"
-        )
+        choose_files = QPushButton("Choisir des fichiers…")
 
-        choose_files.clicked.connect(
-            self._choose_files
-        )
+        choose_files.clicked.connect(self._choose_files)
 
-        choose_folder = QPushButton(
-            "Choisir un dossier…"
-        )
+        choose_folder = QPushButton("Choisir un dossier…")
 
-        choose_folder.clicked.connect(
-            self._choose_folder
-        )
+        choose_folder.clicked.connect(self._choose_folder)
 
         chooser = QHBoxLayout()
 
-        chooser.addWidget(
-            choose_files
-        )
+        chooser.addWidget(choose_files)
 
-        chooser.addWidget(
-            choose_folder
-        )
+        chooser.addWidget(choose_folder)
 
         chooser.addStretch()
 
@@ -168,37 +126,25 @@ class ImportPage(QWidget):
 
         self.result_list = QListWidget()
 
-        self.result_list.setMaximumHeight(
-            190
-        )
+        self.result_list.setMaximumHeight(190)
 
         # ------------------------------------------
         # Galerie images
         # ------------------------------------------
 
-        gallery_title = QLabel(
-            "Aperçu des images"
-        )
+        gallery_title = QLabel("Aperçu des images")
 
-        gallery_title.setObjectName(
-            "sectionTitle"
-        )
+        gallery_title.setObjectName("sectionTitle")
 
         self.gallery_scroll = QScrollArea()
 
-        self.gallery_scroll.setWidgetResizable(
-            True
-        )
+        self.gallery_scroll.setWidgetResizable(True)
 
-        self.gallery_scroll.setMinimumHeight(
-            370
-        )
+        self.gallery_scroll.setMinimumHeight(370)
 
         self.gallery_host = QWidget()
 
-        self.gallery_layout = QGridLayout(
-            self.gallery_host
-        )
+        self.gallery_layout = QGridLayout(self.gallery_host)
 
         self.gallery_layout.setContentsMargins(
             0,
@@ -207,13 +153,9 @@ class ImportPage(QWidget):
             0,
         )
 
-        self.gallery_layout.setHorizontalSpacing(
-            12
-        )
+        self.gallery_layout.setHorizontalSpacing(12)
 
-        self.gallery_layout.setVerticalSpacing(
-            12
-        )
+        self.gallery_layout.setVerticalSpacing(12)
 
         self.gallery_layout.setColumnStretch(
             0,
@@ -225,33 +167,23 @@ class ImportPage(QWidget):
             1,
         )
 
-        self.gallery_scroll.setWidget(
-            self.gallery_host
-        )
+        self.gallery_scroll.setWidget(self.gallery_host)
 
-        self.preview_labels: list[
-            QLabel
-        ] = []
+        self.preview_labels: list[QLabel] = []
 
         # ------------------------------------------
         # Validation humaine
         # ------------------------------------------
 
-        self.approved = QCheckBox(
-            "Je valide ce résultat"
-        )
+        self.approved = QCheckBox("Je valide ce résultat")
 
-        self.approved.toggled.connect(
-            self._emit_confirmations
-        )
+        self.approved.toggled.connect(self._emit_confirmations)
 
         # ------------------------------------------
         # Layout
         # ------------------------------------------
 
-        layout = QVBoxLayout(
-            self
-        )
+        layout = QVBoxLayout(self)
 
         layout.setContentsMargins(
             28,
@@ -260,51 +192,31 @@ class ImportPage(QWidget):
             24,
         )
 
-        layout.setSpacing(
-            12
-        )
+        layout.setSpacing(12)
 
-        layout.addWidget(
-            title
-        )
+        layout.addWidget(title)
 
-        layout.addWidget(
-            subtitle
-        )
+        layout.addWidget(subtitle)
 
-        layout.addWidget(
-            self.drop_zone
-        )
+        layout.addWidget(self.drop_zone)
 
-        layout.addLayout(
-            chooser
-        )
+        layout.addLayout(chooser)
 
-        layout.addWidget(
-            self.result_list
-        )
+        layout.addWidget(self.result_list)
 
-        layout.addWidget(
-            gallery_title
-        )
+        layout.addWidget(gallery_title)
 
         layout.addWidget(
             self.gallery_scroll,
             1,
         )
 
-        layout.addWidget(
-            self.approved
-        )
+        layout.addWidget(self.approved)
 
     def confirmations(
         self,
     ) -> HumanConfirmations:
-        return HumanConfirmations(
-            approved=(
-                self.approved.isChecked()
-            )
-        )
+        return HumanConfirmations(approved=(self.approved.isChecked()))
 
     def set_report(
         self,
@@ -315,9 +227,7 @@ class ImportPage(QWidget):
         self._clear_gallery()
 
         if report.automatic_checks_passed:
-            self.result_list.addItem(
-                "✓ Contrôles automatiques conformes."
-            )
+            self.result_list.addItem("✓ Contrôles automatiques conformes.")
 
         for issue in report.issues:
             prefix = "✗"
@@ -325,48 +235,29 @@ class ImportPage(QWidget):
             if not issue.blocking:
                 prefix = "⚠"
 
-            self.result_list.addItem(
-                f"{prefix} {issue.message}"
-            )
+            self.result_list.addItem(f"{prefix} {issue.message}")
 
         image_artifacts = []
 
         for artifact in report.artifacts:
-            self.result_list.addItem(
-                artifact.filename
-            )
+            self.result_list.addItem(artifact.filename)
 
-            if (
-                artifact.artifact_type
-                is ArtifactType.IMAGE
-            ):
-                image_artifacts.append(
-                    artifact
-                )
+            if artifact.artifact_type is ArtifactType.IMAGE:
+                image_artifacts.append(artifact)
 
-        for index, artifact in enumerate(
-            image_artifacts
-        ):
+        for index, artifact in enumerate(image_artifacts):
             self._add_preview(
                 index,
                 artifact.filename,
-                Path(
-                    artifact.local_path
-                ),
+                Path(artifact.local_path),
             )
 
         if not image_artifacts:
-            empty = QLabel(
-                "Aucune image disponible pour l'aperçu."
-            )
+            empty = QLabel("Aucune image disponible pour l'aperçu.")
 
-            empty.setObjectName(
-                "muted"
-            )
+            empty.setObjectName("muted")
 
-            empty.setAlignment(
-                Qt.AlignmentFlag.AlignCenter
-            )
+            empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
             self.gallery_layout.addWidget(
                 empty,
@@ -380,11 +271,7 @@ class ImportPage(QWidget):
         self,
     ) -> None:
         while self.gallery_layout.count():
-            item = (
-                self.gallery_layout.takeAt(
-                    0
-                )
-            )
+            item = self.gallery_layout.takeAt(0)
 
             widget = item.widget()
 
@@ -401,13 +288,9 @@ class ImportPage(QWidget):
     ) -> None:
         card = QFrame()
 
-        card.setObjectName(
-            "previewCard"
-        )
+        card.setObjectName("previewCard")
 
-        card_layout = QVBoxLayout(
-            card
-        )
+        card_layout = QVBoxLayout(card)
 
         card_layout.setContentsMargins(
             10,
@@ -416,28 +299,20 @@ class ImportPage(QWidget):
             10,
         )
 
-        card_layout.setSpacing(
-            8
-        )
+        card_layout.setSpacing(8)
 
         preview = QLabel()
 
-        preview.setObjectName(
-            "preview"
-        )
+        preview.setObjectName("preview")
 
-        preview.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
-        )
+        preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         preview.setMinimumSize(
             240,
             300,
         )
 
-        pixmap = QPixmap(
-            str(path)
-        )
+        pixmap = QPixmap(str(path))
 
         if not pixmap.isNull():
             scaled = pixmap.scaled(
@@ -447,39 +322,25 @@ class ImportPage(QWidget):
                 Qt.TransformationMode.SmoothTransformation,
             )
 
-            preview.setPixmap(
-                scaled
-            )
+            preview.setPixmap(scaled)
 
         if pixmap.isNull():
-            preview.setText(
-                "Aperçu indisponible"
-            )
+            preview.setText("Aperçu indisponible")
 
-        caption = QLabel(
-            filename
-        )
+        caption = QLabel(filename)
 
-        caption.setObjectName(
-            "previewCaption"
-        )
+        caption.setObjectName("previewCaption")
 
-        caption.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
-        )
+        caption.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        caption.setWordWrap(
-            True
-        )
+        caption.setWordWrap(True)
 
         card_layout.addWidget(
             preview,
             1,
         )
 
-        card_layout.addWidget(
-            caption
-        )
+        card_layout.addWidget(caption)
 
         row = index // 2
         column = index % 2
@@ -490,9 +351,7 @@ class ImportPage(QWidget):
             column,
         )
 
-        self.preview_labels.append(
-            preview
-        )
+        self.preview_labels.append(preview)
 
     def _choose_files(
         self,
@@ -501,45 +360,26 @@ class ImportPage(QWidget):
             self,
             "Choisir les fichiers générés",
             "",
-            (
-                "Fichiers pris en charge "
-                "(*.png *.jpg *.jpeg *.webp "
-                "*.md *.txt *.json)"
-            ),
+            ("Fichiers pris en charge (*.png *.jpg *.jpeg *.webp *.md *.txt *.json)"),
         )
 
         if paths:
-            self.import_requested.emit(
-                [
-                    Path(path)
-                    for path in paths
-                ]
-            )
+            self.import_requested.emit([Path(path) for path in paths])
 
     def _choose_folder(
         self,
     ) -> None:
-        folder = (
-            QFileDialog.getExistingDirectory(
-                self,
-                "Choisir le dossier des fichiers générés",
-            )
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            "Choisir le dossier des fichiers générés",
         )
 
         if folder:
-            path = Path(
-                folder
-            )
+            path = Path(folder)
 
-            self.import_requested.emit(
-                list(
-                    path.iterdir()
-                )
-            )
+            self.import_requested.emit(list(path.iterdir()))
 
     def _emit_confirmations(
         self,
     ) -> None:
-        self.confirmations_changed.emit(
-            self.confirmations()
-        )
+        self.confirmations_changed.emit(self.confirmations())

@@ -7,7 +7,6 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-
 os.environ.setdefault(
     "QT_QPA_PLATFORM",
     "offscreen",
@@ -26,10 +25,7 @@ def artifact_package(
         ),
         include_manifest: bool = True,
     ) -> list[Path]:
-        image = (
-            tmp_path
-            / f"visual-ai-{slug}.png"
-        )
+        image = tmp_path / f"visual-ai-{slug}.png"
 
         Image.new(
             "RGB",
@@ -40,27 +36,17 @@ def artifact_package(
             format="PNG",
         )
 
-        text = (
-            tmp_path
-            / f"visual-ai-{slug}.md"
-        )
+        text = tmp_path / f"visual-ai-{slug}.md"
 
         text.write_text(
-            "# Résultat\n\n"
-            "Description du visuel généré.",
+            "# Résultat\n\nDescription du visuel généré.",
             encoding="utf-8",
         )
 
-        metadata = (
-            tmp_path
-            / f"visual-ai-{slug}-metadata.json"
-        )
+        metadata = tmp_path / f"visual-ai-{slug}-metadata.json"
 
         metadata.write_text(
-            (
-                '{"schema_version":"1.0",'
-                '"title":"Demo visual"}'
-            ),
+            ('{"schema_version":"1.0","title":"Demo visual"}'),
             encoding="utf-8",
         )
 
@@ -71,19 +57,14 @@ def artifact_package(
         ]
 
         if include_manifest:
-            manifest = (
-                tmp_path
-                / f"visual-ai-{slug}-manifest.json"
-            )
+            manifest = tmp_path / f"visual-ai-{slug}-manifest.json"
 
             manifest.write_text(
                 '{"schema_version":"1.0"}',
                 encoding="utf-8",
             )
 
-            result.append(
-                manifest
-            )
+            result.append(manifest)
 
         return result
 

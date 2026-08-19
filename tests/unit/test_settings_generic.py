@@ -9,10 +9,7 @@ from visual_ai_studio.infrastructure.settings import (
 def test_default_settings_are_generic() -> None:
     settings = AppSettings()
 
-    assert (
-        settings.auth_header_name
-        == "X-Visual-AI-Token"
-    )
+    assert settings.auth_header_name == "X-Visual-AI-Token"
 
 
 def test_settings_round_trip(
@@ -20,9 +17,7 @@ def test_settings_round_trip(
 ) -> None:
     path = tmp_path / "settings.json"
 
-    store = SettingsStore(
-        path
-    )
+    store = SettingsStore(path)
 
     expected = AppSettings(
         auth_header_name="X-Demo-Token",
@@ -33,12 +28,6 @@ def test_settings_round_trip(
 
     loaded = store.load()
 
-    assert (
-        loaded.auth_header_name
-        == "X-Demo-Token"
-    )
+    assert loaded.auth_header_name == "X-Demo-Token"
 
-    assert (
-        loaded.timeout_seconds
-        == 45
-    )
+    assert loaded.timeout_seconds == 45
