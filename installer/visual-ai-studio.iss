@@ -1,5 +1,5 @@
 #define MyAppName "Visual AI Studio"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.1.1"
 #define MyAppExeName "Visual AI Studio.exe"
 
 [Setup]
@@ -11,7 +11,7 @@ DefaultDirName={localappdata}\Programs\Visual AI Studio
 DefaultGroupName=Visual AI Studio
 PrivilegesRequired=lowest
 OutputDir=output
-OutputBaseFilename=Visual-AI-Studio-Setup-0.1.0
+OutputBaseFilename=Visual-AI-Studio-Setup-0.1.1
 SetupIconFile=..\src\visual_ai_studio\resources\visual-ai-studio.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2
