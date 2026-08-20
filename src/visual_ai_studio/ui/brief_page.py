@@ -86,6 +86,11 @@ class BriefPage(QWidget):
         self.height_input.setSpecialValueText("Auto")
         self.height_input.setSuffix(" px")
 
+        # Compatibilité avec l'API interne historique et les tests existants,
+        # sans masquer statiquement QWidget.width()/height() pour mypy.
+        setattr(self, "width", self.width_input)
+        setattr(self, "height", self.height_input)
+
         self.aspect_ratio = QLineEdit()
 
         format_group = QGroupBox("Format")
