@@ -88,8 +88,8 @@ class BriefPage(QWidget):
 
         # Compatibilité avec l'API interne historique et les tests existants,
         # sans masquer statiquement QWidget.width()/height() pour mypy.
-        setattr(self, "width", self.width_input)
-        setattr(self, "height", self.height_input)
+        setattr(self, "width", self.width_input)  # noqa: B010
+        setattr(self, "height", self.height_input)  # noqa: B010
 
         self.aspect_ratio = QLineEdit()
 
