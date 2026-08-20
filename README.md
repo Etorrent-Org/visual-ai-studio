@@ -9,6 +9,10 @@
   contrôler les créations et exporter les livrables.
 </p>
 
+<p align="center">
+  <img src="docs/images/visual-ai-studio-infographic.svg" alt="Infographie du workflow Visual AI Studio" width="820">
+</p>
+
 ---
 
 ## À quoi sert Visual AI Studio ?
@@ -211,13 +215,13 @@ Aucun compte cloud n'est requis par l'application.
 
 ## Télécharger
 
-La version Windows actuelle est **v0.1.0**.
+La version Windows actuelle est **v0.1.1**.
 
 ➡️ [Accéder à la dernière GitHub Release](https://github.com/Etorrent-Org/visual-ai-studio/releases/latest)
 
 La Release contient :
 
-- `Visual-AI-Studio-Setup-0.1.0.exe` : installateur Windows ;
+- `Visual-AI-Studio-Setup-0.1.1.exe` : installateur Windows ;
 - `studio-visuel-agent.zip` : package Studio Visuel ;
 - `SHA256SUMS.txt` : empreintes de contrôle des fichiers distribués.
 
@@ -227,7 +231,7 @@ La Release contient :
 
 Visual AI Studio est distribué sous forme d'application Windows autonome.
 
-La distribution publique utilisera un installateur de la forme :
+La distribution publique utilise un installateur de la forme :
 
 `Visual-AI-Studio-Setup-x.y.z.exe`
 
@@ -367,9 +371,9 @@ Consultez [`LICENSE`](LICENSE) pour le texte complet.
 
 ## Version
 
-Version publique actuelle : **0.1.0**
+Version publique actuelle : **0.1.1**
 
-La version **v0.1.0** constitue la première distribution publique Windows.
+La version **v0.1.1** constitue la version publique Windows actuelle.
 
 ---
 
