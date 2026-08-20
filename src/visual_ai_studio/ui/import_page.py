@@ -84,133 +84,60 @@ class ImportPage(QWidget):
     ) -> None:
         super().__init__()
 
-        # ------------------------------------------
-        # En-tête
-        # ------------------------------------------
-
         title = QLabel("Validation du résultat")
-
         title.setObjectName("pageTitle")
 
         subtitle = QLabel("Contrôlez le résultat avant de valider le projet.")
-
         subtitle.setObjectName("muted")
 
-        # ------------------------------------------
-        # Import
-        # ------------------------------------------
-
         self.drop_zone = DropZone()
-
         self.drop_zone.paths_dropped.connect(self.import_requested)
 
         choose_files = QPushButton("Choisir des fichiers…")
-
         choose_files.clicked.connect(self._choose_files)
 
         choose_folder = QPushButton("Choisir un dossier…")
-
         choose_folder.clicked.connect(self._choose_folder)
 
         chooser = QHBoxLayout()
-
         chooser.addWidget(choose_files)
-
         chooser.addWidget(choose_folder)
-
         chooser.addStretch()
 
-        # ------------------------------------------
-        # Résultats validation
-        # ------------------------------------------
-
         self.result_list = QListWidget()
-
         self.result_list.setMaximumHeight(190)
 
-        # ------------------------------------------
-        # Galerie images
-        # ------------------------------------------
-
         gallery_title = QLabel("Aperçu des images")
-
         gallery_title.setObjectName("sectionTitle")
 
         self.gallery_scroll = QScrollArea()
-
         self.gallery_scroll.setWidgetResizable(True)
-
         self.gallery_scroll.setMinimumHeight(370)
 
         self.gallery_host = QWidget()
-
         self.gallery_layout = QGridLayout(self.gallery_host)
-
-        self.gallery_layout.setContentsMargins(
-            0,
-            0,
-            0,
-            0,
-        )
-
+        self.gallery_layout.setContentsMargins(0, 0, 0, 0)
         self.gallery_layout.setHorizontalSpacing(12)
-
         self.gallery_layout.setVerticalSpacing(12)
-
-        self.gallery_layout.setColumnStretch(
-            0,
-            1,
-        )
-
-        self.gallery_layout.setColumnStretch(
-            1,
-            1,
-        )
-
+        self.gallery_layout.setColumnStretch(0, 1)
+        self.gallery_layout.setColumnStretch(1, 1)
         self.gallery_scroll.setWidget(self.gallery_host)
 
         self.preview_labels: list[QLabel] = []
 
-        # ------------------------------------------
-        # Validation humaine
-        # ------------------------------------------
-
         self.approved = QCheckBox("Je valide ce résultat")
-
         self.approved.toggled.connect(self._emit_confirmations)
 
-        # ------------------------------------------
-        # Layout
-        # ------------------------------------------
-
         layout = QVBoxLayout(self)
-
-        layout.setContentsMargins(
-            28,
-            26,
-            28,
-            24,
-        )
-
+        layout.setContentsMargins(28, 26, 28, 24)
         layout.setSpacing(12)
-
         layout.addWidget(title)
-
         layout.addWidget(subtitle)
-
         layout.addWidget(self.drop_zone)
-
         layout.addLayout(chooser)
-
         layout.addWidget(self.result_list)
-
         layout.addWidget(gallery_title)
-
-        layout.addWidget(
-            self.gallery_scroll,
-            1,
-        )
-
+        layout.addWidget(self.gallery_scroll, 1)
         layout.addWidget(self.approved)
 
     def confirmations(
@@ -223,7 +150,6 @@ class ImportPage(QWidget):
         report: ValidationReport,
     ) -> None:
         self.result_list.clear()
-
         self._clear_gallery()
 
         if report.automatic_checks_passed:
@@ -231,50 +157,35 @@ class ImportPage(QWidget):
 
         for issue in report.issues:
             prefix = "✗"
-
             if not issue.blocking:
                 prefix = "⚠"
-
             self.result_list.addItem(f"{prefix} {issue.message}")
 
         image_artifacts = []
 
         for artifact in report.artifacts:
             self.result_list.addItem(artifact.filename)
-
             if artifact.artifact_type is ArtifactType.IMAGE:
                 image_artifacts.append(artifact)
 
         for index, artifact in enumerate(image_artifacts):
-            self._add_preview(
-                index,
-                artifact.filename,
-                Path(artifact.local_path),
-            )
+            self._add_preview(index, artifact.filename, Path(artifact.local_path))
 
         if not image_artifacts:
             empty = QLabel("Aucune image disponible pour l'aperçu.")
-
             empty.setObjectName("muted")
-
             empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-            self.gallery_layout.addWidget(
-                empty,
-                0,
-                0,
-                1,
-                2,
-            )
+            self.gallery_layout.addWidget(empty, 0, 0, 1, 2)
 
     def _clear_gallery(
         self,
     ) -> None:
         while self.gallery_layout.count():
             item = self.gallery_layout.takeAt(0)
+            if item is None:
+                continue
 
             widget = item.widget()
-
             if widget is not None:
                 widget.deleteLater()
 
@@ -287,30 +198,16 @@ class ImportPage(QWidget):
         path: Path,
     ) -> None:
         card = QFrame()
-
         card.setObjectName("previewCard")
 
         card_layout = QVBoxLayout(card)
-
-        card_layout.setContentsMargins(
-            10,
-            10,
-            10,
-            10,
-        )
-
+        card_layout.setContentsMargins(10, 10, 10, 10)
         card_layout.setSpacing(8)
 
         preview = QLabel()
-
         preview.setObjectName("preview")
-
         preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        preview.setMinimumSize(
-            240,
-            300,
-        )
+        preview.setMinimumSize(240, 300)
 
         pixmap = QPixmap(str(path))
 
@@ -321,36 +218,22 @@ class ImportPage(QWidget):
                 Qt.AspectRatioMode.KeepAspectRatio,
                 Qt.TransformationMode.SmoothTransformation,
             )
-
             preview.setPixmap(scaled)
 
         if pixmap.isNull():
             preview.setText("Aperçu indisponible")
 
         caption = QLabel(filename)
-
         caption.setObjectName("previewCaption")
-
         caption.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
         caption.setWordWrap(True)
 
-        card_layout.addWidget(
-            preview,
-            1,
-        )
-
+        card_layout.addWidget(preview, 1)
         card_layout.addWidget(caption)
 
         row = index // 2
         column = index % 2
-
-        self.gallery_layout.addWidget(
-            card,
-            row,
-            column,
-        )
-
+        self.gallery_layout.addWidget(card, row, column)
         self.preview_labels.append(preview)
 
     def _choose_files(
@@ -376,7 +259,6 @@ class ImportPage(QWidget):
 
         if folder:
             path = Path(folder)
-
             self.import_requested.emit(list(path.iterdir()))
 
     def _emit_confirmations(
