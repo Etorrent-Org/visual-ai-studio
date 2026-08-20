@@ -47,17 +47,17 @@ def polish_widget_tree(
     for field in root.findChildren(QLineEdit):
         field.setMinimumHeight(36)
 
-    for spin in root.findChildren(QSpinBox):
-        spin.setMinimumHeight(36)
+    for int_spin in root.findChildren(QSpinBox):
+        int_spin.setMinimumHeight(36)
 
-    for spin in root.findChildren(QDoubleSpinBox):
-        spin.setMinimumHeight(36)
+    for double_spin in root.findChildren(QDoubleSpinBox):
+        double_spin.setMinimumHeight(36)
 
-    for editor in root.findChildren(QTextEdit):
-        editor.setMinimumHeight(86)
+    for text_editor in root.findChildren(QTextEdit):
+        text_editor.setMinimumHeight(86)
 
-    for editor in root.findChildren(QPlainTextEdit):
-        editor.setMinimumHeight(86)
+    for plain_editor in root.findChildren(QPlainTextEdit):
+        plain_editor.setMinimumHeight(86)
 
     for table in root.findChildren(QTableWidget):
         table.setShowGrid(False)
