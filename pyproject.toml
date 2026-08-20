@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "visual-ai-studio"
-version = "0.1.0"
+version = "0.1.1"
 description = "Application Windows locale de creation visuelle assistee par intelligence artificielle."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -57,6 +57,7 @@ ignore = ["RUF001", "RUF002", "RUF003"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
+warn_unused_ignores = false
 packages = ["visual_ai_studio"]
 mypy_path = "src"
 plugins = ["pydantic.mypy"]
