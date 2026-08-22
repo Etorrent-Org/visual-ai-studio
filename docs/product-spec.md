@@ -1,4 +1,4 @@
-# Visual AI Studio - Spécification produit v0.1.0
+# Visual AI Studio - Spécification produit v0.1.1
 
 ## 1. Vision
 
@@ -186,9 +186,9 @@ Visual AI Studio.
 Les paramètres visibles restent volontairement réduits afin de privilégier
 l'usage métier.
 
-## 11. Hors périmètre v0.1.0
+## 11. Hors périmètre v0.1.1
 
-La version 0.1.0 ne fournit pas directement :
+La version 0.1.1 ne fournit pas directement :
 
 - d'authentification Pinterest ;
 - d'authentification Instagram ;
@@ -218,9 +218,9 @@ Visual AI Studio repose notamment sur :
 
 Visual AI Studio est distribué sous forme d'application Windows autonome.
 
-L'installateur de la version 0.1.0 est :
+L'installateur de la version 0.1.1 est :
 
-`Visual-AI-Studio-Setup-0.1.0.exe`
+`Visual-AI-Studio-Setup-0.1.1.exe`
 
 L'utilisateur final n'a pas besoin d'installer :
 
@@ -230,6 +230,8 @@ L'utilisateur final n'a pas besoin d'installer :
 
 Le package Studio Visuel est distribué séparément dans la même GitHub Release.
 
+La chaîne de release produit également les empreintes SHA-256 des artefacts distribués.
+
 ## 14. Licence
 
 Visual AI Studio, sa documentation et le package Studio Visuel sont distribués
@@ -237,7 +239,7 @@ sous licence MIT.
 
 ## 15. État
 
-Version produit : **0.1.0**
+Version produit : **0.1.1**
 
-La version 0.1.0 constitue la première distribution publique Windows de
+La version 0.1.1 constitue la version publique Windows actuelle de
 Visual AI Studio.
