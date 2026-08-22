@@ -1,5 +1,5 @@
 param(
-    [string]$Version = "0.1.1"
+    [string]$Version = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -7,6 +7,17 @@ $Root = Split-Path -Parent $PSScriptRoot
 $InstallerCompiler = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
 $ReleaseDir = Join-Path $Root "release"
 $InstallerOutput = Join-Path $Root "installer\output"
+$ProjectFile = Join-Path $Root "pyproject.toml"
+$InstallerDefinition = Join-Path $Root "installer\visual-ai-studio.iss"
+
+if ([string]::IsNullOrWhiteSpace($Version)) {
+    $ProjectText = Get-Content -LiteralPath $ProjectFile -Raw
+    if ($ProjectText -notmatch '(?m)^version\s*=\s*"([^"]+)"') {
+        throw "Version introuvable dans pyproject.toml."
+    }
+    $Version = $Matches[1]
+}
+
 $SetupName = "Visual-AI-Studio-Setup-$Version.exe"
 $SetupPath = Join-Path $InstallerOutput $SetupName
 $AgentPath = Join-Path $Root "agent\studio-visuel-agent.zip"
@@ -16,6 +27,14 @@ if (-not (Test-Path -LiteralPath $InstallerCompiler)) {
 }
 if (-not (Test-Path -LiteralPath $AgentPath)) {
     throw "Package Studio Visuel introuvable : $AgentPath"
+}
+
+$InstallerText = Get-Content -LiteralPath $InstallerDefinition -Raw
+if (-not $InstallerText.Contains("#define MyAppVersion `"$Version`"")) {
+    throw "La version de l'installateur ne correspond pas a pyproject.toml : $Version"
+}
+if (-not $InstallerText.Contains("OutputBaseFilename=Visual-AI-Studio-Setup-$Version")) {
+    throw "Le nom de sortie Inno Setup ne correspond pas a la version $Version."
 }
 
 Push-Location $Root
