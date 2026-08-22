@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Maintenance
+
+- la chaîne de release lit désormais la version depuis `pyproject.toml` ;
+- un tag Git différent de `v<version>` bloque la publication ;
+- le packaging vérifie que la version et le nom de l'installateur Inno Setup restent alignés ;
+- le workflow publie l'installateur avec un motif de fichier indépendant d'un numéro de version codé en dur.
+
 ## 0.1.1 - 2026-08-20
 
 Version publique Windows stabilisée.
