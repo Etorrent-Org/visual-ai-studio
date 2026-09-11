@@ -26,6 +26,8 @@ def test_brief_page_exposes_agent_modes_only(
         OutputMode.CUSTOM.value,
     ]
 
+    assert page.mode_combo.itemText(0) == "Pinterest — recommandé"
+
 
 def test_pinterest_format_is_applied(
     qtbot: QtBot,
@@ -41,6 +43,23 @@ def test_pinterest_format_is_applied(
     assert page.width.value() == 1000
     assert page.height.value() == 1500
     assert page.aspect_ratio.text() == "2:3"
+    assert "canal prioritaire IA-Art" in page.info.text()
+
+
+def test_post_image_count_round_trip(
+    qtbot: QtBot,
+) -> None:
+    page = BriefPage()
+
+    qtbot.addWidget(page)
+
+    project = Project()
+    project.brief.post_image_count = 5
+
+    page.set_project(project)
+
+    assert page.post_image_count.value() == 5
+    assert page.brief().post_image_count == 5
 
 
 def test_custom_format_is_editable(
