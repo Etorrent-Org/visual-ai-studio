@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+### Fonctionnalités
+
+- Instagram devient le canal de publication par défaut ;
+- une publication Instagram peut demander de 1 à 10 visuels principaux cohérents ;
+- le prompt Studio Visuel décrit explicitement les visuels comme une série destinée à un seul post ;
+- la fiche synthèse et le Markdown restent des livrables annexes séparés.
+
+### Changements
+
+- retrait du mode de publication historique remplacé par Instagram ;
+- conservation d'une lecture de compatibilité des anciens projets afin d'éviter un échec au chargement ;
+- documentation produit alignée sur Instagram et le multi-images.
+
 ### Maintenance
 
 - la chaîne de release lit désormais la version depuis `pyproject.toml` ;
@@ -30,7 +43,7 @@ Première version publique de Visual AI Studio.
 
 - application Windows locale en Python / PySide6 ;
 - création et suivi de projets visuels ;
-- briefs Pinterest, Instagram et formats personnalisés ;
+- briefs pour réseaux sociaux et formats personnalisés ;
 - préparation du prompt destiné à Studio Visuel ;
 - import et contrôle des livrables ;
 - galerie et validation humaine ;
