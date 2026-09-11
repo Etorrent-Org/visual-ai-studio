@@ -23,9 +23,15 @@ Niveau de détail : {{detail_level}}
 Éléments interdits : {{forbidden_elements}}
 Texte demandé dans l'image : {{text_overlay}}
 
+PUBLICATION
+Nombre de visuels principaux : {{post_image_count}}
+Structure : {{post_structure}}
+Les visuels principaux appartiennent à une seule publication et doivent rester cohérents entre eux.
+La fiche de synthèse et le Markdown IA-Art restent des livrables annexes séparés et leur structure ne doit pas être modifiée.
+
 FORMAT
 Canal : {{channel}}
-Dimensions : {{dimensions}}
+Dimensions par visuel principal : {{dimensions}}
 Ratio : {{aspect_ratio}}
 
 RÉFÉRENCE
@@ -46,7 +52,8 @@ Respecte le workflow conversationnel de Studio Visuel :
 - validation explicite avant l'étape suivante ;
 - aucune génération d'image avant validation du brief et de la direction artistique ;
 - aucun branding, logo, watermark ou signature non demandé ;
-- aucun texte ajouté dans l'image sauf demande explicite ci-dessus.
+- aucun texte ajouté dans l'image sauf demande explicite ci-dessus ;
+- si plusieurs visuels principaux sont demandés, conçois-les comme une série cohérente destinée à un seul post, et non comme des variantes indépendantes.
 
 Commence maintenant par l'Étape 1 — Brief.
 
