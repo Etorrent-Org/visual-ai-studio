@@ -13,7 +13,7 @@ class OutputMode(StrEnum):
         cls,
         value: object,
     ) -> OutputMode | None:
-        if value in {"generic", "pinterest"}:
+        if value == "generic":
             return cls.CUSTOM
 
         return None
@@ -57,5 +57,4 @@ def preset_for(
     mode: OutputMode | str,
 ) -> OutputModePreset:
     resolved = OutputMode(mode)
-
     return OUTPUT_MODE_PRESETS[resolved]
