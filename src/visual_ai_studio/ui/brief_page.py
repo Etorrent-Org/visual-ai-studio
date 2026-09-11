@@ -51,7 +51,7 @@ class BriefPage(QWidget):
         self.info.setWordWrap(True)
 
         self.mode_combo = QComboBox()
-        self.mode_combo.addItem("Pinterest", OutputMode.PINTEREST.value)
+        self.mode_combo.addItem("Pinterest — recommandé", OutputMode.PINTEREST.value)
         self.mode_combo.addItem("Instagram", OutputMode.INSTAGRAM.value)
         self.mode_combo.addItem("Autre / personnalisé", OutputMode.CUSTOM.value)
         self.mode_combo.currentIndexChanged.connect(self._mode_changed)
@@ -71,6 +71,15 @@ class BriefPage(QWidget):
 
         self.audience = QLineEdit()
 
+        self.post_image_count = QSpinBox()
+        self.post_image_count.setRange(1, 10)
+        self.post_image_count.setValue(1)
+        self.post_image_count.setSuffix(" image(s)")
+        self.post_image_count.setToolTip(
+            "Nombre de visuels principaux à publier ensemble dans un même post. "
+            "La fiche synthèse et le Markdown restent des livrables séparés."
+        )
+
         self.text_overlay = QLineEdit()
         self.text_overlay.setPlaceholderText("Laisser vide pour aucun texte dans l'image")
 
@@ -86,8 +95,6 @@ class BriefPage(QWidget):
         self.height_input.setSpecialValueText("Auto")
         self.height_input.setSuffix(" px")
 
-        # Compatibilité avec l'API interne historique et les tests existants,
-        # sans masquer statiquement QWidget.width()/height() pour mypy.
         setattr(self, "width", self.width_input)  # noqa: B010
         setattr(self, "height", self.height_input)  # noqa: B010
 
@@ -144,6 +151,7 @@ class BriefPage(QWidget):
         form.addRow("Style", self.style_combo)
         form.addRow("Idée / demande *", self.raw_idea)
         form.addRow("Audience", self.audience)
+        form.addRow("Visuels dans le post", self.post_image_count)
         form.addRow("Texte dans l'image", self.text_overlay)
         form.addRow("Notes", self.notes)
 
@@ -218,6 +226,7 @@ class BriefPage(QWidget):
         self.style_combo.setCurrentText(brief.style)
         self.raw_idea.setPlainText(brief.raw_idea)
         self.audience.setText(brief.audience)
+        self.post_image_count.setValue(brief.post_image_count)
         self.text_overlay.setText(brief.text_overlay)
         self.notes.setPlainText(brief.notes)
         self.reference_image.setText(brief.reference_image)
@@ -250,6 +259,7 @@ class BriefPage(QWidget):
         return Brief(
             title=self.title_edit.text(),
             mode=mode,
+            post_image_count=self.post_image_count.value(),
             audience=self.audience.text(),
             target_width=width,
             target_height=height,
@@ -288,6 +298,11 @@ class BriefPage(QWidget):
             self.aspect_ratio.clear()
 
         format_text = f"{preset.label}"
+
+        if mode is OutputMode.PINTEREST:
+            format_text += " • canal prioritaire IA-Art"
+        elif mode is OutputMode.INSTAGRAM:
+            format_text += " • canal secondaire"
 
         if preset.width and preset.height:
             format_text += f" • {preset.width} × {preset.height} • {preset.aspect_ratio}"
