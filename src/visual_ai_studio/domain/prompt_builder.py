@@ -53,6 +53,16 @@ def _dimensions(
     return "À préciser avec Studio Visuel"
 
 
+def _post_structure(image_count: int) -> str:
+    if image_count <= 1:
+        return "1 visuel principal"
+
+    return (
+        f"{image_count} visuels principaux cohérents à publier ensemble "
+        "dans un seul post, avec une narration visuelle commune"
+    )
+
+
 def build_prompt(
     brief: Brief,
     template: str | None = None,
@@ -153,6 +163,8 @@ def build_prompt(
             "Aucun",
         ),
         "text_overlay": text_overlay,
+        "post_image_count": str(brief.post_image_count),
+        "post_structure": _post_structure(brief.post_image_count),
         "dimensions": _dimensions(
             width,
             height,
