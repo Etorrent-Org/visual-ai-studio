@@ -32,6 +32,23 @@ def test_pinterest_prompt_targets_studio_visuel() -> None:
     assert "Étape 1" in result.text
 
 
+def test_pinterest_multi_image_prompt_describes_one_post() -> None:
+    brief = Brief(
+        title="Série Pinterest",
+        mode=OutputMode.PINTEREST,
+        raw_idea="Une mini-série narrative",
+        post_image_count=4,
+    )
+
+    result = build_prompt(brief)
+
+    assert "Nombre de visuels principaux : 4" in result.text
+    assert "4 visuels principaux cohérents à publier ensemble" in result.text
+    assert "une seule publication" in result.text
+    assert "fiche de synthèse" in result.text
+    assert "Markdown IA-Art" in result.text
+
+
 def test_instagram_prompt_uses_feed_portrait() -> None:
     brief = Brief(
         title="Instagram test",
