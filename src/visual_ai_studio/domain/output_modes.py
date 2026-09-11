@@ -5,7 +5,6 @@ from enum import StrEnum
 
 
 class OutputMode(StrEnum):
-    PINTEREST = "pinterest"
     INSTAGRAM = "instagram"
     CUSTOM = "custom"
 
@@ -14,7 +13,7 @@ class OutputMode(StrEnum):
         cls,
         value: object,
     ) -> OutputMode | None:
-        if value == "generic":
+        if value in {"generic", "pinterest"}:
             return cls.CUSTOM
 
         return None
@@ -35,14 +34,6 @@ ModePreset = OutputModePreset
 
 
 OUTPUT_MODE_PRESETS = {
-    OutputMode.PINTEREST: OutputModePreset(
-        mode=OutputMode.PINTEREST,
-        label="Pinterest",
-        width=1000,
-        height=1500,
-        aspect_ratio="2:3",
-        publication=True,
-    ),
     OutputMode.INSTAGRAM: OutputModePreset(
         mode=OutputMode.INSTAGRAM,
         label="Instagram",
