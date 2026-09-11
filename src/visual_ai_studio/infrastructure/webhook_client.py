@@ -32,7 +32,7 @@ def build_metadata(
     confirmations: HumanConfirmations,
 ) -> dict[str, Any]:
     return {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "source": "visual-ai-studio",
         "project": {
             "id": str(project.id),
@@ -47,6 +47,7 @@ def build_metadata(
             "aspect_ratio": project.brief.aspect_ratio,
             "collection": project.brief.collection,
             "style": project.brief.style,
+            "post_image_count": project.brief.post_image_count,
         },
         "artifacts": [
             {
