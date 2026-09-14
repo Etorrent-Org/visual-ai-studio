@@ -2,7 +2,7 @@
 
 ## Baseline
 
-Visual AI Studio **0.2.0** est une application Windows locale en Python / PySide6.
+Visual AI Studio **0.2.1** est une application Windows locale en Python / PySide6.
 
 - Interface : PySide6
 - Logique métier : Python
@@ -27,6 +27,8 @@ flowchart LR
 ```
 
 Visual AI Studio ne réalise aucun appel direct à une API OpenAI. Le passage vers Studio Visuel et le retour des livrables restent manuels.
+
+Au premier lancement, une installation sans projet peut reprendre la base SQLite historique de IA-Art Studio. La copie est réalisée avant les migrations de schéma, sans supprimer la base d'origine.
 
 ## Organisation
 
