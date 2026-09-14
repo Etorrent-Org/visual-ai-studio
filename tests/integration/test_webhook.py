@@ -12,12 +12,8 @@ from visual_ai_studio.domain.models import (
     Project,
     ValidationReport,
 )
-from visual_ai_studio.domain.statuses import (
-    ArtifactType,
-)
-from visual_ai_studio.domain.validators import (
-    sha256_file,
-)
+from visual_ai_studio.domain.statuses import ArtifactType
+from visual_ai_studio.domain.validators import sha256_file
 from visual_ai_studio.infrastructure.webhook_client import (
     WebhookClient,
     build_metadata,
@@ -44,21 +40,9 @@ def submission_data(
     )
 
     definitions = [
-        (
-            ArtifactType.IMAGE,
-            "result.png",
-            b"synthetic-image",
-        ),
-        (
-            ArtifactType.TEXT,
-            "description.md",
-            b"# Resultat",
-        ),
-        (
-            ArtifactType.METADATA,
-            "metadata.json",
-            b'{"schema_version":"1.0"}',
-        ),
+        (ArtifactType.IMAGE, "result.png", b"synthetic-image"),
+        (ArtifactType.TEXT, "description.md", b"# Resultat"),
+        (ArtifactType.METADATA, "metadata.json", b'{"schema_version":"1.0"}'),
     ]
 
     artifacts: list[Artifact] = []
@@ -78,39 +62,24 @@ def submission_data(
         )
 
     report = ValidationReport(artifacts=artifacts)
-
     confirmations = HumanConfirmations(approved=True)
 
-    return (
-        project,
-        artifacts,
-        report,
-        confirmations,
-    )
+    return project, artifacts, report, confirmations
 
 
-def test_metadata_is_generic(
-    tmp_path: Path,
-) -> None:
+def test_metadata_is_generic(tmp_path: Path) -> None:
     data = submission_data(tmp_path)
-
     metadata = build_metadata(*data)
 
     assert metadata["source"] == "visual-ai-studio"
-
     assert "notion" not in metadata
+    assert metadata["output"]["mode"] == "instagram"
 
-    assert metadata["output"]["mode"] == "pinterest"
 
-
-def test_multipart_payload_and_success(
-    tmp_path: Path,
-) -> None:
+def test_multipart_payload_and_success(tmp_path: Path) -> None:
     captured: dict[str, Any] = {}
 
-    def handler(
-        request: httpx.Request,
-    ) -> httpx.Response:
+    def handler(request: httpx.Request) -> httpx.Response:
         captured["headers"] = request.headers
         captured["body"] = request.read()
 
@@ -119,7 +88,7 @@ def test_multipart_payload_and_success(
             json={
                 "status": "success",
                 "execution_id": "exec-123",
-                "remote_url": ("https://example.test/result"),
+                "remote_url": "https://example.test/result",
             },
         )
 
@@ -132,41 +101,21 @@ def test_multipart_payload_and_success(
         transport=httpx.MockTransport(handler),
     )
 
-    outcome = client.submit(
-        project,
-        artifacts,
-        report,
-        confirmations,
-    )
+    outcome = client.submit(project, artifacts, report, confirmations)
 
     assert outcome.status == "success"
-
     assert outcome.execution_id == "exec-123"
-
     assert outcome.remote_url == "https://example.test/result"
-
     assert captured["headers"]["X-Token"] == "secret-value"
-
-    assert captured["headers"]["Idempotency-Key"] == idempotency_key(
-        project.id,
-        1,
-    )
-
+    assert captured["headers"]["Idempotency-Key"] == idempotency_key(project.id, 1)
     assert b'name="metadata"' in captured["body"]
-
     assert b'name="artifact_0"' in captured["body"]
-
     assert b'name="artifact_1"' in captured["body"]
-
     assert b"local_path" not in captured["body"]
 
 
-def test_business_error_is_not_retryable(
-    tmp_path: Path,
-) -> None:
-    def handler(
-        _request: httpx.Request,
-    ) -> httpx.Response:
+def test_business_error_is_not_retryable(tmp_path: Path) -> None:
+    def handler(_request: httpx.Request) -> httpx.Response:
         return httpx.Response(
             409,
             json={
@@ -190,16 +139,9 @@ def test_business_error_is_not_retryable(
     assert outcome.http_status == 409
 
 
-def test_timeout_has_unknown_status(
-    tmp_path: Path,
-) -> None:
-    def handler(
-        request: httpx.Request,
-    ) -> httpx.Response:
-        raise httpx.ReadTimeout(
-            "timeout",
-            request=request,
-        )
+def test_timeout_has_unknown_status(tmp_path: Path) -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ReadTimeout("timeout", request=request)
 
     data = submission_data(tmp_path)
 
@@ -214,14 +156,9 @@ def test_timeout_has_unknown_status(
     assert outcome.retryable is True
 
 
-def test_invalid_json_is_explicit(
-    tmp_path: Path,
-) -> None:
+def test_invalid_json_is_explicit(tmp_path: Path) -> None:
     transport = httpx.MockTransport(
-        lambda _request: httpx.Response(
-            200,
-            text="not json",
-        )
+        lambda _request: httpx.Response(200, text="not json")
     )
 
     data = submission_data(tmp_path)
@@ -239,18 +176,5 @@ def test_invalid_json_is_explicit(
 def test_idempotency_is_stable_per_project_version() -> None:
     project = Project()
 
-    assert idempotency_key(
-        project.id,
-        1,
-    ) == idempotency_key(
-        project.id,
-        1,
-    )
-
-    assert idempotency_key(
-        project.id,
-        1,
-    ) != idempotency_key(
-        project.id,
-        2,
-    )
+    assert idempotency_key(project.id, 1) == idempotency_key(project.id, 1)
+    assert idempotency_key(project.id, 1) != idempotency_key(project.id, 2)
