@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="docs/images/visual-ai-studio-icon.png" width="120" alt="Visual AI Studio">
 </p>
 
@@ -9,25 +9,23 @@
   contrôler les créations et exporter les livrables.
 </p>
 
-<p align="center">
-  <img src="docs/images/visual-ai-studio-infographic.svg" alt="Infographie du workflow Visual AI Studio" width="820">
-</p>
-
 ---
 
 ## À quoi sert Visual AI Studio ?
 
-Visual AI Studio accompagne un projet visuel du brief jusqu'à l'export final.
+Visual AI Studio accompagne un projet visuel du brief jusqu'à l'export final, avec Instagram comme canal de publication principal.
 
 L'application reste volontairement simple :
 
 1. vous préparez le brief dans Visual AI Studio ;
-2. l'application génère un prompt de lancement ;
-3. vous copiez ce prompt dans Studio Visuel ;
-4. Studio Visuel accompagne la création dans ChatGPT ;
-5. vous récupérez les fichiers générés ;
-6. Visual AI Studio les contrôle et les présente ;
-7. vous validez puis exportez le résultat.
+2. vous choisissez de 1 à 10 visuels principaux pour la publication ;
+3. l'application génère un prompt de lancement ;
+4. vous copiez ce prompt dans Studio Visuel ;
+5. Studio Visuel prépare puis génère exactement le nombre de visuels demandé ;
+6. le Skill IA-Art signe les images et prépare les livrables ;
+7. vous récupérez les fichiers générés ;
+8. Visual AI Studio les contrôle et les présente ;
+9. vous validez puis exportez le résultat.
 
 Visual AI Studio ne réalise **aucun appel direct à une API OpenAI** et ne nécessite aucune clé API OpenAI.
 
@@ -51,23 +49,22 @@ L'application Windows prend en charge :
 
 Studio Visuel est l'agent conversationnel utilisé dans ChatGPT.
 
-Un accès à ChatGPT et à Studio Visuel est nécessaire pour la phase de génération.
-
 Il prend en charge notamment :
 
 - la reformulation du brief ;
 - la direction artistique ;
-- le prompt image ;
+- le mini-storyboard multi-images ;
+- les prompts image ;
 - les contraintes négatives ;
 - les contenus de publication ;
-- la génération visuelle ;
-- la livraison des résultats.
+- la génération de exactement N visuels pour un seul post Instagram ;
+- le passage au Skill IA-Art pour signature et packaging.
 
-Le Skill `visual-content-studio` constitue la source de vérité fonctionnelle de l'agent.
-
-Son package est fourni dans :
+Le package est fourni dans :
 
 `agent/studio-visuel-agent.zip`
+
+Il contient la définition de Studio Visuel, le Skill IA-Art Instagram et la licence MIT.
 
 ---
 
@@ -78,22 +75,19 @@ flowchart LR
     A[Brief créatif] --> B[Préparation Studio Visuel]
     B --> C[Copier le prompt]
     C --> D[Studio Visuel dans ChatGPT]
-    D --> E[Direction artistique]
-    E --> F[Génération]
-    F --> G[Importer les fichiers]
-    G --> H[Validation humaine]
-    H --> I[Export local]
+    D --> E[Direction artistique + storyboard]
+    E --> F[Génération de N visuels Instagram]
+    F --> G[IA-Art : signature + paquet]
+    G --> H[Importer les fichiers]
+    H --> I[Validation humaine]
+    I --> J[Export local]
 ```
 
 Le passage entre l'application et Studio Visuel reste manuel.
 
-Ce fonctionnement évite d'imposer une API et permet à l'utilisateur de garder la maîtrise de chaque étape.
-
 ---
 
 ## 1. Les projets
-
-![Visual AI Studio - Projets](docs/images/projets.png)
 
 La page **Projets** constitue le point d'entrée de l'application.
 
@@ -103,21 +97,20 @@ Trois statuts métier sont utilisés :
 - **Validé**
 - **Archivé**
 
-Les projets peuvent être retrouvés, ouverts et suivis depuis cette vue.
-
 ---
 
 ## 2. Créer un brief
 
-![Visual AI Studio - Brief créatif](docs/images/brief.png)
-
 La page **Créer** permet de structurer la demande visuelle avant de passer dans Studio Visuel.
 
-Trois modes de sortie sont disponibles :
+Deux modes de sortie sont disponibles :
 
-- **Pinterest**
-- **Instagram**
-- **Autre / personnalisé**
+- **Instagram** — mode par défaut, 1080 × 1350, ratio 4:5 ;
+- **Autre / personnalisé**.
+
+Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**.
+
+La fiche synthèse et le Markdown IA-Art restent des livrables annexes séparés et ne comptent pas dans le nombre de visuels.
 
 Le brief peut notamment préciser :
 
@@ -126,6 +119,7 @@ Le brief peut notamment préciser :
 - l'idée ou la demande ;
 - l'audience ;
 - le style ;
+- le nombre de visuels ;
 - le texte souhaité dans l'image ;
 - les dimensions ;
 - le ratio ;
@@ -133,41 +127,28 @@ Le brief peut notamment préciser :
 - les éléments obligatoires ;
 - les éléments interdits.
 
-Une fois le brief prêt, utilisez :
-
-**Préparer pour Studio Visuel**
+Une fois le brief prêt, utilisez **Préparer pour Studio Visuel**.
 
 ---
 
-## 3. Préparer Studio Visuel
+## 3. Studio Visuel et IA-Art
 
-![Visual AI Studio - Préparation Studio Visuel](docs/images/studio-visuel.png)
+Visual AI Studio transmet le contexte du projet et le nombre de visuels principaux attendu.
 
-Visual AI Studio transforme le brief en **prompt de lancement**.
+Studio Visuel doit produire exactement ce nombre de visuels pour un seul post Instagram. Pour une série multi-images, il prépare une direction artistique commune et un mini-storyboard numéroté.
 
-Ce prompt ne remplace pas le Skill de Studio Visuel.
+Le Skill IA-Art embarqué dans `agent/studio-visuel-agent.zip` prend ensuite en charge :
 
-Il transmet le contexte du projet et demande à Studio Visuel de démarrer son workflow conversationnel à partir du brief.
-
-L'utilisateur peut alors :
-
-1. copier le prompt ;
-2. ouvrir Studio Visuel ;
-3. coller le prompt dans ChatGPT ;
-4. suivre les étapes de l'agent ;
-5. valider chaque étape avant de poursuivre.
-
-Studio Visuel commence par le brief et attend la validation de l'utilisateur avant de poursuivre vers la direction artistique puis la génération.
+- la signature officielle de chaque image ;
+- une fiche synthèse unique pour le post ;
+- un Markdown Notion unique ;
+- une archive unique contenant l'ensemble des livrables.
 
 ---
 
 ## 4. Importer et contrôler les résultats
 
-![Visual AI Studio - Validation](docs/images/validation.png)
-
-Une fois les créations terminées dans Studio Visuel, les fichiers produits peuvent être importés dans Visual AI Studio.
-
-L'application peut notamment gérer :
+Visual AI Studio accepte notamment :
 
 ### Images
 
@@ -181,13 +162,9 @@ L'application peut notamment gérer :
 - TXT
 - JSON
 
-Les images sont présentées sous forme de galerie afin de pouvoir contrôler plusieurs créations dans un même projet.
+Les images sont présentées sous forme de galerie afin de contrôler plusieurs créations dans un même projet.
 
-Les éventuels avertissements sont affichés avant validation.
-
-La validation finale reste volontairement humaine :
-
-**Je valide ce résultat**
+La validation finale reste volontairement humaine : **Je valide ce résultat**.
 
 ---
 
@@ -195,35 +172,15 @@ La validation finale reste volontairement humaine :
 
 Lorsqu'un résultat est validé, le projet peut être exporté localement.
 
-Visual AI Studio crée un dossier d'export dédié au projet contenant les livrables disponibles.
-
 Les données de travail restent locales sur l'ordinateur.
-
----
-
-## 6. Paramètres
-
-![Visual AI Studio - Paramètres](docs/images/parametres.png)
-
-Les paramètres visibles restent volontairement réduits.
-
-L'utilisateur choisit principalement le dossier dans lequel Visual AI Studio conserve ses projets et leurs fichiers.
-
-Aucun compte cloud n'est requis par l'application.
 
 ---
 
 ## Télécharger
 
-La version Windows actuelle est **v0.1.1**.
+La version Windows publique actuelle est **v0.2.0**.
 
 ➡️ [Accéder à la dernière GitHub Release](https://github.com/Etorrent-Org/visual-ai-studio/releases/latest)
-
-La Release contient :
-
-- `Visual-AI-Studio-Setup-0.1.1.exe` : installateur Windows ;
-- `studio-visuel-agent.zip` : package Studio Visuel ;
-- `SHA256SUMS.txt` : empreintes de contrôle des fichiers distribués.
 
 ---
 
@@ -231,153 +188,37 @@ La Release contient :
 
 Visual AI Studio est distribué sous forme d'application Windows autonome.
 
-La distribution publique utilise un installateur de la forme :
-
-`Visual-AI-Studio-Setup-x.y.z.exe`
-
 L'utilisateur final n'a pas besoin d'installer Python, Git ou Docker.
-
-L'installation crée l'application Windows ainsi qu'un raccourci dans le menu Démarrer.
-
-Un raccourci Bureau peut également être créé depuis l'installateur.
-
-La version publique est distribuée via **GitHub Releases**.
-
----
-
-## Installer Studio Visuel
-
-Visual AI Studio et Studio Visuel sont distribués séparément.
-
-Le package de l'agent se trouve dans :
-
-`agent/studio-visuel-agent.zip`
-
-Il contient les instructions de Studio Visuel ainsi que le Skill `visual-content-studio`.
-
-Une documentation complémentaire est disponible dans :
-
-[`agent/README.md`](agent/README.md)
-
----
-
-## Stockage local
-
-Visual AI Studio suit une approche **local-first**.
-
-Les projets, la base de données et les fichiers de travail restent stockés localement.
-
-Le dossier des projets peut être choisi depuis :
-
-**Paramètres → Stockage local → Dossier des projets**
-
----
-
-## Architecture technique
-
-L'application repose notamment sur :
-
-- Python 3.11+
-- PySide6
-- Pydantic
-- SQLAlchemy
-- SQLite
-- Pillow
-- platformdirs
-- keyring
-- PyInstaller
-- Inno Setup
 
 ---
 
 ## Développement
 
-### Installation
-
 ```powershell
 git clone https://github.com/Etorrent-Org/visual-ai-studio.git
 cd visual-ai-studio
-
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-```
-
-### Lancement
-
-```powershell
 .\.venv\Scripts\python.exe -m visual_ai_studio.main
-```
-
-### Tests
-
-```powershell
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
 ---
 
-## Structure du dépôt
-
-```text
-visual-ai-studio/
-├── agent/
-│   ├── README.md
-│   └── studio-visuel-agent.zip
-├── docs/
-│   └── images/
-├── installer/
-├── migrations/
-├── scripts/
-├── src/
-│   └── visual_ai_studio/
-├── tests/
-├── README.md
-└── pyproject.toml
-```
-
----
-
-## Distribution
-
-Les builds intermédiaires et les exécutables générés ne sont pas conservés dans Git.
-
-Les installateurs officiels sont destinés à être publiés dans **GitHub Releases** avec leur empreinte SHA-256.
-
----
-
 ## Sécurité et confidentialité
 
-Visual AI Studio ne nécessite aucune clé API OpenAI.
+Visual AI Studio ne nécessite aucune clé API OpenAI. Les données restent locales sauf action volontaire de l'utilisateur en dehors de l'application.
 
-Les données restent locales sauf action volontaire de l'utilisateur en dehors de l'application.
-
-Pour le signalement d'une vulnérabilité ou les règles de sécurité du projet :
-
-[`SECURITY.md`](SECURITY.md)
+Consultez [`SECURITY.md`](SECURITY.md) pour les règles de sécurité.
 
 ---
 
 ## Licence
 
-Visual AI Studio est distribué sous **licence MIT**.
-
-Le code, la documentation et le package Studio Visuel présents dans ce dépôt
-peuvent être utilisés, modifiés et redistribués conformément aux conditions
-de la licence.
-
-Consultez [`LICENSE`](LICENSE) pour le texte complet.
+Visual AI Studio est distribué sous **licence MIT**. Consultez [`LICENSE`](LICENSE).
 
 ---
 
 ## Version
 
-Version publique actuelle : **0.1.1**
-
-La version **v0.1.1** constitue la version publique Windows actuelle.
-
----
-
-<p align="center">
-  <strong>Visual AI Studio</strong><br>
-  Du brief à la création, avec une validation humaine aux étapes essentielles.
-</p>
+Version publique actuelle : **0.2.0**.

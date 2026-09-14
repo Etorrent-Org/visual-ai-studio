@@ -19,7 +19,8 @@ class Brief(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     title: str = ""
-    mode: OutputMode = OutputMode.PINTEREST
+    mode: OutputMode = OutputMode.INSTAGRAM
+    post_image_count: int = Field(default=1, ge=1, le=10)
     audience: str = ""
     target_width: int | None = None
     target_height: int | None = None

@@ -5,7 +5,6 @@ from enum import StrEnum
 
 
 class OutputMode(StrEnum):
-    PINTEREST = "pinterest"
     INSTAGRAM = "instagram"
     CUSTOM = "custom"
 
@@ -35,14 +34,6 @@ ModePreset = OutputModePreset
 
 
 OUTPUT_MODE_PRESETS = {
-    OutputMode.PINTEREST: OutputModePreset(
-        mode=OutputMode.PINTEREST,
-        label="Pinterest",
-        width=1000,
-        height=1500,
-        aspect_ratio="2:3",
-        publication=True,
-    ),
     OutputMode.INSTAGRAM: OutputModePreset(
         mode=OutputMode.INSTAGRAM,
         label="Instagram",
@@ -66,5 +57,4 @@ def preset_for(
     mode: OutputMode | str,
 ) -> OutputModePreset:
     resolved = OutputMode(mode)
-
     return OUTPUT_MODE_PRESETS[resolved]

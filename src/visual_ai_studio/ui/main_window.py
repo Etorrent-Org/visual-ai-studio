@@ -131,6 +131,8 @@ class MainWindow(QMainWindow):
         self.brief.notes.textChanged.connect(self._schedule_autosave)
         self.brief.collection.currentTextChanged.connect(self._schedule_autosave)
         self.brief.style_combo.currentTextChanged.connect(self._schedule_autosave)
+        self.brief.mode_combo.currentIndexChanged.connect(self._schedule_autosave)
+        self.brief.post_image_count.valueChanged.connect(self._schedule_autosave)
         for widget in self.brief.advanced.values():
             widget.textChanged.connect(self._schedule_autosave)  # type: ignore[attr-defined]
 
@@ -478,4 +480,7 @@ class MainWindow(QMainWindow):
         )
         progress.close()
         self.submission.set_outcome(outcome)
-        self._refresh_dashboard()
+        if outcome.status == "success":
+            self.current_project = self.context.project_service.get(self.current_project.id)
+            self._refresh_dashboard()
+            self._update_webhook_indicator()

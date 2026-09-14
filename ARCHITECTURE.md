@@ -2,7 +2,7 @@
 
 ## Baseline
 
-Visual AI Studio **0.1.1** est une application Windows locale en Python / PySide6.
+Visual AI Studio **0.2.0** est une application Windows locale en Python / PySide6.
 
 - Interface : PySide6
 - Logique métier : Python
