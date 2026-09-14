@@ -178,7 +178,7 @@ Les données de travail restent locales sur l'ordinateur.
 
 ## Télécharger
 
-La version Windows publique actuelle est **v0.1.1**.
+La version Windows publique actuelle est **v0.2.0**.
 
 ➡️ [Accéder à la dernière GitHub Release](https://github.com/Etorrent-Org/visual-ai-studio/releases/latest)
 
@@ -221,4 +221,4 @@ Visual AI Studio est distribué sous **licence MIT**. Consultez [`LICENSE`](LICE
 
 ## Version
 
-Version publique actuelle : **0.1.1**.
+Version publique actuelle : **0.2.0**.
