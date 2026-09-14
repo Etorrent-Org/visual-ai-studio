@@ -125,5 +125,5 @@ class ProjectService:
     def get(self, project_id: UUID | str) -> Project | None:
         return self.projects.get(project_id)
 
-    def list_projects(self, include_archived: bool = False) -> list[Project]:
+    def list_projects(self, include_archived: bool = True) -> list[Project]:
         return self.projects.list(include_archived=include_archived)
