@@ -45,6 +45,8 @@ class ArtifactType(StrEnum):
             return None
 
         legacy = {
+            "pinterest": cls.IMAGE,
+            "instagram": cls.IMAGE,
             "synthese": cls.IMAGE,
             "notion": cls.TEXT,
         }

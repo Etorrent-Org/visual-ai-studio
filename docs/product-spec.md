@@ -1,4 +1,4 @@
-# Visual AI Studio - Spécification produit v0.2.0
+# Visual AI Studio - Spécification produit v0.2.1
 
 ## 1. Vision
 
@@ -42,7 +42,7 @@ Deux modes sont disponibles.
 
 Instagram est le mode de publication par défaut. Le format standard est **1080 × 1350 px**, ratio **4:5**.
 
-Une publication peut comporter **1 à 10 visuels principaux**. Lorsque plusieurs visuels sont demandés, Studio Visuel doit les concevoir comme une série cohérente destinée à un seul post, et non comme des variantes indépendantes.
+Une publication peut comporter **1 à 10 visuels principaux**. Le nombre peut être saisi ou modifié avec des boutons `−` et `+`. Lorsque plusieurs visuels sont demandés, Studio Visuel doit les concevoir comme une série cohérente destinée à un seul post, et non comme des variantes indépendantes.
 
 ### Autre / personnalisé
 
@@ -54,17 +54,27 @@ Les visuels principaux destinés au post sont distincts des livrables annexes.
 
 La **fiche synthèse** et le **Markdown IA-Art** restent des livrables séparés et leur structure n'est pas modifiée par la fonctionnalité multi-images.
 
+Les anciens types de livrables de IA-Art Studio restent lisibles pour préserver l'historique, sans être réexposés comme modes de création.
+
 ## 6. Statuts des projets
 
 Visual AI Studio utilise trois statuts métier visibles : **Brief**, **Validé** et **Archivé**. Aucun statut technique n'est exposé à l'utilisateur.
 
-## 7. Brief créatif
+Les projets archivés restent présents dans la liste et peuvent être filtrés comme historique.
+
+## 7. Migration depuis IA-Art Studio
+
+Si Visual AI Studio ne contient encore aucun projet et qu'une base locale `ia-art-studio.db` est détectée, la version 0.2.1 copie automatiquement cette base dans l'espace Visual AI Studio avant d'appliquer les migrations de schéma.
+
+La base IA-Art Studio d'origine n'est jamais supprimée. Si une base Visual AI Studio existe déjà mais ne contient aucun projet, une sauvegarde locale est créée avant la reprise de la base historique. Si Visual AI Studio contient déjà au moins un projet, aucune migration automatique destructive n'est effectuée.
+
+## 8. Brief créatif
 
 Le brief peut notamment contenir le nom du projet, la collection ou campagne, l'idée, l'audience, le style, le nombre de visuels principaux, le texte souhaité dans l'image, les dimensions, le ratio, des notes et les indications de direction créative.
 
 Le brief reste modifiable tant que le projet est en préparation.
 
-## 8. Préparation Studio Visuel
+## 9. Préparation Studio Visuel
 
 Visual AI Studio génère un **prompt de lancement** qui transmet le contexte du projet, le mode de sortie, le nombre de visuels principaux et les informations utiles du brief.
 
@@ -72,34 +82,36 @@ Pour une publication multi-images, le prompt demande explicitement une narration
 
 Visual AI Studio ne duplique pas dans l'application la logique créative du Skill Studio Visuel.
 
-## 9. Import et validation
+## 10. Import et validation
 
 Les fichiers pris en charge comprennent notamment PNG, JPG, JPEG, WebP, Markdown, TXT et JSON.
 
 Plusieurs images peuvent être importées pour un même projet et sont présentées dans une galerie de validation. La validation finale est explicite et humaine : **Je valide ce résultat**.
 
-## 10. Export et webhook
+## 11. Export et webhook
 
 Un projet validé peut être exporté localement. Un envoi vers un webhook peut également être utilisé lorsqu'une configuration technique correspondante existe. Le webhook n'est pas nécessaire au fonctionnement standard de l'application.
 
-## 11. Stockage local
+## 12. Stockage local
 
 Les projets et fichiers de travail sont conservés localement. L'utilisateur peut choisir le dossier de stockage depuis les paramètres de Visual AI Studio.
 
-## 12. Hors périmètre v0.2.0
+## 13. Hors périmètre v0.2.1
 
-La version 0.2.0 ne fournit pas directement d'authentification Instagram, de publication automatique vers un réseau social, d'appel direct à une API OpenAI, d'hébergement cloud, de fonctionnement multi-utilisateur, d'abonnement SaaS ou de marketplace.
+La version 0.2.1 ne fournit pas directement d'authentification Instagram, de publication automatique vers un réseau social, d'appel direct à une API OpenAI, d'hébergement cloud, de fonctionnement multi-utilisateur, d'abonnement SaaS ou de marketplace.
 
-## 13. Architecture technique
+## 14. Architecture technique
 
 Visual AI Studio repose notamment sur Python 3.11+, PySide6, Pydantic, SQLAlchemy, SQLite, Pillow, platformdirs, keyring, PyInstaller et Inno Setup.
 
-## 14. Distribution Windows
+## 15. Distribution Windows
 
 Visual AI Studio est distribué sous forme d'application Windows autonome. L'utilisateur final n'a pas besoin d'installer Python, Git ou Docker. Le package Studio Visuel est distribué séparément dans la même GitHub Release.
 
-## 15. Licence et état
+L'installateur 0.2.1 supprime l'ancien raccourci Bureau `IA-Art Studio`, mais ne supprime ni l'ancienne installation ni ses données afin de préserver la migration.
+
+## 16. Licence et état
 
 Visual AI Studio, sa documentation et le package Studio Visuel sont distribués sous licence MIT.
 
-Version produit publique actuelle : **0.2.0**.
+Version produit publique actuelle : **0.2.1**.

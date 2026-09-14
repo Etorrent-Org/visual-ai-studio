@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from pytestqt.qtbot import QtBot
 
 from visual_ai_studio.domain.models import Project
@@ -32,6 +33,19 @@ def test_post_image_count_round_trip(qtbot: QtBot) -> None:
     page.set_project(project)
     assert page.post_image_count.value() == 5
     assert page.brief().post_image_count == 5
+
+
+def test_post_image_count_buttons_change_value(qtbot: QtBot) -> None:
+    page = BriefPage()
+    qtbot.addWidget(page)
+
+    assert page.post_image_count.value() == 1
+
+    qtbot.mouseClick(page.post_image_increase, Qt.MouseButton.LeftButton)
+    assert page.post_image_count.value() == 2
+
+    qtbot.mouseClick(page.post_image_decrease, Qt.MouseButton.LeftButton)
+    assert page.post_image_count.value() == 1
 
 
 def test_custom_format_is_editable(qtbot: QtBot) -> None:

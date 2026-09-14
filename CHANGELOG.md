@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 - 2026-09-14
+
+Version corrective de migration depuis IA-Art Studio.
+
+### Corrections
+
+- migration automatique de l'ancienne base `ia-art-studio.db` lorsque Visual AI Studio ne contient encore aucun projet ;
+- sauvegarde de la base Visual AI Studio existante avant migration ;
+- affichage des projets archivés dans le tableau et les indicateurs d'historique ;
+- compatibilité de lecture des anciens types de livrables Pinterest, Instagram, synthèse et Notion ;
+- ajout de boutons explicites `−` et `+` pour régler de 1 à 10 visuels dans un post ;
+- suppression de l'ancien raccourci Bureau `IA-Art Studio` lors de l'installation, sans suppression des données historiques.
+
 ## 0.2.0 - 2026-09-14
 
 ### Fonctionnalités

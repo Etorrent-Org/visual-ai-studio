@@ -72,6 +72,26 @@ class BriefPage(QWidget):
             "La fiche synthèse et le Markdown restent des livrables séparés."
         )
 
+        self.post_image_decrease = QPushButton("−")
+        self.post_image_decrease.setObjectName("spinStepButton")
+        self.post_image_decrease.setFixedWidth(38)
+        self.post_image_decrease.setToolTip("Retirer un visuel")
+        self.post_image_decrease.clicked.connect(self.post_image_count.stepDown)
+
+        self.post_image_increase = QPushButton("+")
+        self.post_image_increase.setObjectName("spinStepButton")
+        self.post_image_increase.setFixedWidth(38)
+        self.post_image_increase.setToolTip("Ajouter un visuel")
+        self.post_image_increase.clicked.connect(self.post_image_count.stepUp)
+
+        post_image_control = QWidget()
+        post_image_layout = QHBoxLayout(post_image_control)
+        post_image_layout.setContentsMargins(0, 0, 0, 0)
+        post_image_layout.setSpacing(6)
+        post_image_layout.addWidget(self.post_image_count, 1)
+        post_image_layout.addWidget(self.post_image_decrease)
+        post_image_layout.addWidget(self.post_image_increase)
+
         self.text_overlay = QLineEdit()
         self.text_overlay.setPlaceholderText("Laisser vide pour aucun texte dans l'image")
         self.notes = QTextEdit()
@@ -133,7 +153,7 @@ class BriefPage(QWidget):
         form.addRow("Style", self.style_combo)
         form.addRow("Idée / demande *", self.raw_idea)
         form.addRow("Audience", self.audience)
-        form.addRow("Visuels dans le post", self.post_image_count)
+        form.addRow("Visuels dans le post", post_image_control)
         form.addRow("Texte dans l'image", self.text_overlay)
         form.addRow("Notes", self.notes)
 
