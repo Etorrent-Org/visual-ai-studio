@@ -22,29 +22,31 @@ Le workflow est volontairement simple :
 
 ## Package
 
-Le fichier `studio-visuel-agent.zip` contient :
+Le fichier `studio-visuel-agent.zip` contient exactement :
 
-- `studio-visuel-agent.md` : instructions générales de l'agent ;
-- `skill.zip` : Skill `visual-content-studio`.
+- `studio-visuel-agent.md` : instructions Instagram multi-images de l'agent ;
+- `skill.zip` : Skill **IA-Art** aligné sur Instagram ;
+- `LICENSE` : licence MIT.
 
-Le Skill est la source de vérité fonctionnelle de Studio Visuel.
+Le Skill IA-Art est la source de vérité pour la signature, la synthèse, le Markdown Notion et le packaging final.
 
 ## Modes pris en charge par Visual AI Studio
 
 - Instagram — mode par défaut, 1080 × 1350, ratio 4:5 ;
 - Autre / personnalisé.
 
-Instagram prend en charge une publication composée de **1 à 10 visuels principaux cohérents**. La fiche synthèse et le Markdown restent des livrables annexes séparés.
+Le workflow IA-Art de publication utilise uniquement Instagram.
 
-## Important
+Instagram prend en charge une publication composée de **1 à 10 visuels principaux cohérents**. Studio Visuel doit produire exactement le nombre demandé. La fiche synthèse et le Markdown restent des livrables annexes séparés et ne sont jamais comptés parmi les visuels du post.
 
-Studio Visuel et Visual AI Studio sont deux composants distincts :
+## Répartition des responsabilités
 
-- **Visual AI Studio** structure le brief, prépare le prompt, contrôle les résultats et gère l'export ;
-- **Studio Visuel** réalise le workflow conversationnel de création visuelle.
+- **Visual AI Studio** structure le brief et transmet le nombre de visuels demandé ;
+- **Studio Visuel** prépare la direction artistique, le storyboard et exactement N prompts/images ;
+- **IA-Art** signe les N images et fabrique un paquet unique avec une synthèse et un Markdown Notion.
 
-Le package agent/Skill sera aligné séparément sur ce nouveau fonctionnement. Aucune clé API OpenAI n'est nécessaire dans Visual AI Studio.
+Aucune clé API OpenAI n'est nécessaire dans Visual AI Studio.
 
 ## Licence
 
-Studio Visuel et le Skill `visual-content-studio` fournis dans ce package sont distribués sous **licence MIT**.
+Studio Visuel et le Skill IA-Art fournis dans ce package sont distribués sous **licence MIT**.
