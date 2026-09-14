@@ -99,11 +99,18 @@ class BriefPage(QWidget):
         advanced_layout = QFormLayout(self.advanced_group)
         self.advanced: dict[str, QLineEdit] = {}
         labels = {
-            "intent": "Objectif", "subject": "Sujet principal", "setting": "Décor",
-            "ambience": "Ambiance", "palette": "Palette", "lighting": "Lumière",
-            "materials": "Matières", "composition": "Composition",
-            "detail_level": "Niveau de détail", "required_elements": "Éléments obligatoires",
-            "forbidden_elements": "Éléments interdits", "reference_note": "Note de référence",
+            "intent": "Objectif",
+            "subject": "Sujet principal",
+            "setting": "Décor",
+            "ambience": "Ambiance",
+            "palette": "Palette",
+            "lighting": "Lumière",
+            "materials": "Matières",
+            "composition": "Composition",
+            "detail_level": "Niveau de détail",
+            "required_elements": "Éléments obligatoires",
+            "forbidden_elements": "Éléments interdits",
+            "reference_note": "Note de référence",
         }
         for key, label in labels.items():
             widget = QLineEdit()
@@ -200,13 +207,21 @@ class BriefPage(QWidget):
         height = self.height_input.value() or None
         advanced_values = {key: widget.text() for key, widget in self.advanced.items()}
         return Brief(
-            title=self.title_edit.text(), mode=mode,
-            post_image_count=self.post_image_count.value(), audience=self.audience.text(),
-            target_width=width, target_height=height, aspect_ratio=self.aspect_ratio.text(),
-            text_overlay=self.text_overlay.text(), collection=selected_collection,
-            collection_is_new=bool(reference and reference.is_new), style=self.style_combo.currentText(),
-            raw_idea=self.raw_idea.toPlainText(), notes=self.notes.toPlainText(),
-            reference_image=self.reference_image.text(), **advanced_values,
+            title=self.title_edit.text(),
+            mode=mode,
+            post_image_count=self.post_image_count.value(),
+            audience=self.audience.text(),
+            target_width=width,
+            target_height=height,
+            aspect_ratio=self.aspect_ratio.text(),
+            text_overlay=self.text_overlay.text(),
+            collection=selected_collection,
+            collection_is_new=bool(reference and reference.is_new),
+            style=self.style_combo.currentText(),
+            raw_idea=self.raw_idea.toPlainText(),
+            notes=self.notes.toPlainText(),
+            reference_image=self.reference_image.text(),
+            **advanced_values,
         )
 
     def _mode_changed(self, _index: int = 0, preserve_values: bool = False) -> None:
@@ -241,7 +256,10 @@ class BriefPage(QWidget):
 
     def _choose_reference(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
-            self, "Choisir une image de référence", "", "Images (*.png *.jpg *.jpeg *.webp)"
+            self,
+            "Choisir une image de référence",
+            "",
+            "Images (*.png *.jpg *.jpeg *.webp)",
         )
         if path:
             self.reference_image.setText(path)
