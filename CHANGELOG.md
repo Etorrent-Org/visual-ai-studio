@@ -1,18 +1,21 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 - 2026-09-14
 
 ### Fonctionnalités
 
 - Instagram devient le canal de publication par défaut ;
 - une publication Instagram peut demander de 1 à 10 visuels principaux cohérents ;
 - le prompt Studio Visuel décrit explicitement les visuels comme une série destinée à un seul post ;
+- Studio Visuel lit le nombre demandé et prépare exactement N prompts et N images ;
+- le Skill IA-Art embarqué signe les N images et produit une synthèse unique, un Markdown Notion unique et une archive unique ;
 - la fiche synthèse et le Markdown restent des livrables annexes séparés.
 
 ### Changements
 
 - retrait du mode de publication historique remplacé par Instagram ;
-- conservation d'une lecture de compatibilité des anciens projets afin d'éviter un échec au chargement ;
+- nettoyage de l'interface, des presets, des tests et de la documentation associés à l'ancien canal ;
+- mise à jour du package Studio Visuel et du Skill IA-Art ;
 - documentation produit alignée sur Instagram et le multi-images.
 
 ### Maintenance
@@ -20,7 +23,8 @@
 - la chaîne de release lit désormais la version depuis `pyproject.toml` ;
 - un tag Git différent de `v<version>` bloque la publication ;
 - le packaging vérifie que la version et le nom de l'installateur Inno Setup restent alignés ;
-- le workflow publie l'installateur avec un motif de fichier indépendant d'un numéro de version codé en dur.
+- le workflow publie l'installateur avec un motif de fichier indépendant d'un numéro de version codé en dur ;
+- les tests hérités ont été alignés sur la suppression de Pinterest.
 
 ## 0.1.1 - 2026-08-20
 
