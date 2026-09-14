@@ -65,26 +65,44 @@ def build_metadata(
 def _mime_type(filename: str) -> str:
     suffix = Path(filename).suffix.lower()
     mapping = {
-        ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
-        ".webp": "image/webp", ".md": "text/markdown; charset=utf-8",
-        ".txt": "text/plain; charset=utf-8", ".json": "application/json",
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp",
+        ".md": "text/markdown; charset=utf-8",
+        ".txt": "text/plain; charset=utf-8",
+        ".json": "application/json",
     }
     return mapping.get(suffix, "application/octet-stream")
 
 
 class WebhookClient:
-    def __init__(self, webhook_url: str, auth_header_name: str, secret: str,
-                 timeout_seconds: float = 30.0, transport: httpx.BaseTransport | None = None) -> None:
+    def __init__(
+        self,
+        webhook_url: str,
+        auth_header_name: str,
+        secret: str,
+        timeout_seconds: float = 30.0,
+        transport: httpx.BaseTransport | None = None,
+    ) -> None:
         self.webhook_url = webhook_url
         self.auth_header_name = auth_header_name
         self.secret = secret
         self.timeout_seconds = timeout_seconds
         self.transport = transport
 
-    def submit(self, project: Project, artifacts: list[Artifact], report: ValidationReport,
-               confirmations: HumanConfirmations) -> SubmissionOutcome:
+    def submit(
+        self,
+        project: Project,
+        artifacts: list[Artifact],
+        report: ValidationReport,
+        confirmations: HumanConfirmations,
+    ) -> SubmissionOutcome:
         if not report.automatic_checks_passed or not confirmations.all_confirmed:
-            return SubmissionOutcome(status="error", message="Le résultat doit être validé avant l'envoi.")
+            return SubmissionOutcome(
+                status="error",
+                message="Le résultat doit être validé avant l'envoi.",
+            )
         key = idempotency_key(project.id, project.version)
         metadata = build_metadata(project, artifacts, report, confirmations)
         headers = {"Idempotency-Key": key}
@@ -96,17 +114,29 @@ class WebhookClient:
             for index, artifact in enumerate(artifacts):
                 stream = Path(artifact.local_path).open("rb")  # noqa: SIM115
                 opened.append(stream)
-                files[f"artifact_{index}"] = (artifact.filename, stream, _mime_type(artifact.filename))
+                files[f"artifact_{index}"] = (
+                    artifact.filename,
+                    stream,
+                    _mime_type(artifact.filename),
+                )
             files["metadata"] = (
-                "metadata.json", json.dumps(metadata, ensure_ascii=False).encode("utf-8"),
+                "metadata.json",
+                json.dumps(metadata, ensure_ascii=False).encode("utf-8"),
                 "application/json; charset=utf-8",
             )
-            with httpx.Client(timeout=self.timeout_seconds, transport=self.transport,
-                              follow_redirects=False) as client:
+            with httpx.Client(
+                timeout=self.timeout_seconds,
+                transport=self.transport,
+                follow_redirects=False,
+            ) as client:
                 response = client.post(self.webhook_url, headers=headers, files=files)
         except httpx.TimeoutException:
-            return SubmissionOutcome(status="unknown", retryable=True, unknown=True,
-                                     message="Délai dépassé : le statut distant est inconnu.")
+            return SubmissionOutcome(
+                status="unknown",
+                retryable=True,
+                unknown=True,
+                message="Délai dépassé : le statut distant est inconnu.",
+            )
         except (httpx.NetworkError, OSError) as exc:
             return SubmissionOutcome(status="error", retryable=True, message=str(exc))
         finally:
@@ -115,24 +145,43 @@ class WebhookClient:
         try:
             payload = response.json()
         except ValueError:
-            return SubmissionOutcome(status="error", retryable=response.status_code >= 500,
-                                     message="La réponse du webhook n'est pas un JSON valide.",
-                                     http_status=response.status_code)
+            return SubmissionOutcome(
+                status="error",
+                retryable=response.status_code >= 500,
+                message="La réponse du webhook n'est pas un JSON valide.",
+                http_status=response.status_code,
+            )
         if not isinstance(payload, dict):
-            return SubmissionOutcome(status="error", message="La réponse JSON du webhook n'est pas un objet.",
-                                     http_status=response.status_code)
+            return SubmissionOutcome(
+                status="error",
+                message="La réponse JSON du webhook n'est pas un objet.",
+                http_status=response.status_code,
+            )
         remote_url = str(payload.get("remote_url") or "")
-        success_status = response.is_success and payload.get("status") in {"success", "duplicate"}
+        success_status = response.is_success and payload.get("status") in {
+            "success",
+            "duplicate",
+        }
         if success_status:
             return SubmissionOutcome(
-                status="success", execution_id=str(payload.get("execution_id", "")), remote_url=remote_url,
-                message=str(payload.get("message", "Envoi terminé.")), http_status=response.status_code,
-                duplicate_avoided=(payload.get("status") == "duplicate" or bool(payload.get("duplicate_avoided"))),
+                status="success",
+                execution_id=str(payload.get("execution_id", "")),
+                remote_url=remote_url,
+                message=str(payload.get("message", "Envoi terminé.")),
+                http_status=response.status_code,
+                duplicate_avoided=(
+                    payload.get("status") == "duplicate"
+                    or bool(payload.get("duplicate_avoided"))
+                ),
             )
         return SubmissionOutcome(
-            status="error", retryable=bool(payload.get("retryable", response.status_code >= 500)),
-            execution_id=str(payload.get("execution_id", "")), remote_url=remote_url,
-            message=str(payload.get("message", f"Erreur webhook HTTP {response.status_code}.")),
+            status="error",
+            retryable=bool(payload.get("retryable", response.status_code >= 500)),
+            execution_id=str(payload.get("execution_id", "")),
+            remote_url=remote_url,
+            message=str(
+                payload.get("message", f"Erreur webhook HTTP {response.status_code}.")
+            ),
             http_status=response.status_code,
         )
 
@@ -141,11 +190,19 @@ class WebhookClient:
         if self.secret:
             headers[self.auth_header_name] = self.secret
         try:
-            with httpx.Client(timeout=self.timeout_seconds, transport=self.transport) as client:
-                response = client.get(self.webhook_url, headers=headers, params={"probe": "true"})
+            with httpx.Client(
+                timeout=self.timeout_seconds,
+                transport=self.transport,
+            ) as client:
+                response = client.get(
+                    self.webhook_url,
+                    headers=headers,
+                    params={"probe": "true"},
+                )
             return SubmissionOutcome(
                 status="success" if response.is_success else "error",
-                retryable=response.status_code >= 500, http_status=response.status_code,
+                retryable=response.status_code >= 500,
+                http_status=response.status_code,
                 message=f"Réponse webhook HTTP {response.status_code}.",
             )
         except httpx.HTTPError as exc:
