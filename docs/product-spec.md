@@ -1,4 +1,4 @@
-# Visual AI Studio - Spécification produit v0.1.1
+# Visual AI Studio - Spécification produit v0.2.0
 
 ## 1. Vision
 
@@ -86,9 +86,9 @@ Un projet validé peut être exporté localement. Un envoi vers un webhook peut 
 
 Les projets et fichiers de travail sont conservés localement. L'utilisateur peut choisir le dossier de stockage depuis les paramètres de Visual AI Studio.
 
-## 12. Hors périmètre v0.1.1
+## 12. Hors périmètre v0.2.0
 
-La version 0.1.1 ne fournit pas directement d'authentification Instagram, de publication automatique vers un réseau social, d'appel direct à une API OpenAI, d'hébergement cloud, de fonctionnement multi-utilisateur, d'abonnement SaaS ou de marketplace.
+La version 0.2.0 ne fournit pas directement d'authentification Instagram, de publication automatique vers un réseau social, d'appel direct à une API OpenAI, d'hébergement cloud, de fonctionnement multi-utilisateur, d'abonnement SaaS ou de marketplace.
 
 ## 13. Architecture technique
 
@@ -102,4 +102,4 @@ Visual AI Studio est distribué sous forme d'application Windows autonome. L'uti
 
 Visual AI Studio, sa documentation et le package Studio Visuel sont distribués sous licence MIT.
 
-Version produit publique actuelle : **0.1.1**.
+Version produit publique actuelle : **0.2.0**.
