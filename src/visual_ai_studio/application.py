@@ -62,9 +62,11 @@ def migrate_legacy_database(current_database: Path, legacy_database: Path) -> bo
         if not backup.exists():
             shutil.copy2(current_database, backup)
 
-    with sqlite3.connect(legacy_database) as source:
-        with sqlite3.connect(current_database) as target:
-            source.backup(target)
+    with (
+        sqlite3.connect(legacy_database) as source,
+        sqlite3.connect(current_database) as target,
+    ):
+        source.backup(target)
 
     return True
 
