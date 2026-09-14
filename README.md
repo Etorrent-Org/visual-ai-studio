@@ -97,6 +97,10 @@ Trois statuts métier sont utilisés :
 - **Validé**
 - **Archivé**
 
+Les projets archivés restent visibles dans l'historique et peuvent être retrouvés avec le filtre de statut.
+
+Lors du premier lancement d'une installation Visual AI Studio sans projet, la version 0.2.1 peut reprendre automatiquement la base locale de l'ancienne application **IA-Art Studio**. La base historique d'origine n'est pas supprimée.
+
 ---
 
 ## 2. Créer un brief
@@ -108,7 +112,7 @@ Deux modes de sortie sont disponibles :
 - **Instagram** — mode par défaut, 1080 × 1350, ratio 4:5 ;
 - **Autre / personnalisé**.
 
-Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**.
+Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**. Le nombre peut être saisi directement ou ajusté avec les boutons `−` et `+`.
 
 La fiche synthèse et le Markdown IA-Art restent des livrables annexes séparés et ne comptent pas dans le nombre de visuels.
 
@@ -178,7 +182,7 @@ Les données de travail restent locales sur l'ordinateur.
 
 ## Télécharger
 
-La version Windows publique actuelle est **v0.2.0**.
+La version Windows publique actuelle est **v0.2.1**.
 
 ➡️ [Accéder à la dernière GitHub Release](https://github.com/Etorrent-Org/visual-ai-studio/releases/latest)
 
@@ -221,4 +225,4 @@ Visual AI Studio est distribué sous **licence MIT**. Consultez [`LICENSE`](LICE
 
 ## Version
 
-Version publique actuelle : **0.2.0**.
+Version publique actuelle : **0.2.1**.
