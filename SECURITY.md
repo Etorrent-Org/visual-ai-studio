@@ -8,7 +8,7 @@ If you discover a vulnerability, report it privately to the repository maintaine
 
 ## Sensitive information
 
-Visual AI Studio is designed to keep project data locally on the user's computer.
+Visual AI Studio is designed to keep project data locally in the Docker volume selected by the user.
 
 Do not commit:
 
@@ -21,6 +21,6 @@ Do not commit:
 - user project data;
 - personal export folders.
 
-## Releases
+## Distribution
 
-Official Windows binaries should only be downloaded from the GitHub Releases section of this repository.
+Visual AI Studio is distributed as a web application built with Docker from this repository. Verify the source branch or release tag before building or deploying an image.

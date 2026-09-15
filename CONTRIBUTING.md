@@ -15,7 +15,8 @@ Merci de votre intérêt pour Visual AI Studio.
 Merci d'indiquer au minimum :
 
 - la version de Visual AI Studio ;
-- la version de Windows ;
+- l'environnement Docker utilisé ;
+- le navigateur et sa version ;
 - les étapes permettant de reproduire le problème ;
 - le résultat attendu ;
 - le résultat obtenu ;
@@ -34,12 +35,26 @@ Pour une contribution de code :
 3. exécutez les contrôles du projet ;
 4. décrivez clairement le changement et son impact dans la pull request.
 
-Contrôles de référence :
+Contrôles de référence pour le backend :
 
-```powershell
-.\.venv\Scripts\python.exe -m ruff check src tests
-.\.venv\Scripts\python.exe -m mypy src
-.\.venv\Scripts\python.exe -m pytest -q
+```bash
+python -m pip install -e ".[web,web-dev]"
+ruff check src tests
+pytest -q tests/unit tests/integration
+```
+
+Contrôles de référence pour le frontend :
+
+```bash
+cd web
+npm install
+npm run build
+```
+
+Le build Docker doit également rester fonctionnel :
+
+```bash
+docker build -t visual-ai-studio-web:ci .
 ```
 
 ## Licence

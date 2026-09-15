@@ -32,19 +32,6 @@ web-dev = [
   "ruff>=0.9,<1",
   "mypy>=1.14,<2",
 ]
-desktop = [
-  "PySide6>=6.7,<7",
-]
-dev = [
-  "pytest>=8,<10",
-  "pytest-qt>=4.4,<5",
-  "ruff>=0.9,<1",
-  "mypy>=1.14,<2",
-  "PyInstaller>=6.11,<7",
-]
-
-[project.scripts]
-visual-ai-studio = "visual_ai_studio.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/visual_ai_studio"]
