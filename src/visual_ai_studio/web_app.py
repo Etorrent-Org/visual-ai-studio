@@ -5,7 +5,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 from uuid import UUID, uuid4
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -23,7 +23,7 @@ from visual_ai_studio.domain.models import (
     ValidationReport,
 )
 from visual_ai_studio.domain.normalization import find_close_values, normalize_value
-from visual_ai_studio.domain.output_modes import OUTPUT_MODE_PRESETS, OutputMode
+from visual_ai_studio.domain.output_modes import OUTPUT_MODE_PRESETS
 from visual_ai_studio.domain.statuses import ArtifactType, ProjectStatus
 from visual_ai_studio.domain.validators import validate_artifact_package
 from visual_ai_studio.infrastructure.automation_runs import AutomationRunRepository
@@ -211,11 +211,20 @@ def _report_from_storage(
         return None
 
     paths = [_resolve_artifact_path(context, project, item) for item in stored_artifacts]
-    return validate_artifact_package(
+    validated = validate_artifact_package(
         project.id,
         paths,
         expected_width=project.brief.target_width,
         expected_height=project.brief.target_height,
+    )
+    resolved_artifacts = [
+        item.model_copy(update={"local_path": path}, deep=True)
+        for item, path in zip(stored_artifacts, paths, strict=True)
+    ]
+    return ValidationReport(
+        artifacts=resolved_artifacts,
+        issues=validated.issues,
+        markdown_metadata=validated.markdown_metadata,
     )
 
 
@@ -241,11 +250,7 @@ async def _store_upload(upload: UploadFile, target: Path, max_bytes: int) -> Pat
 
 
 def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> FastAPI:
-    root = Path(
-        data_root
-        or os.getenv("VISUAL_AI_DATA_DIR", "").strip()
-        or "/data"
-    ).resolve()
+    root = Path(data_root or os.getenv("VISUAL_AI_DATA_DIR", "").strip() or "/data").resolve()
     root.mkdir(parents=True, exist_ok=True)
 
     context = build_application(root)
@@ -377,7 +382,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
     @app.post("/api/projects/{project_id}/reference")
     async def upload_reference(
         project_id: UUID,
-        file: UploadFile = File(...),
+        file: Annotated[UploadFile, File()],
     ) -> dict[str, str]:
         project = get_project(project_id)
         filename = _safe_filename(file.filename)
@@ -396,7 +401,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
     @app.post("/api/projects/{project_id}/artifacts")
     async def import_artifacts(
         project_id: UUID,
-        files: list[UploadFile] = File(...),
+        files: Annotated[list[UploadFile], File()],
     ) -> dict[str, Any]:
         project = get_project(project_id)
         if not files:
@@ -574,16 +579,12 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
         context.artifact_service.projects_dir = candidate
         return {"projects_dir": str(candidate)}
 
-    dist = Path(
-        web_dist
-        or os.getenv("VISUAL_AI_WEB_DIST", "").strip()
-        or "/app/web-dist"
-    )
+    dist = Path(web_dist or os.getenv("VISUAL_AI_WEB_DIST", "").strip() or "/app/web-dist")
     assets = dist / "assets"
     if assets.is_dir():
         app.mount("/assets", StaticFiles(directory=assets), name="assets")
 
-    @app.get("/{path:path}", include_in_schema=False)
+    @app.get("/{path:path}", include_in_schema=False, response_model=None)
     def spa(path: str) -> FileResponse | HTMLResponse:
         index = dist / "index.html"
         if index.is_file():
