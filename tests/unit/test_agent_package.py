@@ -2,7 +2,6 @@ from io import BytesIO
 from pathlib import Path
 from zipfile import ZipFile
 
-
 ROOT = Path(__file__).resolve().parents[2]
 AGENT_DIR = ROOT / "agent"
 
