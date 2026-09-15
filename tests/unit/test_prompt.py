@@ -30,8 +30,12 @@ def test_instagram_multi_image_prompt_describes_one_post() -> None:
     assert "Nombre de visuels principaux : 4" in result.text
     assert "4 visuels principaux cohérents à publier ensemble" in result.text
     assert "une seule publication" in result.text
-    assert "fiche de synthèse" in result.text
+    assert "JPEG/JPG réel" in result.text
+    assert "PNG est accepté uniquement comme source intermédiaire" in result.text
+    assert "fiche de synthèse PNG" in result.text
     assert "Markdown IA-Art" in result.text
+    assert "livrables obligatoires" in result.text
+    assert "N JPEG/JPG signés + 1 synthèse PNG + 1 Markdown + archive" in result.text
 
 
 def test_custom_prompt_accepts_free_format() -> None:

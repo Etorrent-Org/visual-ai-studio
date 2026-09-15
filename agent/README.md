@@ -1,8 +1,8 @@
 # Studio Visuel
 
-Visual AI Studio fonctionne avec un agent conversationnel séparé nommé **Studio Visuel**.
+Visual AI Studio Web fonctionne avec un agent conversationnel séparé nommé **Studio Visuel**.
 
-L'application Windows ne réalise aucun appel direct à une API OpenAI.
+L'application ne réalise aucun appel direct à une API OpenAI.
 
 ## Principe
 
@@ -28,7 +28,7 @@ Le fichier `studio-visuel-agent.zip` contient exactement :
 - `skill.zip` : Skill **IA-Art** aligné sur Instagram ;
 - `LICENSE` : licence MIT.
 
-Le Skill IA-Art est la source de vérité pour la signature, la synthèse, le Markdown Notion et le packaging final.
+Le Skill IA-Art est la source de vérité pour la signature, le format final des visuels, la synthèse, le Markdown Notion et le packaging final.
 
 ## Modes pris en charge par Visual AI Studio
 
@@ -37,13 +37,24 @@ Le Skill IA-Art est la source de vérité pour la signature, la synthèse, le Ma
 
 Le workflow IA-Art de publication utilise uniquement Instagram.
 
-Instagram prend en charge une publication composée de **1 à 10 visuels principaux cohérents**. Studio Visuel doit produire exactement le nombre demandé. La fiche synthèse et le Markdown restent des livrables annexes séparés et ne sont jamais comptés parmi les visuels du post.
+Instagram prend en charge une publication composée de **1 à 10 visuels principaux cohérents**. Studio Visuel doit produire exactement le nombre demandé.
+
+### Contrat de livraison IA-Art
+
+Après validation des images, IA-Art doit toujours livrer :
+
+- exactement **N images Instagram signées en JPEG/JPG**, 1080 × 1350, ratio 4:5 ;
+- **une fiche de synthèse PNG unique** ;
+- **un Markdown Notion unique** ;
+- une archive contenant exactement ces **N+2 fichiers éditoriaux**.
+
+Les PNG générés par le moteur d'image peuvent être utilisés comme sources intermédiaires, mais **ne sont pas des livrables Instagram finaux**. La fiche synthèse et le Markdown sont obligatoires et ne sont jamais comptés parmi les N visuels du post.
 
 ## Répartition des responsabilités
 
 - **Visual AI Studio** structure le brief et transmet le nombre de visuels demandé ;
 - **Studio Visuel** prépare la direction artistique, le storyboard et exactement N prompts/images ;
-- **IA-Art** signe les N images et fabrique un paquet unique avec une synthèse et un Markdown Notion.
+- **IA-Art** signe les N images, les livre en JPEG/JPG et fabrique un paquet unique avec une synthèse et un Markdown Notion.
 
 Aucune clé API OpenAI n'est nécessaire dans Visual AI Studio.
 
