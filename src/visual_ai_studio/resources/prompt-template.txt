@@ -27,7 +27,8 @@ PUBLICATION
 Nombre de visuels principaux : {{post_image_count}}
 Structure : {{post_structure}}
 Les visuels principaux appartiennent à une seule publication et doivent rester cohérents entre eux.
-La fiche de synthèse et le Markdown IA-Art restent des livrables annexes séparés et leur structure ne doit pas être modifiée.
+Pour Instagram, les visuels finaux signés doivent être livrés en JPEG/JPG réel ; le PNG est accepté uniquement comme source intermédiaire.
+Après validation des visuels, la fiche de synthèse PNG et le Markdown IA-Art sont des livrables obligatoires, séparés des visuels principaux et non comptés dans leur nombre.
 
 FORMAT
 Canal : {{channel}}
@@ -53,7 +54,8 @@ Respecte le workflow conversationnel de Studio Visuel :
 - aucune génération d'image avant validation du brief et de la direction artistique ;
 - aucun branding, logo, watermark ou signature non demandé ;
 - aucun texte ajouté dans l'image sauf demande explicite ci-dessus ;
-- si plusieurs visuels principaux sont demandés, conçois-les comme une série cohérente destinée à un seul post, et non comme des variantes indépendantes.
+- si plusieurs visuels principaux sont demandés, conçois-les comme une série cohérente destinée à un seul post, et non comme des variantes indépendantes ;
+- après validation des images, poursuivre obligatoirement jusqu'au paquet IA-Art complet : N JPEG/JPG signés + 1 synthèse PNG + 1 Markdown + archive.
 
 Commence maintenant par l'Étape 1 — Brief.
 

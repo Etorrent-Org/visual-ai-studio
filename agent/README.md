@@ -30,6 +30,8 @@ Le fichier `studio-visuel-agent.zip` contient exactement :
 
 Le Skill IA-Art est la source de vérité pour la signature, la synthèse, le Markdown Notion et le packaging final.
 
+Pour Instagram, les visuels éditoriaux finaux sont toujours livrés en **JPEG/JPG 1080 × 1350**. Les PNG ne servent qu'aux étapes intermédiaires lorsque nécessaire. Une livraison IA-Art complète contient obligatoirement les N JPEG/JPG signés, une fiche de synthèse PNG, un Markdown Notion unique et l'archive éditoriale correspondante.
+
 ## Modes pris en charge par Visual AI Studio
 
 - Instagram — mode par défaut, 1080 × 1350, ratio 4:5 ;
@@ -43,7 +45,7 @@ Instagram prend en charge une publication composée de **1 à 10 visuels princip
 
 - **Visual AI Studio** structure le brief et transmet le nombre de visuels demandé ;
 - **Studio Visuel** prépare la direction artistique, le storyboard et exactement N prompts/images ;
-- **IA-Art** signe les N images et fabrique un paquet unique avec une synthèse et un Markdown Notion.
+- **IA-Art** signe les N images, convertit les livrables Instagram finaux en JPEG/JPG et fabrique un paquet unique avec une synthèse PNG et un Markdown Notion.
 
 Aucune clé API OpenAI n'est nécessaire dans Visual AI Studio.
 

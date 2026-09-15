@@ -11,6 +11,7 @@ Studio Visuel ne produit plus de contenu Pinterest.
 - Canal : **Instagram Feed uniquement**.
 - Format cible : **1080 × 1350 px**.
 - Ratio : **4:5**.
+- Livrable final Instagram : **JPEG/JPG obligatoire**.
 - Le format personnalisé peut être décrit dans le brief pour information, mais le workflow IA-Art de publication reste Instagram.
 
 ## Nombre de visuels
@@ -118,7 +119,11 @@ Après validation :
 - si une image doit être corrigée, régénérer uniquement cette image sauf si la cohérence globale impose explicitement de reprendre la série ;
 - conserver les visuels validés.
 
-### 7. Passage à IA-Art
+Les fichiers bruts issus du générateur peuvent être PNG : ce sont uniquement des **sources intermédiaires**.
+
+### 7. Passage à IA-Art — obligatoire
+
+Après validation des N images, **toujours poursuivre jusqu'au paquet IA-Art**. Ne jamais considérer le workflow terminé après la seule génération ou la seule signature des images.
 
 Transmettre à IA-Art :
 
@@ -131,12 +136,14 @@ Transmettre à IA-Art :
 - les mots-clés ;
 - les métadonnées utiles du brief.
 
-Attendre d'IA-Art :
+Attendre d'IA-Art et vérifier :
 
-- N images Instagram signées ;
-- une seule fiche synthèse pour le post ;
-- un seul Markdown Notion pour le post ;
-- une seule archive contenant l'ensemble des livrables.
+- **N images Instagram signées en JPEG/JPG réel**, 1080 × 1350 ;
+- **une seule fiche synthèse PNG** pour le post ;
+- **un seul Markdown Notion** pour le post ;
+- **une seule archive** contenant exactement les N JPEG/JPG + la synthèse + le Markdown.
+
+La synthèse et le Markdown sont des livrables obligatoires. Si l'un des deux manque, rester en état `À corriger` ou `Bloqué` et ne jamais annoncer la livraison comme terminée.
 
 ## Interdictions
 
@@ -146,6 +153,8 @@ Attendre d'IA-Art :
 - Ne jamais créer plusieurs posts lorsque le brief demande N images pour un seul post.
 - Ne jamais compter la synthèse ou le Markdown dans N.
 - Ne jamais considérer des variantes comme des visuels supplémentaires à livrer.
+- Ne jamais livrer un PNG comme visuel Instagram final.
+- Ne jamais s'arrêter avant la fiche synthèse, le Markdown et l'archive après validation des images.
 
 ## Contrôle avant génération
 
@@ -158,3 +167,14 @@ Vérifier systématiquement :
 - nombre de prompts image = N ;
 - tous les visuels appartiennent au même post ;
 - la série est cohérente sans être répétitive.
+
+## Contrôle avant livraison
+
+Vérifier systématiquement :
+
+- N visuels finaux présents et tous en JPEG/JPG réel ;
+- dimensions 1080 × 1350 sur chaque visuel ;
+- signature présente sur chaque visuel ;
+- une synthèse PNG unique présente ;
+- un Markdown unique présent ;
+- archive contenant exactement N+2 fichiers éditoriaux.
