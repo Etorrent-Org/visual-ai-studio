@@ -24,7 +24,32 @@ Le workflow est volontairement simple :
 
 ## Package
 
-Le fichier `studio-visuel-agent.zip` contient exactement :
+Les ZIP générés ne sont plus versionnés directement afin d'éviter toute corruption d'un binaire lors d'une mise à jour distante.
+
+La source packagée du Skill IA-Art 5.0.2 est stockée sous forme de segments Base64 dans :
+
+`agent/package/skill.zip.b64.part*`
+
+Le script `agent/package_agent.py` :
+
+1. reconstitue `skill.zip` ;
+2. vérifie son SHA-256 attendu ;
+3. vérifie que le ZIP IA-Art est lisible ;
+4. génère `studio-visuel-agent.zip` ;
+5. vérifie la structure du package final.
+
+Pour reconstruire localement les packages :
+
+```powershell
+python agent/package_agent.py
+```
+
+Les fichiers sont créés dans `agent/dist/` :
+
+- `skill.zip` : Skill **IA-Art** prêt à être installé dans ChatGPT ;
+- `studio-visuel-agent.zip` : package complet Studio Visuel.
+
+Le package Studio Visuel contient exactement :
 
 - `studio-visuel-agent.md` : instructions Instagram multi-images de l'agent ;
 - `skill.zip` : Skill **IA-Art** aligné sur Instagram ;
@@ -43,7 +68,7 @@ Au message `continue` — ou un équivalent bref comme `ok`, `oui`, `vas-y` ou `
 1. découverte des N PNG sources ;
 2. signature et conversion en JPEG/JPG réel ;
 3. création de la synthèse PNG ;
-4. création de le Markdown Notion ;
+4. création du Markdown Notion ;
 5. création et vérification de l'archive complète.
 
 Les PNG sources ne doivent jamais être présentés comme la livraison finale.
