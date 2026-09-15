@@ -1,12 +1,14 @@
 import hashlib
 from io import BytesIO
 from pathlib import Path
+from runpy import run_path
 from zipfile import ZipFile
-
-from agent.package_agent import SKILL_SHA256, build_agent_package
 
 ROOT = Path(__file__).resolve().parents[2]
 AGENT_DIR = ROOT / "agent"
+PACKAGE_AGENT = run_path(str(AGENT_DIR / "package_agent.py"))
+SKILL_SHA256 = PACKAGE_AGENT["SKILL_SHA256"]
+build_agent_package = PACKAGE_AGENT["build_agent_package"]
 
 
 def test_studio_visuel_package_embeds_current_agent_and_ia_art_contract(tmp_path: Path) -> None:
