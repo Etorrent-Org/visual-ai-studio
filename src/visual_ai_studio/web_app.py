@@ -559,7 +559,10 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
             candidate = root / candidate
         candidate = candidate.resolve()
         if not _is_within(candidate, root):
-            raise HTTPException(status_code=400, detail="Le dossier doit rester dans le volume Docker.")
+            raise HTTPException(
+                status_code=400,
+                detail="Le dossier doit rester dans le volume Docker.",
+            )
         if not candidate.is_dir():
             raise HTTPException(status_code=400, detail="Le dossier sélectionné n'existe pas.")
 
