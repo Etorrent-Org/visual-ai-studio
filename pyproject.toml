@@ -40,7 +40,6 @@ dev = [
 
 [project.scripts]
 visual-ai-studio = "visual_ai_studio.main:main"
-visual-ai-studio-web = "visual_ai_studio.web_app:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/visual_ai_studio"]
