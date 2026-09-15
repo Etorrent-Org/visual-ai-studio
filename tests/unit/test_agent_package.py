@@ -1,13 +1,18 @@
+import hashlib
 from io import BytesIO
 from pathlib import Path
 from zipfile import ZipFile
+
+from agent.package_agent import SKILL_SHA256, build_agent_package
 
 ROOT = Path(__file__).resolve().parents[2]
 AGENT_DIR = ROOT / "agent"
 
 
-def test_studio_visuel_package_embeds_current_agent_and_ia_art_contract() -> None:
-    package_path = AGENT_DIR / "studio-visuel-agent.zip"
+def test_studio_visuel_package_embeds_current_agent_and_ia_art_contract(tmp_path: Path) -> None:
+    skill_path, package_path = build_agent_package(tmp_path)
+
+    assert hashlib.sha256(skill_path.read_bytes()).hexdigest() == SKILL_SHA256
 
     with ZipFile(package_path) as package:
         assert package.namelist() == ["LICENSE", "studio-visuel-agent.md", "skill.zip"]
@@ -15,8 +20,10 @@ def test_studio_visuel_package_embeds_current_agent_and_ia_art_contract() -> Non
             AGENT_DIR / "studio-visuel-agent.md"
         ).read_bytes()
         skill_zip = package.read("skill.zip")
+        assert skill_zip == skill_path.read_bytes()
 
     with ZipFile(BytesIO(skill_zip)) as skill_package:
+        assert skill_package.testzip() is None
         skill_text = skill_package.read("ia-art/SKILL.md").decode("utf-8")
         format_rules = skill_package.read(
             "ia-art/references/format-rules.md"
