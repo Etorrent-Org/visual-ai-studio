@@ -1,5 +1,17 @@
 # Changelog
 
+## Non publié
+
+### Nettoyage
+
+- suppression complète de l'interface desktop PySide6 et de ses tests UI ;
+- suppression du point d'entrée desktop, des ressources QSS/ICO et des scripts de lancement associés ;
+- suppression de l'installateur Inno Setup, du workflow Windows et des scripts PyInstaller/release legacy ;
+- suppression des anciennes captures de l'interface desktop et de la documentation de parité desktop/web ;
+- retrait des dépendances de développement PySide6, pytest-qt et PyInstaller ;
+- documentation recentrée sur l'application web Docker ;
+- conservation du backend Python/FastAPI et de la compatibilité des données historiques.
+
 ## 0.3.0 - 2026-09-15
 
 Migration de Visual AI Studio vers une application web Docker à parité fonctionnelle avec la version desktop 0.2.1.

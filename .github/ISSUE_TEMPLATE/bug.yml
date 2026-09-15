@@ -11,19 +11,24 @@ body:
     attributes:
       label: Version de Visual AI Studio
       options:
-        - v0.1.0
+        - v0.3.x
         - Version de développement
         - Autre
     validations:
       required: true
-  - type: dropdown
-    id: windows
+  - type: input
+    id: environment
     attributes:
-      label: Version de Windows
-      options:
-        - Windows 11
-        - Windows 10
-        - Autre
+      label: Environnement Docker
+      description: Docker Desktop ou Docker Engine, avec le système hôte si utile.
+      placeholder: Docker Desktop 4.x sur Windows 11
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Navigateur
+      placeholder: Chrome 152, Edge 152, Firefox ...
     validations:
       required: true
   - type: textarea

@@ -6,21 +6,19 @@ Visual AI Studio est une application web locale distribuée avec Docker permetta
 
 La génération est réalisée avec un composant conversationnel séparé nommé **Studio Visuel**. Visual AI Studio n'effectue aucun appel direct à une API OpenAI et conserve une approche **local-first**.
 
-La version 0.3.0 change l'interface et le mode d'exécution, pas le périmètre métier. La matrice de parité fait foi : [`web-functional-parity.md`](web-functional-parity.md).
-
 ## 2. Composants
 
 ### Visual AI Studio Web
 
-L'application prend en charge exactement les fonctions déjà présentes en 0.2.1 : création et suivi des projets, brief, préparation du prompt, import des résultats, contrôle des fichiers, galerie, validation humaine, export local et envoi facultatif vers le webhook.
+L'application prend en charge la création et le suivi des projets, le brief, la préparation du prompt, l'import des résultats, le contrôle des fichiers, la galerie, la validation humaine, l'export local et l'envoi facultatif vers le webhook.
 
 ### Studio Visuel
 
-Studio Visuel reste l'agent conversationnel utilisé dans ChatGPT. Sa responsabilité et son package ne changent pas.
+Studio Visuel est l'agent conversationnel utilisé dans ChatGPT pour préparer la direction artistique, le storyboard et les visuels demandés.
 
 ### IA-Art
 
-Le Skill IA-Art reste responsable de la signature et du packaging des visuels Instagram. Visual AI Studio n'en réimplémente pas la logique.
+Le Skill IA-Art est responsable de la signature et du packaging des visuels Instagram. Pour Instagram, les livrables finaux sont des JPEG/JPG 1080 × 1350 accompagnés d'une synthèse PNG, d'un Markdown Notion et de l'archive éditoriale complète.
 
 ## 3. Workflow principal
 
@@ -42,7 +40,7 @@ Le passage entre Visual AI Studio et Studio Visuel reste volontairement manuel.
 
 Trois statuts métier sont visibles : **Brief**, **Validé** et **Archivé**.
 
-La page Projets conserve :
+La page Projets propose :
 
 - les quatre KPI ;
 - la recherche par nom, collection ou style ;
@@ -57,7 +55,7 @@ La page Projets conserve :
 
 ### Instagram
 
-Instagram reste le mode par défaut : **1080 × 1350 px**, ratio **4:5**.
+Instagram est le mode par défaut : **1080 × 1350 px**, ratio **4:5**.
 
 Une publication peut comporter **1 à 10 visuels principaux**, réglés avec les boutons `−` et `+`. Plusieurs visuels représentent une série cohérente destinée à un seul post.
 
@@ -65,13 +63,11 @@ Une publication peut comporter **1 à 10 visuels principaux**, réglés avec les
 
 L'utilisateur peut définir les dimensions, le ratio, le style, les contraintes, le texte dans l'image et la destination prévue.
 
-Aucun autre mode de sortie n'est ajouté en 0.3.0.
-
 ## 6. Brief créatif
 
-Tous les champs 0.2.1 sont conservés : nom, collection, style, idée, audience, nombre de visuels, texte, notes, dimensions, ratio, objectif, sujet, décor, ambiance, palette, lumière, matières, composition, détail, éléments obligatoires, éléments interdits, image et note de référence.
+Le brief comprend : nom, collection, style, idée, audience, nombre de visuels, texte, notes, dimensions, ratio, objectif, sujet, décor, ambiance, palette, lumière, matières, composition, détail, éléments obligatoires, éléments interdits, image et note de référence.
 
-Sont également conservés :
+Sont également pris en charge :
 
 - l'autosauvegarde ;
 - la normalisation des collections ;
@@ -81,9 +77,9 @@ Sont également conservés :
 
 ## 7. Préparation Studio Visuel
 
-Visual AI Studio utilise le même `prompt_builder.py` et le même `prompt-template.txt` que la version desktop.
+Visual AI Studio utilise `prompt_builder.py` et `prompt-template.txt` pour produire le prompt de lancement.
 
-La page conserve :
+La page fournit :
 
 - le prompt intégral ;
 - sa version ;
@@ -97,7 +93,7 @@ La page conserve :
 
 Formats pris en charge : PNG, JPG, JPEG, WebP, Markdown, TXT et JSON.
 
-Le backend réutilise le service d'artefacts et les validateurs existants. Les règles ne changent pas :
+Les règles de validation couvrent :
 
 - limite de taille par fichier ;
 - image lisible ;
@@ -109,21 +105,17 @@ Le backend réutilise le service d'artefacts et les validateurs existants. Les r
 - manifeste facultatif ;
 - fichier inconnu signalé sans blocage.
 
-Les images restent présentées dans une galerie. La validation finale reste explicite et humaine : **Je valide ce résultat**.
+Les images sont présentées dans une galerie. La validation finale reste explicite et humaine : **Je valide ce résultat**.
 
 ## 9. Export local
 
-Le service d'export existant crée toujours le dossier `<slug>-v<version>` contenant tous les artefacts et `project.json`.
+Le service d'export crée le dossier `<slug>-v<version>` contenant tous les artefacts et `project.json`.
 
-Un navigateur ne pouvant pas écrire arbitrairement dans le système de fichiers du poste client, l'interface web transmet ce dossier sous forme d'archive ZIP. Le contenu métier de l'export reste identique.
+L'interface web transmet ce dossier sous forme d'archive ZIP, car un navigateur ne peut pas écrire arbitrairement dans le système de fichiers du poste client.
 
 ## 10. n8n / webhook
 
-La compatibilité n8n est un invariant de la version 0.3.0.
-
-Le backend appelle directement le même `WebhookClient` et le même `SubmissionService` que la version desktop.
-
-Le contrat reste :
+La compatibilité n8n est un invariant :
 
 - `schema_version: 1.0` ;
 - `source: visual-ai-studio` ;
@@ -135,22 +127,22 @@ Le contrat reste :
 - `Idempotency-Key` identique ;
 - header d'authentification identique ;
 - réponses `success` et `duplicate` ;
-- champs `execution_id`, `remote_url`, `message`, `retryable`, `duplicate_avoided` inchangés ;
-- journalisation dans `automation_runs` inchangée.
+- champs `execution_id`, `remote_url`, `message`, `retryable`, `duplicate_avoided` ;
+- journalisation dans `automation_runs`.
 
 Une URL utilisant `host.docker.internal` peut être nécessaire pour atteindre un n8n exposé sur le poste hôte. Cette différence est uniquement réseau.
 
 ## 11. Paramètres
 
-L'interface expose toujours uniquement le dossier des projets.
+L'interface expose uniquement le dossier des projets.
 
-Dans le web, le dossier sélectionnable reste volontairement à l'intérieur du volume Docker monté sous `/data`. Les paramètres techniques restent hors de l'UI et peuvent être fournis par la configuration existante ou par variables d'environnement Docker.
+Le dossier sélectionnable reste volontairement à l'intérieur du volume Docker monté sous `/data`. Les paramètres techniques restent hors de l'UI et peuvent être fournis par variables d'environnement Docker.
 
 ## 12. Données et historique
 
-SQLite est conservé.
+SQLite est utilisé pour les projets et l'historique.
 
-La structure des projets et les repositories Python restent utilisés. Les anciens types de livrables Pinterest, Instagram, synthèse et Notion restent lisibles pour préserver l'historique, sans redevenir des modes de création.
+La compatibilité de lecture des données et types de livrables existants est conservée afin de ne pas perdre l'historique utilisateur.
 
 Un dossier hôte contenant `visual-ai-studio.db` et `projects` peut être monté dans `/data` pour reprendre les données existantes.
 
@@ -171,9 +163,9 @@ Le frontend React ne duplique pas la logique métier Python.
 
 ## 14. Distribution
 
-La distribution principale devient Docker. Le `Dockerfile` construit le frontend puis le backend dans une image unique. Docker Compose expose par défaut l'interface sur le port hôte 3093 et monte `/data` en volume persistant.
+La distribution est exclusivement web/Docker. Le `Dockerfile` construit le frontend puis le backend dans une image unique. Docker Compose expose par défaut l'interface sur le port hôte 3093 et monte `/data` en volume persistant.
 
-La chaîne Windows 0.2.1 reste disponible comme héritage et n'est plus déclenchée automatiquement.
+Le dépôt ne contient plus d'interface PySide6 ni de chaîne de build Windows.
 
 ## 15. Hors périmètre v0.3.0
 
@@ -190,6 +182,6 @@ La version 0.3.0 n'ajoute pas :
 
 ## 16. Licence et état
 
-Visual AI Studio, sa documentation et le package Studio Visuel restent distribués sous licence MIT.
+Visual AI Studio, sa documentation et le package Studio Visuel sont distribués sous licence MIT.
 
 Version web : **0.3.0**.

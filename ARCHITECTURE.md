@@ -4,13 +4,13 @@
 
 Visual AI Studio **0.3.0** est une application web locale distribuée avec Docker.
 
-- Interface : React / Vite / Motion ;
+- interface : React / Vite / Motion ;
 - API : FastAPI ;
-- logique métier : Python existant ;
+- logique métier : Python ;
 - données : SQLite ;
 - fichiers : volume Docker local ;
 - agent créatif : Studio Visuel dans ChatGPT ;
-- intégration externe : webhook n8n facultatif et compatible avec le contrat 1.0 existant.
+- intégration externe : webhook n8n facultatif, contrat 1.0.
 
 ## Vue simple
 
@@ -25,16 +25,10 @@ flowchart LR
     R --> P[Prompt de lancement]
     P -. copie manuelle .-> SV[Studio Visuel dans ChatGPT]
     SV -. livrables manuels .-> R
-    APP -. contrat 1.0 inchangé .-> N8N[n8n Webhook]
+    APP -. contrat 1.0 .-> N8N[n8n Webhook]
 ```
 
 Visual AI Studio ne réalise aucun appel direct à une API OpenAI. Le passage vers Studio Visuel et le retour des livrables restent manuels.
-
-## Principe de migration
-
-La version web conserve les modèles, repositories, services et validateurs Python existants. L'interface PySide6 n'est plus le frontend principal mais reste dans le dépôt pour préserver l'historique et permettre un build desktop legacy manuel.
-
-La parité fonctionnelle est figée dans [`docs/web-functional-parity.md`](docs/web-functional-parity.md).
 
 ## Frontend
 
@@ -47,15 +41,16 @@ Le dossier `web` contient l'interface React :
 - export / webhook ;
 - paramètres de stockage.
 
-Le frontend ne contient pas de logique métier parallèle : il appelle l'API FastAPI, qui réutilise les services Python existants.
+Le frontend ne duplique pas la logique métier : il appelle l'API FastAPI.
 
 ## Backend
 
 `src/visual_ai_studio/web_app.py` expose les routes nécessaires au frontend et délègue à :
 
 - `domain` pour les modèles et règles ;
-- `services` pour le prompt, les artefacts, l'export et la soumission ;
-- `infrastructure` pour SQLite, les paramètres, le webhook et les journaux d'automatisation.
+- `services` pour les cas d'usage, les artefacts, l'export et la soumission ;
+- `infrastructure` pour SQLite, les paramètres, le webhook et les journaux d'automatisation ;
+- `application.py` pour construire le contexte applicatif partagé.
 
 Le backend sert également le bundle frontend compilé en production.
 
@@ -72,11 +67,11 @@ Le conteneur utilise `/data` comme volume persistant :
 
 Le dossier hôte est défini par `VISUAL_AI_HOST_DATA_DIR` dans Docker Compose.
 
+La compatibilité de lecture des données existantes est conservée afin de ne pas perdre l'historique utilisateur.
+
 ## n8n
 
-Le chemin réseau peut changer dans Docker, mais pas le contrat applicatif.
-
-Le backend appelle le même `WebhookClient` et le même `SubmissionService` que le desktop :
+Le chemin réseau peut changer dans Docker, mais pas le contrat applicatif :
 
 - `schema_version = 1.0` ;
 - multipart `artifact_0...artifact_N` + `metadata` ;
@@ -104,13 +99,13 @@ Le `Dockerfile` est multi-stage :
 - `src/visual_ai_studio/domain` : règles métier ;
 - `src/visual_ai_studio/services` : cas d'usage ;
 - `src/visual_ai_studio/infrastructure` : persistance et intégrations ;
-- `src/visual_ai_studio/ui` : frontend desktop legacy ;
-- `src/visual_ai_studio/resources` : ressources partagées ;
-- `agent` : package Studio Visuel ;
-- `Dockerfile` / `docker-compose.yml` : distribution principale ;
-- `.github/workflows/web-docker.yml` : CI web ;
-- `.github/workflows/release-windows.yml` : build Windows legacy manuel.
+- `src/visual_ai_studio/resources` : ressources partagées du backend ;
+- `agent` : package Studio Visuel et Skill IA-Art ;
+- `Dockerfile` / `docker-compose.yml` : distribution ;
+- `.github/workflows/web-docker.yml` : CI web et Docker.
+
+L'ancienne interface desktop PySide6 et la chaîne de build Windows ont été retirées du dépôt.
 
 ## Distribution
 
-La distribution principale est l'image Docker construite depuis le dépôt. La version Windows 0.2.1 reste disponible comme version historique, mais n'est plus publiée automatiquement.
+La distribution du projet est exclusivement web/Docker. Le dépôt ne produit plus d'installateur Windows.

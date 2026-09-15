@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-import os
 from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 from PIL import Image
-
-os.environ.setdefault(
-    "QT_QPA_PLATFORM",
-    "offscreen",
-)
 
 
 @pytest.fixture

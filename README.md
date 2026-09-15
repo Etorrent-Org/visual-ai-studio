@@ -31,20 +31,16 @@ Visual AI Studio ne réalise **aucun appel direct à une API OpenAI** et ne néc
 
 ---
 
-## Version web Docker 0.3.0
-
-La version 0.3.0 remplace l'interface Windows par une interface web React très graphique, sans modifier le périmètre métier.
+## Stack web Docker
 
 - **Frontend** : React, Vite, Motion ;
-- **Backend** : FastAPI ;
+- **Backend** : FastAPI / Python ;
 - **Données** : SQLite et fichiers locaux ;
 - **Déploiement** : Docker / Docker Compose ;
 - **Stockage persistant** : volume `/data` ;
 - **Port hôte par défaut** : `3093`.
 
-La logique Python existante est conservée pour les projets, le prompt, les validations, les exports et le webhook.
-
-La matrice de parité complète est documentée dans [`docs/web-functional-parity.md`](docs/web-functional-parity.md).
+Le dépôt ne contient plus l'ancienne application desktop PySide6 ni sa chaîne Windows.
 
 ---
 
@@ -68,43 +64,38 @@ Deux modes de sortie sont disponibles :
 
 Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**.
 
-Le brief conserve tous les champs de la version desktop : projet, collection, style, idée, audience, texte, notes, dimensions, ratio, direction créative avancée et image de référence.
+Le brief prend en charge le projet, la collection, le style, l'idée, l'audience, le texte, les notes, les dimensions, le ratio, la direction créative avancée et l'image de référence.
 
-L'autosauvegarde, la détection de collections proches, l'invalidation du prompt après modification du brief et le versionnement sont conservés.
+L'autosauvegarde, la détection de collections proches, l'invalidation du prompt après modification du brief et le versionnement sont intégrés.
 
 ### Studio Visuel et IA-Art
 
-Visual AI Studio génère le même prompt de lancement qu'auparavant. Studio Visuel et le Skill IA-Art restent séparés de l'application.
+Visual AI Studio prépare le prompt de lancement destiné à Studio Visuel. Studio Visuel et le Skill IA-Art restent séparés de l'application.
 
 Le package est disponible dans :
 
 `agent/studio-visuel-agent.zip`
 
+Pour Instagram, IA-Art livre les visuels finaux en **JPEG/JPG 1080 × 1350**, avec une synthèse PNG, un Markdown Notion et l'archive complète.
+
 ### Import et validation
 
-Formats pris en charge :
+Formats pris en charge : PNG, JPG/JPEG, WebP, Markdown, TXT et JSON.
 
-- PNG ;
-- JPG / JPEG ;
-- WebP ;
-- Markdown ;
-- TXT ;
-- JSON.
-
-Les contrôles existants sont conservés : lisibilité, dimensions, UTF-8, JSON, SHA-256, image obligatoire et manifeste facultatif. Les images sont présentées dans une galerie et la validation finale reste humaine : **Je valide ce résultat**.
+Les contrôles couvrent la lisibilité, les dimensions, l'UTF-8, le JSON, le SHA-256, la présence d'au moins une image et le manifeste facultatif. Les images sont présentées dans une galerie et la validation finale reste humaine : **Je valide ce résultat**.
 
 ### Export
 
 Un projet validé peut :
 
-- être téléchargé sous forme d'une archive contenant le même dossier `<slug>-v<version>`, tous les livrables et `project.json` ;
+- être téléchargé sous forme d'une archive contenant le dossier `<slug>-v<version>`, tous les livrables et `project.json` ;
 - être transmis au webhook n8n existant.
 
 ---
 
 ## Compatibilité n8n
 
-Le contrat n8n reste **strictement inchangé**.
+Le contrat n8n reste **strictement inchangé** :
 
 - `schema_version: 1.0` ;
 - `source: visual-ai-studio` ;
@@ -114,8 +105,6 @@ Le contrat n8n reste **strictement inchangé**.
 - même header d'authentification ;
 - mêmes réponses `success` et `duplicate` ;
 - mêmes champs `execution_id`, `remote_url`, `message`, `retryable` et `duplicate_avoided`.
-
-La version web utilise directement le même `WebhookClient` et le même `SubmissionService` Python que la version desktop.
 
 Si n8n tourne sur le poste hôte et Visual AI Studio dans Docker Desktop, l'URL du webhook peut utiliser `host.docker.internal` à la place de `127.0.0.1` / `localhost`. Seule l'adresse réseau change ; le flux n8n ne change pas.
 
@@ -154,7 +143,7 @@ Les principaux réglages sont disponibles dans `.env.example` :
 - `VISUAL_AI_MAX_FILE_SIZE_MB` ;
 - `VISUAL_AI_AGENT_URL`.
 
-Les paramètres techniques n8n restent volontairement hors de l'interface graphique, comme dans la version 0.2.1.
+Les paramètres techniques n8n restent volontairement hors de l'interface graphique.
 
 ---
 
@@ -164,10 +153,12 @@ Les paramètres techniques n8n restent volontairement hors de l'interface graphi
 
 ```bash
 python -m venv .venv
-.venv/bin/python -m pip install -e ".[web,desktop,dev]"
-.venv/bin/python -m pytest -q tests/unit tests/integration
-uvicorn visual_ai_studio.web_app:app --reload
+.venv/bin/python -m pip install -e ".[web,web-dev]"
+VISUAL_AI_DATA_DIR=./data .venv/bin/python -m pytest -q tests/unit tests/integration
+VISUAL_AI_DATA_DIR=./data .venv/bin/uvicorn visual_ai_studio.web_app:app --reload
 ```
+
+Sous PowerShell, définir d'abord `$env:VISUAL_AI_DATA_DIR = ".\data"`.
 
 ### Frontend
 
@@ -178,12 +169,6 @@ npm run dev
 ```
 
 Le serveur Vite redirige `/api` vers le backend local sur le port 8000.
-
----
-
-## Ancienne version Windows
-
-La version Windows **v0.2.1** reste disponible comme version historique. Son workflow de build est conservé uniquement en déclenchement manuel et n'est plus la distribution principale.
 
 ---
 
