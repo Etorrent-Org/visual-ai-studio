@@ -1,0 +1,23 @@
+services:
+  visual-ai-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: visual-ai-studio-web:0.3.0
+    container_name: visual-ai-studio
+    restart: unless-stopped
+    ports:
+      - "${VISUAL_AI_PORT:-3093}:8000"
+    environment:
+      VISUAL_AI_DATA_DIR: /data
+      VISUAL_AI_WEB_DIST: /app/web-dist
+      VISUAL_AI_WEBHOOK_URL: ${VISUAL_AI_WEBHOOK_URL:-}
+      VISUAL_AI_WEBHOOK_SECRET: ${VISUAL_AI_WEBHOOK_SECRET:-}
+      VISUAL_AI_AUTH_HEADER: ${VISUAL_AI_AUTH_HEADER:-X-Visual-AI-Token}
+      VISUAL_AI_AGENT_URL: ${VISUAL_AI_AGENT_URL:-}
+      VISUAL_AI_TIMEOUT_SECONDS: ${VISUAL_AI_TIMEOUT_SECONDS:-30}
+      VISUAL_AI_MAX_FILE_SIZE_MB: ${VISUAL_AI_MAX_FILE_SIZE_MB:-50}
+    volumes:
+      - "${VISUAL_AI_HOST_DATA_DIR:-./data}:/data"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

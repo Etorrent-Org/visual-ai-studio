@@ -5,7 +5,7 @@
 <h1 align="center">Visual AI Studio</h1>
 
 <p align="center">
-  Studio Windows local pour structurer un brief, travailler avec Studio Visuel,
+  Studio web Docker pour structurer un brief, travailler avec Studio Visuel,
   contrôler les créations et exporter les livrables.
 </p>
 
@@ -15,203 +15,181 @@
 
 Visual AI Studio accompagne un projet visuel du brief jusqu'à l'export final, avec Instagram comme canal de publication principal.
 
-L'application reste volontairement simple :
+Le workflow reste volontairement simple :
 
-1. vous préparez le brief dans Visual AI Studio ;
-2. vous choisissez de 1 à 10 visuels principaux pour la publication ;
-3. l'application génère un prompt de lancement ;
-4. vous copiez ce prompt dans Studio Visuel ;
-5. Studio Visuel prépare puis génère exactement le nombre de visuels demandé ;
-6. le Skill IA-Art signe les images et prépare les livrables ;
-7. vous récupérez les fichiers générés ;
-8. Visual AI Studio les contrôle et les présente ;
-9. vous validez puis exportez le résultat.
+1. préparer le brief dans Visual AI Studio ;
+2. choisir de 1 à 10 visuels principaux pour la publication ;
+3. générer le prompt de lancement ;
+4. copier ce prompt dans Studio Visuel ;
+5. laisser Studio Visuel préparer puis générer exactement le nombre de visuels demandé ;
+6. laisser le Skill IA-Art signer les images et préparer les livrables ;
+7. importer les fichiers générés ;
+8. contrôler et valider le résultat ;
+9. exporter localement ou transmettre le paquet au webhook n8n existant.
 
 Visual AI Studio ne réalise **aucun appel direct à une API OpenAI** et ne nécessite aucune clé API OpenAI.
 
 ---
 
-## Deux composants, deux rôles
+## Version web Docker 0.3.0
 
-### Visual AI Studio
+La version 0.3.0 remplace l'interface Windows par une interface web React très graphique, sans modifier le périmètre métier.
 
-L'application Windows prend en charge :
+- **Frontend** : React, Vite, Motion ;
+- **Backend** : FastAPI ;
+- **Données** : SQLite et fichiers locaux ;
+- **Déploiement** : Docker / Docker Compose ;
+- **Stockage persistant** : volume `/data` ;
+- **Port hôte par défaut** : `3093`.
 
-- les projets ;
-- les briefs ;
-- la préparation du prompt de lancement ;
-- l'import des résultats ;
-- la galerie de validation ;
-- la validation humaine ;
-- l'export local.
+La logique Python existante est conservée pour les projets, le prompt, les validations, les exports et le webhook.
 
-### Studio Visuel
-
-Studio Visuel est l'agent conversationnel utilisé dans ChatGPT.
-
-Il prend en charge notamment :
-
-- la reformulation du brief ;
-- la direction artistique ;
-- le mini-storyboard multi-images ;
-- les prompts image ;
-- les contraintes négatives ;
-- les contenus de publication ;
-- la génération de exactement N visuels pour un seul post Instagram ;
-- le passage au Skill IA-Art pour signature et packaging.
-
-Le package est fourni dans :
-
-`agent/studio-visuel-agent.zip`
-
-Il contient la définition de Studio Visuel, le Skill IA-Art Instagram et la licence MIT.
+La matrice de parité complète est documentée dans [`docs/web-functional-parity.md`](docs/web-functional-parity.md).
 
 ---
 
-## Workflow
+## Fonctionnalités
 
-```mermaid
-flowchart LR
-    A[Brief créatif] --> B[Préparation Studio Visuel]
-    B --> C[Copier le prompt]
-    C --> D[Studio Visuel dans ChatGPT]
-    D --> E[Direction artistique + storyboard]
-    E --> F[Génération de N visuels Instagram]
-    F --> G[IA-Art : signature + paquet]
-    G --> H[Importer les fichiers]
-    H --> I[Validation humaine]
-    I --> J[Export local]
-```
+### Projets
 
-Le passage entre l'application et Studio Visuel reste manuel.
+- liste des projets ;
+- KPI **Projets / Brief / Validé / Archivé** ;
+- recherche par nom, collection ou style ;
+- filtre de statut ;
+- création, ouverture, duplication et archivage ;
+- historique des projets archivés.
 
----
-
-## 1. Les projets
-
-La page **Projets** constitue le point d'entrée de l'application.
-
-Trois statuts métier sont utilisés :
-
-- **Brief**
-- **Validé**
-- **Archivé**
-
-Les projets archivés restent visibles dans l'historique et peuvent être retrouvés avec le filtre de statut.
-
-Lors du premier lancement d'une installation Visual AI Studio sans projet, la version 0.2.1 peut reprendre automatiquement la base locale de l'ancienne application **IA-Art Studio**. La base historique d'origine n'est pas supprimée.
-
----
-
-## 2. Créer un brief
-
-La page **Créer** permet de structurer la demande visuelle avant de passer dans Studio Visuel.
+### Brief créatif
 
 Deux modes de sortie sont disponibles :
 
 - **Instagram** — mode par défaut, 1080 × 1350, ratio 4:5 ;
 - **Autre / personnalisé**.
 
-Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**. Le nombre peut être saisi directement ou ajusté avec les boutons `−` et `+`.
+Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**.
 
-La fiche synthèse et le Markdown IA-Art restent des livrables annexes séparés et ne comptent pas dans le nombre de visuels.
+Le brief conserve tous les champs de la version desktop : projet, collection, style, idée, audience, texte, notes, dimensions, ratio, direction créative avancée et image de référence.
 
-Le brief peut notamment préciser :
+L'autosauvegarde, la détection de collections proches, l'invalidation du prompt après modification du brief et le versionnement sont conservés.
 
-- le nom du projet ;
-- la collection ou campagne ;
-- l'idée ou la demande ;
-- l'audience ;
-- le style ;
-- le nombre de visuels ;
-- le texte souhaité dans l'image ;
-- les dimensions ;
-- le ratio ;
-- les contraintes créatives ;
-- les éléments obligatoires ;
-- les éléments interdits.
+### Studio Visuel et IA-Art
 
-Une fois le brief prêt, utilisez **Préparer pour Studio Visuel**.
+Visual AI Studio génère le même prompt de lancement qu'auparavant. Studio Visuel et le Skill IA-Art restent séparés de l'application.
 
----
+Le package est disponible dans :
 
-## 3. Studio Visuel et IA-Art
+`agent/studio-visuel-agent.zip`
 
-Visual AI Studio transmet le contexte du projet et le nombre de visuels principaux attendu.
+### Import et validation
 
-Studio Visuel doit produire exactement ce nombre de visuels pour un seul post Instagram. Pour une série multi-images, il prépare une direction artistique commune et un mini-storyboard numéroté.
+Formats pris en charge :
 
-Le Skill IA-Art embarqué dans `agent/studio-visuel-agent.zip` prend ensuite en charge :
+- PNG ;
+- JPG / JPEG ;
+- WebP ;
+- Markdown ;
+- TXT ;
+- JSON.
 
-- la signature officielle de chaque image ;
-- une fiche synthèse unique pour le post ;
-- un Markdown Notion unique ;
-- une archive unique contenant l'ensemble des livrables.
+Les contrôles existants sont conservés : lisibilité, dimensions, UTF-8, JSON, SHA-256, image obligatoire et manifeste facultatif. Les images sont présentées dans une galerie et la validation finale reste humaine : **Je valide ce résultat**.
+
+### Export
+
+Un projet validé peut :
+
+- être téléchargé sous forme d'une archive contenant le même dossier `<slug>-v<version>`, tous les livrables et `project.json` ;
+- être transmis au webhook n8n existant.
 
 ---
 
-## 4. Importer et contrôler les résultats
+## Compatibilité n8n
 
-Visual AI Studio accepte notamment :
+Le contrat n8n reste **strictement inchangé**.
 
-### Images
+- `schema_version: 1.0` ;
+- `source: visual-ai-studio` ;
+- même structure `project`, `output`, `artifacts`, `validation` ;
+- même multipart `artifact_0`, `artifact_1`, … + `metadata` ;
+- même `Idempotency-Key` ;
+- même header d'authentification ;
+- mêmes réponses `success` et `duplicate` ;
+- mêmes champs `execution_id`, `remote_url`, `message`, `retryable` et `duplicate_avoided`.
 
-- PNG
-- JPG / JPEG
-- WebP
+La version web utilise directement le même `WebhookClient` et le même `SubmissionService` Python que la version desktop.
 
-### Fichiers complémentaires
-
-- Markdown
-- TXT
-- JSON
-
-Les images sont présentées sous forme de galerie afin de contrôler plusieurs créations dans un même projet.
-
-La validation finale reste volontairement humaine : **Je valide ce résultat**.
+Si n8n tourne sur le poste hôte et Visual AI Studio dans Docker Desktop, l'URL du webhook peut utiliser `host.docker.internal` à la place de `127.0.0.1` / `localhost`. Seule l'adresse réseau change ; le flux n8n ne change pas.
 
 ---
 
-## 5. Exporter
+## Installation Docker
 
-Lorsqu'un résultat est validé, le projet peut être exporté localement.
+Créer un fichier `.env` à partir de `.env.example`, puis :
 
-Les données de travail restent locales sur l'ordinateur.
+```powershell
+docker compose up -d --build
+```
+
+Ouvrir ensuite :
+
+```text
+http://localhost:3093
+```
+
+Le dossier hôte défini par `VISUAL_AI_HOST_DATA_DIR` est monté dans `/data` et contient la base SQLite ainsi que les projets.
+
+Pour reprendre un historique existant, ce dossier peut pointer vers un répertoire contenant `visual-ai-studio.db` et le dossier `projects`.
 
 ---
 
-## Télécharger
+## Variables Docker
 
-La version Windows publique actuelle est **v0.2.1**.
+Les principaux réglages sont disponibles dans `.env.example` :
 
-➡️ [Accéder à la dernière GitHub Release](https://github.com/Etorrent-Org/visual-ai-studio/releases/latest)
+- `VISUAL_AI_PORT` ;
+- `VISUAL_AI_HOST_DATA_DIR` ;
+- `VISUAL_AI_WEBHOOK_URL` ;
+- `VISUAL_AI_WEBHOOK_SECRET` ;
+- `VISUAL_AI_AUTH_HEADER` ;
+- `VISUAL_AI_TIMEOUT_SECONDS` ;
+- `VISUAL_AI_MAX_FILE_SIZE_MB` ;
+- `VISUAL_AI_AGENT_URL`.
 
----
-
-## Installation Windows
-
-Visual AI Studio est distribué sous forme d'application Windows autonome.
-
-L'utilisateur final n'a pas besoin d'installer Python, Git ou Docker.
+Les paramètres techniques n8n restent volontairement hors de l'interface graphique, comme dans la version 0.2.1.
 
 ---
 
 ## Développement
 
-```powershell
-git clone https://github.com/Etorrent-Org/visual-ai-studio.git
-cd visual-ai-studio
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\.venv\Scripts\python.exe -m visual_ai_studio.main
-.\.venv\Scripts\python.exe -m pytest -q
+### Backend
+
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install -e ".[web,desktop,dev]"
+.venv/bin/python -m pytest -q tests/unit tests/integration
+uvicorn visual_ai_studio.web_app:app --reload
 ```
+
+### Frontend
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Le serveur Vite redirige `/api` vers le backend local sur le port 8000.
+
+---
+
+## Ancienne version Windows
+
+La version Windows **v0.2.1** reste disponible comme version historique. Son workflow de build est conservé uniquement en déclenchement manuel et n'est plus la distribution principale.
 
 ---
 
 ## Sécurité et confidentialité
 
-Visual AI Studio ne nécessite aucune clé API OpenAI. Les données restent locales sauf action volontaire de l'utilisateur en dehors de l'application.
+Les données restent dans le volume Docker local, sauf envoi volontaire vers le webhook configuré. Visual AI Studio ne nécessite aucune clé API OpenAI.
 
 Consultez [`SECURITY.md`](SECURITY.md) pour les règles de sécurité.
 
@@ -225,4 +203,4 @@ Visual AI Studio est distribué sous **licence MIT**. Consultez [`LICENSE`](LICE
 
 ## Version
 
-Version publique actuelle : **0.2.1**.
+Version web : **0.3.0**.
