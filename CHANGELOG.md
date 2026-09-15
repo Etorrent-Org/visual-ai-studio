@@ -1,5 +1,49 @@
 # Changelog
 
+## 0.3.0 - 2026-09-15
+
+Migration de Visual AI Studio vers une application web Docker à parité fonctionnelle avec la version desktop 0.2.1.
+
+### Interface
+
+- remplacement du frontend principal PySide6 par une interface React / Vite très graphique ;
+- conservation des pages Projets, Brief, Studio Visuel, Validation, Export et Paramètres ;
+- conservation des KPI, recherches, filtres, actions projet, galerie et validation humaine ;
+- interface responsive avec direction visuelle sombre, verre, violet et cyan ;
+- conservation du réglage de 1 à 10 visuels Instagram.
+
+### Backend
+
+- ajout d'une API FastAPI ;
+- réutilisation des modèles, repositories, services, prompt builder, validateurs et SQLite existants ;
+- conservation de l'autosauvegarde, des collections, du versionnement et des contrôles de livrables ;
+- export web sous forme de ZIP contenant le même dossier `<slug>-v<version>`, les mêmes livrables et `project.json`.
+
+### Docker
+
+- ajout d'un Dockerfile multi-stage Node / Python ;
+- ajout de Docker Compose ;
+- volume persistant `/data` ;
+- port hôte par défaut `3093` ;
+- prise en charge de `host.docker.internal` pour joindre un service n8n exposé sur le poste hôte ;
+- paramètres techniques disponibles par variables d'environnement sans les exposer dans l'UI.
+
+### n8n
+
+- aucune modification du contrat webhook ;
+- `schema_version` reste `1.0` ;
+- même `WebhookClient` et même `SubmissionService` ;
+- même multipart `artifact_N` + `metadata` ;
+- même `Idempotency-Key`, même authentification et mêmes structures de réponse.
+
+### QA
+
+- matrice de parité desktop / web dans `docs/web-functional-parity.md` ;
+- tests API du parcours brief → prompt → import → validation → export ;
+- tests du sélecteur de stockage Docker ;
+- CI séparée backend, frontend et image Docker ;
+- chaîne Windows automatique remplacée par un workflow legacy manuel.
+
 ## 0.2.1 - 2026-09-14
 
 Version corrective de migration depuis IA-Art Studio.
