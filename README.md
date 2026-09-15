@@ -22,10 +22,11 @@ Le workflow reste volontairement simple :
 3. générer le prompt de lancement ;
 4. copier ce prompt dans Studio Visuel ;
 5. laisser Studio Visuel préparer puis générer exactement le nombre de visuels demandé ;
-6. laisser le Skill IA-Art signer les images et préparer les livrables ;
-7. importer les fichiers générés ;
-8. contrôler et valider le résultat ;
-9. exporter localement ou transmettre le paquet au webhook n8n existant.
+6. après l'affichage des PNG intermédiaires, répondre `continue` pour déclencher la finalisation IA-Art ;
+7. laisser IA-Art produire les JPEG signés, la synthèse PNG, le Markdown Notion et l'archive complète ;
+8. importer les fichiers finaux ;
+9. contrôler et valider le résultat ;
+10. exporter localement ou transmettre le paquet au webhook n8n existant.
 
 Visual AI Studio ne réalise **aucun appel direct à une API OpenAI** et ne nécessite aucune clé API OpenAI.
 
@@ -72,11 +73,20 @@ L'autosauvegarde, la détection de collections proches, l'invalidation du prompt
 
 Visual AI Studio prépare le prompt de lancement destiné à Studio Visuel. Studio Visuel et le Skill IA-Art restent séparés de l'application.
 
-Le package est disponible dans :
+Les packages sont reconstruits de façon déterministe avec :
 
-`agent/studio-visuel-agent.zip`
+```bash
+python agent/package_agent.py
+```
 
-Pour Instagram, IA-Art livre les visuels finaux en **JPEG/JPG 1080 × 1350**, avec une synthèse PNG, un Markdown Notion et l'archive complète.
+Cette commande produit dans `agent/dist/` :
+
+- `skill.zip` — Skill IA-Art à installer dans ChatGPT ;
+- `studio-visuel-agent.zip` — package complet Studio Visuel.
+
+Le script vérifie le SHA-256 du Skill et l'intégrité des deux archives avant de les livrer.
+
+Pour Instagram, IA-Art livre les visuels finaux en **JPEG/JPG 1080 × 1350**, avec une synthèse PNG, un Markdown Notion et l'archive complète. Les PNG affichés par `image_gen` sont uniquement des sources intermédiaires ; après leur affichage, répondre **`continue`** pour déclencher la finalisation.
 
 ### Import et validation
 
