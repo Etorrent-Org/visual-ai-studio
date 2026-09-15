@@ -28,12 +28,18 @@ def test_studio_visuel_package_embeds_current_agent_and_ia_art_contract() -> Non
             "ia-art/scripts/render_ia_art.py"
         ).decode("utf-8")
 
-    assert "# IA-Art 5.0.1" in skill_text
+    assert "# IA-Art 5.0.2" in skill_text
     assert "JPEG/JPG" in skill_text
     assert "fiche de synthèse" in skill_text
     assert "Markdown Notion" in skill_text
+    assert "continue" in skill_text
+    assert "Reprise automatique au tour suivant" in skill_text
+    assert "même tour de reprise" in skill_text
     assert "instagram.jpg" in format_rules
     assert "instagram-01.jpg" in format_rules
+    assert "PNG sources" in format_rules
     assert "N JPEG/JPG Instagram" in delivery_contract
+    assert "packaging complet dans le même tour de reprise" in delivery_contract
+    assert 'VERSION = "5.0.2"' in renderer
     assert "JPEG_QUALITY = 95" in renderer
     assert 'format="JPEG"' in renderer

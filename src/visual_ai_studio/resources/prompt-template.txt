@@ -55,7 +55,9 @@ Respecte le workflow conversationnel de Studio Visuel :
 - aucun branding, logo, watermark ou signature non demandé ;
 - aucun texte ajouté dans l'image sauf demande explicite ci-dessus ;
 - si plusieurs visuels principaux sont demandés, conçois-les comme une série cohérente destinée à un seul post, et non comme des variantes indépendantes ;
-- après validation des images, poursuivre obligatoirement jusqu'au paquet IA-Art complet : N JPEG/JPG signés + 1 synthèse PNG + 1 Markdown + archive.
+- les PNG affichés par `image_gen` sont uniquement des sources intermédiaires et ne doivent jamais être présentés comme la livraison finale ;
+- juste avant `image_gen`, indique que je dois répondre simplement `continue` dès que les PNG sont affichés ;
+- à mon message `continue` (ou équivalent bref), reprends directement après la génération, sans refaire les étapes créatives, puis poursuis dans le même tour jusqu'au paquet IA-Art complet : N JPEG/JPG signés + 1 synthèse PNG + 1 Markdown + archive.
 
 Commence maintenant par l'Étape 1 — Brief.
 
