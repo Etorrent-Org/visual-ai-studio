@@ -109,41 +109,43 @@ Le contenu éditorial décrit le post complet, pas chaque image comme une public
 
 Demander validation finale avant génération.
 
-### 6. Génération
+### 6. Génération — PNG intermédiaires uniquement
 
-Après validation :
+Après validation finale :
 
-- générer exactement N images ;
-- conserver l'ordre 1 à N ;
-- ne pas générer d'image supplémentaire ;
-- si une image doit être corrigée, régénérer uniquement cette image sauf si la cohérence globale impose explicitement de reprendre la série ;
-- conserver les visuels validés.
+1. générer exactement N images ;
+2. conserver l'ordre 1 à N ;
+3. ne pas générer d'image supplémentaire ;
+4. juste avant `image_gen`, prévenir explicitement :
+   `Les PNG qui vont apparaître sont uniquement des sources intermédiaires. Dès qu'ils sont affichés, réponds simplement « continue » pour obtenir les JPEG signés, la synthèse, le Markdown et l'archive.`
+5. appeler `image_gen` une seule fois avec N images ;
+6. accepter que ce tour se termine sur les PNG générés : **ne jamais les présenter comme la livraison finale**.
 
-Les fichiers bruts issus du générateur peuvent être PNG : ce sont uniquement des **sources intermédiaires**.
+### 7. Reprise IA-Art — obligatoire
 
-### 7. Passage à IA-Art — obligatoire
+Au premier message utilisateur suivant la génération, si le message est une reprise courte (`continue`, `ok`, `oui`, `vas-y`, `go` ou équivalent), **reprendre directement ici**. Ne pas recommencer le brief, la direction artistique, les prompts ou le contenu Instagram.
 
-Après validation des N images, **toujours poursuivre jusqu'au paquet IA-Art**. Ne jamais considérer le workflow terminé après la seule génération ou la seule signature des images.
-
-Transmettre à IA-Art :
+Utiliser le Skill **IA-Art** et lui transmettre :
 
 - le nombre exact N ;
 - l'ordre des images ;
-- les N images validées ;
+- les N PNG sources générés ;
 - la légende ;
 - le texte alternatif ;
 - les hashtags ;
 - les mots-clés ;
 - les métadonnées utiles du brief.
 
-Attendre d'IA-Art et vérifier :
+IA-Art doit, dans ce même tour de reprise :
 
-- **N images Instagram signées en JPEG/JPG réel**, 1080 × 1350 ;
-- **une seule fiche synthèse PNG** pour le post ;
-- **un seul Markdown Notion** pour le post ;
-- **une seule archive** contenant exactement les N JPEG/JPG + la synthèse + le Markdown.
+1. retrouver les N PNG sources ;
+2. signer et convertir chaque image en **JPEG/JPG réel 1080 × 1350** ;
+3. produire une seule **fiche synthèse PNG** ;
+4. produire un seul **Markdown Notion** ;
+5. produire une archive contenant exactement les N JPEG/JPG + la synthèse + le Markdown ;
+6. vérifier le paquet et livrer les JPEG, la synthèse, le Markdown et l'archive.
 
-La synthèse et le Markdown sont des livrables obligatoires. Si l'un des deux manque, rester en état `À corriger` ou `Bloqué` et ne jamais annoncer la livraison comme terminée.
+Ne pas demander une validation intermédiaire entre la conversion JPEG et le packaging. La validation utilisateur porte sur la livraison complète. Si une image doit être corrigée ensuite, ne régénérer que cette position puis refaire la reprise IA-Art pour reconstruire le paquet.
 
 ## Interdictions
 
@@ -153,8 +155,8 @@ La synthèse et le Markdown sont des livrables obligatoires. Si l'un des deux ma
 - Ne jamais créer plusieurs posts lorsque le brief demande N images pour un seul post.
 - Ne jamais compter la synthèse ou le Markdown dans N.
 - Ne jamais considérer des variantes comme des visuels supplémentaires à livrer.
-- Ne jamais livrer un PNG comme visuel Instagram final.
-- Ne jamais s'arrêter avant la fiche synthèse, le Markdown et l'archive après validation des images.
+- Ne jamais présenter les PNG issus de `image_gen` comme des livrables finaux.
+- Ne jamais s’arrêter après la génération : la reprise IA-Art et le paquet complet sont obligatoires.
 
 ## Contrôle avant génération
 
@@ -172,9 +174,9 @@ Vérifier systématiquement :
 
 Vérifier systématiquement :
 
-- N visuels finaux présents et tous en JPEG/JPG réel ;
-- dimensions 1080 × 1350 sur chaque visuel ;
-- signature présente sur chaque visuel ;
-- une synthèse PNG unique présente ;
-- un Markdown unique présent ;
-- archive contenant exactement N+2 fichiers éditoriaux.
+- N JPEG/JPG finaux réels, 1080 × 1350 ;
+- signature officielle présente sur chaque JPEG ;
+- une synthèse PNG unique ;
+- un Markdown Notion unique ;
+- une archive contenant exactement N+2 fichiers éditoriaux ;
+- aucun PNG source proposé comme livrable final.

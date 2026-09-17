@@ -19,6 +19,7 @@ dist/
 *.spec
 web/node_modules/
 web/dist/
+agent/dist/
 data/
 
 *.bak

@@ -35,6 +35,8 @@ def test_instagram_multi_image_prompt_describes_one_post() -> None:
     assert "fiche de synthèse PNG" in result.text
     assert "Markdown IA-Art" in result.text
     assert "livrables obligatoires" in result.text
+    assert "PNG affichés par `image_gen` sont uniquement des sources intermédiaires" in result.text
+    assert "répondre simplement `continue`" in result.text
     assert "N JPEG/JPG signés + 1 synthèse PNG + 1 Markdown + archive" in result.text
 
 
