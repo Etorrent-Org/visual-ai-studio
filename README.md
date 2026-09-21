@@ -1,3 +1,5 @@
+> **Distribution actuelle : web/Docker 0.3.0 depuis les sources.** Les releases Windows 0.2.1 et antérieures sont historiques. La release nommée `v1.0.0` contient l’ancien installateur 0.1.1 et ne correspond pas à la version web.
+
 <p align="center">
   <img src="docs/images/visual-ai-studio-icon.png" width="120" alt="Visual AI Studio">
 </p>
@@ -22,11 +24,10 @@ Le workflow reste volontairement simple :
 3. générer le prompt de lancement ;
 4. copier ce prompt dans Studio Visuel ;
 5. laisser Studio Visuel préparer puis générer exactement le nombre de visuels demandé ;
-6. après l'affichage des PNG intermédiaires, répondre `continue` pour déclencher la finalisation IA-Art ;
-7. laisser IA-Art produire les JPEG signés, la synthèse PNG, le Markdown Notion et l'archive complète ;
-8. importer les fichiers finaux ;
-9. contrôler et valider le résultat ;
-10. exporter localement ou transmettre le paquet au webhook n8n existant.
+6. laisser le Skill IA-Art signer les images et préparer les livrables ;
+7. importer les fichiers générés ;
+8. contrôler et valider le résultat ;
+9. exporter localement ou transmettre le paquet au webhook n8n existant.
 
 Visual AI Studio ne réalise **aucun appel direct à une API OpenAI** et ne nécessite aucune clé API OpenAI.
 
@@ -58,14 +59,11 @@ Le dépôt ne contient plus l'ancienne application desktop PySide6 ni sa chaîne
 
 ### Brief créatif
 
-Deux modes de sortie sont disponibles :
-
-- **Instagram** — mode par défaut, 1080 × 1350, ratio 4:5 ;
-- **Autre / personnalisé**.
+Le seul mode de sortie est **Instagram Feed**, en 1080 × 1350 avec un ratio 4:5.
 
 Pour Instagram, un post peut contenir **1 à 10 visuels principaux cohérents**.
 
-Le brief prend en charge le projet, la collection, le style, l'idée, l'audience, le texte, les notes, les dimensions, le ratio, la direction créative avancée et l'image de référence.
+Le brief prend en charge le projet, la collection, le style, l'idée, l'audience, le texte, les notes, la direction créative avancée et l'image de référence. Le format est fixe pour éviter les sorties incompatibles avec IA-Art.
 
 L'autosauvegarde, la détection de collections proches, l'invalidation du prompt après modification du brief et le versionnement sont intégrés.
 
@@ -73,24 +71,19 @@ L'autosauvegarde, la détection de collections proches, l'invalidation du prompt
 
 Visual AI Studio prépare le prompt de lancement destiné à Studio Visuel. Studio Visuel et le Skill IA-Art restent séparés de l'application.
 
-Les packages sont reconstruits de façon déterministe avec :
+Le package est disponible dans :
 
-```bash
-python agent/package_agent.py
-```
+`agent/studio-visuel-agent.zip`
 
-Cette commande produit dans `agent/dist/` :
+Il contient l'agent Studio Visuel et le Skill IA-Art **5.0.2** alignés sur le contrat Instagram.
 
-- `skill.zip` — Skill IA-Art à installer dans ChatGPT ;
-- `studio-visuel-agent.zip` — package complet Studio Visuel.
-
-Le script vérifie le SHA-256 du Skill et l'intégrité des deux archives avant de les livrer.
-
-Pour Instagram, IA-Art livre les visuels finaux en **JPEG/JPG 1080 × 1350**, avec une synthèse PNG, un Markdown Notion et l'archive complète. Les PNG affichés par `image_gen` sont uniquement des sources intermédiaires ; après leur affichage, répondre **`continue`** pour déclencher la finalisation.
+Pour Instagram, IA-Art livre les visuels finaux en **JPEG/JPG 1080 × 1350**, avec une synthèse PNG, un Markdown Notion et l'archive complète.
 
 ### Import et validation
 
 Formats pris en charge : PNG, JPG/JPEG, WebP, Markdown, TXT et JSON.
+
+Pour l'import Notion de la version web Instagram, le workflow n8n dédié est disponible dans [`n8n/IA-Art-01-Import-Notion-Instagram.json`](n8n/IA-Art-01-Import-Notion-Instagram.json). Les flux aval démarrent depuis Notion ; ils ne sont pas appelés directement par Visual AI Studio.
 
 Les contrôles couvrent la lisibilité, les dimensions, l'UTF-8, le JSON, le SHA-256, la présence d'au moins une image et le manifeste facultatif. Les images sont présentées dans une galerie et la validation finale reste humaine : **Je valide ce résultat**.
 
@@ -153,7 +146,9 @@ Les principaux réglages sont disponibles dans `.env.example` :
 - `VISUAL_AI_MAX_FILE_SIZE_MB` ;
 - `VISUAL_AI_AGENT_URL`.
 
-Les paramètres techniques n8n restent volontairement hors de l'interface graphique.
+La configuration n8n se fait depuis l’écran **Administration** de l’application : URL du webhook, nom du header, secret, délai et test de connexion. Les valeurs sont conservées dans le volume Docker ; le fichier `.env` n’est pas nécessaire pour les modifier.
+
+Les variables n8n du `.env` restent disponibles comme valeurs de démarrage pour une installation automatisée, mais une configuration enregistrée depuis l’interface est prioritaire.
 
 ---
 
