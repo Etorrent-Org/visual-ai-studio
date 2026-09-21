@@ -62,6 +62,7 @@ Le conteneur utilise `/data` comme volume persistant :
 /data/
   visual-ai-studio.db
   settings.json
+  .webhook-secret
   projects/
 ```
 
@@ -78,6 +79,8 @@ Le chemin réseau peut changer dans Docker, mais pas le contrat applicatif :
 - même `Idempotency-Key` ;
 - même header d'authentification ;
 - mêmes structures de métadonnées et de réponse.
+
+La configuration courante du webhook se fait depuis l’écran Administration. L’URL, le header et le délai sont stockés dans `settings.json`; le secret est conservé séparément dans `.webhook-secret` lorsque le conteneur ne dispose pas d’un keyring. Les variables d’environnement restent uniquement une configuration de démarrage.
 
 Sur Docker Desktop, un n8n accessible sur la machine hôte peut être joint via `host.docker.internal`.
 
