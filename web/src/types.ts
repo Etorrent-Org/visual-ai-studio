@@ -1,5 +1,5 @@
 export type ProjectStatus = "Brief" | "Validé" | "Archivé";
-export type OutputMode = "instagram" | "custom";
+export type OutputMode = "instagram";
 
 export interface Brief {
   title: string;
@@ -96,15 +96,29 @@ export interface BootstrapData {
   projects: Project[];
   collections: ReferenceValue[];
   styles: string[];
-  settings: {
-    projects_dir: string;
-    webhook_configured: boolean;
-    agent_url: string;
-    max_file_size_mb: number;
-    storage_root: string;
-  };
+  settings: AppSettings;
   statuses: ProjectStatus[];
   modes: ModePreset[];
+}
+
+export interface AppSettings {
+  projects_dir: string;
+  webhook_configured: boolean;
+  webhook_url: string;
+  auth_header_name: string;
+  webhook_secret_configured: boolean;
+  timeout_seconds: number;
+  agent_url: string;
+  max_file_size_mb: number;
+  storage_root: string;
+}
+
+export interface SettingsUpdate {
+  projects_dir: string;
+  webhook_url: string;
+  auth_header_name: string;
+  webhook_secret: string;
+  timeout_seconds: number;
 }
 
 export interface SubmissionOutcome {

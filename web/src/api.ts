@@ -3,6 +3,7 @@ import type {
   Brief,
   DirectoryListing,
   Project,
+  SettingsUpdate,
   SubmissionOutcome,
   ValidationReport,
 } from "./types";
@@ -154,9 +155,15 @@ export const api = {
       `/api/storage/directories${path ? `?path=${encodeURIComponent(path)}` : ""}`,
     ),
 
-  saveSettings: (projectsDir: string) =>
-    json<{ projects_dir: string }>("/api/settings", {
+  saveSettings: (settings: SettingsUpdate) =>
+    json<{ projects_dir: string; settings: BootstrapData["settings"] }>("/api/settings", {
       method: "PUT",
-      body: JSON.stringify({ projects_dir: projectsDir }),
+      body: JSON.stringify(settings),
+    }),
+
+  testWebhook: () =>
+    json<SubmissionOutcome>("/api/settings/test-webhook", {
+      method: "POST",
+      body: "{}",
     }),
 };

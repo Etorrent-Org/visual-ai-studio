@@ -2,29 +2,20 @@
 
 ## Non publié
 
-### IA-Art 5.0.2
+### Instagram et package agent
 
-- fiabilise la reprise après `image_gen` : les PNG affichés sont explicitement considérés comme des sources intermédiaires ;
-- Studio Visuel annonce avant génération que l'utilisateur doit répondre `continue` lorsque les PNG sont visibles ;
-- `continue`, `ok`, `oui`, `vas-y` ou `go` reprennent directement après la génération sans refaire le brief ni les prompts ;
-- IA-Art produit ensuite les N JPEG/JPG signés 1080 × 1350, la synthèse PNG, le Markdown Notion et l'archive complète ;
-- les PNG sources ne doivent jamais être présentés comme la livraison finale ;
-- le package Studio Visuel est désormais reconstruit depuis des segments Base64 texte avec vérification du SHA-256 et de l'intégrité ZIP ;
-- les ZIP générés sont placés dans `agent/dist/` et ne sont plus versionnés directement.
-
-### Nettoyage
-
-- suppression complète de l'interface desktop PySide6 et de ses tests UI ;
-- suppression du point d'entrée desktop, des ressources QSS/ICO et des scripts de lancement associés ;
-- suppression de l'installateur Inno Setup, du workflow Windows et des scripts PyInstaller/release legacy ;
-- suppression des anciennes captures de l'interface desktop et de la documentation de parité desktop/web ;
-- retrait des dépendances de développement PySide6, pytest-qt et PyInstaller ;
-- documentation recentrée sur l'application web Docker ;
-- conservation du backend Python/FastAPI et de la compatibilité des données historiques.
+- verrouillage de Visual AI Studio sur Instagram Feed 1080 × 1350, ratio 4:5 ;
+- suppression du choix de format personnalisé dans l'interface web ;
+- normalisation des anciens briefs custom, generic et Pinterest vers le contrat Instagram ;
+- alignement de l'agent Studio Visuel et du Skill IA-Art 5.0.2 ;
+- mise à jour du package agent + Skill et des fichiers Markdown associés ;
+- ajout d'une interface Administration pour configurer et tester n8n sans modifier `.env` ;
+- persistance du webhook dans le volume Docker avec secret séparé ;
+- conservation de la compatibilité de lecture des données historiques.
 
 ## 0.3.0 - 2026-09-15
 
-Migration de Visual AI Studio vers une application web Docker à parité fonctionnelle avec la version desktop 0.2.1.
+Migration de Visual AI Studio vers une application web Docker issue de la version desktop 0.2.1.
 
 ### Interface
 
@@ -48,7 +39,7 @@ Migration de Visual AI Studio vers une application web Docker à parité fonctio
 - volume persistant `/data` ;
 - port hôte par défaut `3093` ;
 - prise en charge de `host.docker.internal` pour joindre un service n8n exposé sur le poste hôte ;
-- paramètres techniques disponibles par variables d'environnement sans les exposer dans l'UI.
+- paramètres n8n administrables depuis l'interface, avec variables d'environnement conservées comme valeurs de démarrage.
 
 ### n8n
 
@@ -60,11 +51,10 @@ Migration de Visual AI Studio vers une application web Docker à parité fonctio
 
 ### QA
 
-- matrice de parité desktop / web établie pendant la migration puis retirée après validation ;
 - tests API du parcours brief → prompt → import → validation → export ;
 - tests du sélecteur de stockage Docker ;
-- CI backend, frontend et image Docker ;
-- chaîne Windows retirée après validation de la migration web.
+- CI séparée backend, frontend et image Docker ;
+- chaîne CI web et Docker documentée dans `.github/workflows/web-docker.yml`.
 
 ## 0.2.1 - 2026-09-14
 
@@ -97,11 +87,13 @@ Version corrective de migration depuis IA-Art Studio.
 - mise à jour du package Studio Visuel et du Skill IA-Art ;
 - documentation produit alignée sur Instagram et le multi-images.
 
-### Maintenance historique
+### Maintenance
 
-- la chaîne Windows lisait la version depuis `pyproject.toml` et bloquait un tag incohérent ;
-- le packaging historique vérifiait l'alignement de l'installateur Inno Setup ;
-- cette chaîne a depuis été retirée lors du passage exclusif au Web/Docker.
+- la chaîne de release lit désormais la version depuis `pyproject.toml` ;
+- un tag Git différent de `v<version>` bloque la publication ;
+- le packaging vérifie que la version et le nom de l'installateur Inno Setup restent alignés ;
+- le workflow publie l'installateur avec un motif de fichier indépendant d'un numéro de version codé en dur ;
+- les tests hérités ont été alignés sur la suppression de Pinterest.
 
 ## 0.1.1 - 2026-08-20
 

@@ -1,0 +1,440 @@
+{
+  "name": "IA-Art — 01 — Import Notion — Instagram",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ia-art-import-notion-hub",
+        "authentication": "headerAuth",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1040,
+        320
+      ],
+      "webhookId": "ia-art-import-notion-hub-instagram",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OLGQoqrWuXO6M1Ss",
+          "name": "Header Auth account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b002",
+              "leftValue": "={{ $json.query.probe }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b003",
+      "name": "Probe ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -816,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b004",
+              "name": "status",
+              "value": "success",
+              "type": "string"
+            },
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b005",
+              "name": "probe",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b006",
+              "name": "message",
+              "value": "Connexion n8n validée",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b007",
+      "name": "Réponse probe",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -576,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input=$input.first();const binaries=input.binary??{};const keys=Object.keys(binaries);const fileName=(key)=>String(binaries[key].fileName??key);const extension=(name)=>String(name).toLowerCase().split('.').pop()??'';const rows=[];for(const key of keys){const name=fileName(key);const lower=name.toLowerCase();const keyLower=key.toLowerCase();const ext=extension(name);let role='';let order=0;if((ext==='jpg'||ext==='jpeg')&&(lower.includes('instagram')||keyLower.includes('instagram'))){role='instagram';const tail=lower.split('-instagram-')[1];order=tail?Number.parseInt(tail.split('.')[0],10)||1:1;}else if(ext==='png'&&(lower.includes('synthese')||keyLower==='synthese'))role='synthese';else if((ext==='md'||ext==='markdown')&&(lower.includes('notion')||keyLower==='notion'||keyLower==='notion_md'))role='notion';if(role)rows.push({key,role,order,filename:name,file:binaries[key]});}const images=rows.filter((row)=>row.role==='instagram').sort((a,b)=>a.order-b.order||a.filename.localeCompare(b.filename));const summary=rows.find((row)=>row.role==='synthese');const notion=rows.find((row)=>row.role==='notion');if(!images.length)throw new Error('Aucun visuel Instagram JPEG/JPG détecté.');if(!summary)throw new Error('La fiche synthèse PNG manque.');if(!notion)throw new Error('Le Markdown Notion manque.');const read=async(key)=>this.helpers.getBinaryDataBuffer(0,key);const markdown=(await read(notion.key)).toString('utf8').replace(String.fromCharCode(65279),'');const value=(key)=>{const prefix=key.toLowerCase()+':';const line=markdown.split('\\n').map((part)=>part.trim().replace(String.fromCharCode(13),'')).find((part)=>part.toLowerCase().startsWith(prefix));if(!line)return '';let result=line.slice(prefix.length).trim();const quote=String.fromCharCode(34);const apostrophe=String.fromCharCode(39);if((result.startsWith(quote)&&result.endsWith(quote))||(result.startsWith(apostrophe)&&result.endsWith(apostrophe)))result=result.slice(1,-1);return result;};const channel=value('channel');const ratio=value('ratio');const count=value('image_count');if(channel&&channel!=='Instagram'&&channel!=='Instagram Feed')throw new Error('Le Markdown doit déclarer channel=Instagram Feed.');if(ratio&&ratio!=='4:5')throw new Error('Le Markdown doit déclarer ratio=4:5.');if(count&&Number.parseInt(count,10)!==images.length)throw new Error('image_count ne correspond pas au nombre de visuels Instagram.');for(const row of [...images,summary]){if(!(await read(row.key)).length)throw new Error(row.filename+' est vide.');if(!markdown.includes(row.filename))throw new Error('Le Markdown ne référence pas '+row.filename+'.');}let metadata={};const metadataKey=keys.find((key)=>key.toLowerCase()==='metadata'||fileName(key).toLowerCase().includes('metadata'));if(metadataKey)metadata=JSON.parse((await read(metadataKey)).toString('utf8'));const title=value('title')||String(metadata.project?.title??'IA-Art');const collection=value('collection')||String(metadata.output?.collection??'À classer');const front={title,collection,channel:channel||'Instagram Feed',ratio:ratio||'4:5',imageCount:images.length,style:String(metadata.output?.style??'').trim()};return [...images,summary,notion].map((row)=>({json:{role:row.role,order:row.order,filename:row.filename,contentType:row.file.mimeType||(row.role==='notion'?'text/markdown':row.role==='synthese'?'image/png':'image/jpeg'),metadata,front,markdown},binary:{file:row.file}}));"
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b008",
+      "name": "Préparer le paquet Instagram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/file_uploads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2026-03-11"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ filename: $json.filename, content_type: $json.contentType }) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b009",
+      "name": "Créer upload Notion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -304,
+        448
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "HWpNm1snqa5FYghD",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b010",
+      "name": "Joindre fichier et upload",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -48,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.notion.com/v1/file_uploads/' + $json.id + '/send' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2026-03-11"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "file"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b011",
+      "name": "Envoyer upload Notion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        448
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "HWpNm1snqa5FYghD",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const originals=$('Préparer le paquet Instagram').all();const responses=$input.all();if(originals.length!==responses.length)throw new Error('Réponses Notion incohérentes.');return responses.map((item,index)=>{const uploadId=String(item.json.id??'');if(!uploadId)throw new Error('Identifiant de fichier Notion manquant.');return{json:{...originals[index].json,uploadId}};});"
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b012",
+      "name": "Rassembler les uploads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const rows=$input.all().map((item)=>item.json);const first=rows[0]??{};const images=rows.filter((row)=>row.role==='instagram').sort((a,b)=>a.order-b.order||a.filename.localeCompare(b.filename));const summary=rows.find((row)=>row.role==='synthese');const markdown=rows.find((row)=>row.role==='notion');if(!images.length||!summary||!markdown)throw new Error('Paquet Notion incomplet.');const front=first.front??{};const rich=(value)=>{const text=String(value??'');const result=[];for(let index=0;index<text.length;index+=1900)result.push({type:'text',text:{content:text.slice(index,index+1900)}});return result;};const heading=(value)=>({object:'block',type:'heading_2',heading_2:{rich_text:rich(value)}});const paragraph=(value)=>({object:'block',type:'paragraph',paragraph:{rich_text:rich(value)}});const upload=(id,name)=>({name,type:'file_upload',file_upload:{id}});const files=[...images.map((row)=>upload(row.uploadId,row.filename)),upload(summary.uploadId,summary.filename),upload(markdown.uploadId,markdown.filename)];const children=[];images.forEach((row,index)=>{children.push(heading('Image Instagram '+String(index+1).padStart(2,'0')));children.push({object:'block',type:'image',image:{type:'file_upload',file_upload:{id:row.uploadId}}});});children.push(heading('Fiche de synthèse'));children.push({object:'block',type:'image',image:{type:'file_upload',file_upload:{id:summary.uploadId}}});children.push(heading('Paquet source'));children.push({object:'block',type:'file',file:{type:'file_upload',file_upload:{id:markdown.uploadId}}});children.push(heading('Contrat IA-Art'));children.push(paragraph('Instagram Feed 1080 × 1350 — 4:5'));children.push(paragraph('Nombre de visuels : '+images.length));const properties={};properties[`Nom de l'image`] = {type:'title',title:rich(front.title)};properties.Collection={type:'select',select:{name:front.collection}};properties['Format principal']={type:'select',select:{name:'Instagram 4:5'}};properties['Statut Génération']={type:'select',select:{name:'Prêt à publier'}};properties['Finalisation visuelle']={type:'select',select:{name:'Finalisée'}};properties['Publiée']={type:'select',select:{name:'Non publiée'}};properties['Nom du fichier']={type:'rich_text',rich_text:rich(images.map((row)=>row.filename).join(', '))};properties['Description Pinterest']={type:'rich_text',rich_text:rich('Import Instagram IA-Art')};properties.Hashtags={type:'rich_text',rich_text:rich('Voir le Markdown joint')};properties.Prompt={type:'rich_text',rich_text:rich('Voir le Markdown joint')};properties['Négative Prompt']={type:'rich_text',rich_text:rich('Voir le Markdown joint')};properties.Style={type:'rich_text',rich_text:rich(front.style)};properties.Notes={type:'rich_text',rich_text:rich('Import automatique IA-Art depuis Visual AI Studio. Source : '+markdown.filename)};properties['🏆 À la une']={type:'checkbox',checkbox:false};properties.Pics={type:'files',files};const payload={parent:{type:'data_source_id',data_source_id:'364ae2fe-fa49-80c7-9e46-000bd3c75db2'},cover:{type:'file_upload',file_upload:{id:images[0].uploadId}},properties,children};return[{json:{notionPagePayload:payload,title:front.title}}];"
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b013",
+      "name": "Construire la fiche Instagram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2026-03-11"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.notionPagePayload) }}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b014",
+      "name": "Créer la fiche dans Images",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        448
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "HWpNm1snqa5FYghD",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b015",
+              "name": "status",
+              "value": "success",
+              "type": "string"
+            },
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b016",
+              "name": "message",
+              "value": "Import Notion terminé.",
+              "type": "string"
+            },
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b017",
+              "name": "execution_id",
+              "value": "={{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b018",
+              "name": "notion_page_url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b019",
+      "name": "Résultat import Notion",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        448
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Probe ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Probe ?": {
+      "main": [
+        [
+          {
+            "node": "Réponse probe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer le paquet Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le paquet Instagram": {
+      "main": [
+        [
+          {
+            "node": "Créer upload Notion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Joindre fichier et upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer upload Notion": {
+      "main": [
+        [
+          {
+            "node": "Joindre fichier et upload",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Joindre fichier et upload": {
+      "main": [
+        [
+          {
+            "node": "Envoyer upload Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer upload Notion": {
+      "main": [
+        [
+          {
+            "node": "Rassembler les uploads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rassembler les uploads": {
+      "main": [
+        [
+          {
+            "node": "Construire la fiche Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construire la fiche Instagram": {
+      "main": [
+        [
+          {
+            "node": "Créer la fiche dans Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer la fiche dans Images": {
+      "main": [
+        [
+          {
+            "node": "Résultat import Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c2c9b5e7-2ac5-45aa-8b9d-2c48c8d9b020",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
