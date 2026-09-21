@@ -76,6 +76,18 @@ def _mime_type(filename: str) -> str:
     return mapping.get(suffix, "application/octet-stream")
 
 
+def _response_object(payload: Any) -> dict[str, Any]:
+    """Normalize common webhook response envelopes to one JSON object."""
+    if isinstance(payload, dict):
+        body = payload.get("body")
+        if isinstance(body, dict):
+            return body
+        return payload
+    if isinstance(payload, list) and len(payload) == 1 and isinstance(payload[0], dict):
+        return payload[0]
+    return {}
+
+
 class WebhookClient:
     def __init__(
         self,
@@ -151,7 +163,8 @@ class WebhookClient:
                 message="La réponse du webhook n'est pas un JSON valide.",
                 http_status=response.status_code,
             )
-        if not isinstance(payload, dict):
+        payload = _response_object(payload)
+        if not payload:
             return SubmissionOutcome(
                 status="error",
                 message="La réponse JSON du webhook n'est pas un objet.",
@@ -213,10 +226,16 @@ class WebhookClient:
                 payload = response.json()
             except ValueError:
                 payload = {}
+            payload = _response_object(payload)
             is_probe_success = (
                 response.is_success
                 and isinstance(payload, dict)
-                and payload.get("status") in {"success", "duplicate"}
+                and (
+                    payload.get("status") in {"success", "duplicate"}
+                    or payload.get("probe") is True
+                    or str(payload.get("message", "")).strip().lower()
+                    == "connexion n8n validée"
+                )
             )
             return SubmissionOutcome(
                 status="success" if is_probe_success else "error",
