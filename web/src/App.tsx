@@ -13,15 +13,19 @@ import {
   Folder,
   FolderOpen,
   Image as ImageIcon,
+  KeyRound,
   Layers3,
+  Link2,
   Minus,
   Palette,
+  PlugZap,
   Plus,
   Search,
   Send,
   Settings,
   SlidersHorizontal,
   Sparkles,
+  Timer,
   Upload,
   WandSparkles,
   X,
@@ -342,6 +346,12 @@ export default function App() {
   const [storage, setStorage] = useState<DirectoryListing | null>(null);
   const [storageBusy, setStorageBusy] = useState(false);
   const [settingsDir, setSettingsDir] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [authHeaderName, setAuthHeaderName] = useState("X-Visual-AI-Token");
+  const [webhookSecret, setWebhookSecret] = useState("");
+  const [webhookSecretConfigured, setWebhookSecretConfigured] = useState(false);
+  const [timeoutSeconds, setTimeoutSeconds] = useState(300);
+  const [connectionTest, setConnectionTest] = useState<SubmissionOutcome | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"" | ProjectStatus>("");
   const [collectionHint, setCollectionHint] = useState<string[]>([]);
@@ -354,13 +364,21 @@ export default function App() {
     setToast({ tone, message });
   };
 
+  const applyBootstrap = (data: BootstrapData) => {
+    setBootstrap(data);
+    setProjects(sortProjects(data.projects));
+    setSettingsDir(data.settings.projects_dir);
+    setWebhookUrl(data.settings.webhook_url);
+    setAuthHeaderName(data.settings.auth_header_name);
+    setWebhookSecretConfigured(data.settings.webhook_secret_configured);
+    setTimeoutSeconds(data.settings.timeout_seconds);
+  };
+
   useEffect(() => {
     void (async () => {
       try {
         const data = await api.bootstrap();
-        setBootstrap(data);
-        setProjects(sortProjects(data.projects));
-        setSettingsDir(data.settings.projects_dir);
+        applyBootstrap(data);
       } catch (error) {
         showToast("error", errorMessage(error));
       }
@@ -388,9 +406,7 @@ export default function App() {
 
   const refreshCatalog = async () => {
     const data = await api.bootstrap();
-    setBootstrap(data);
-    setProjects(sortProjects(data.projects));
-    setSettingsDir(data.settings.projects_dir);
+    applyBootstrap(data);
   };
 
   useEffect(() => {
@@ -417,11 +433,6 @@ export default function App() {
     }, 800);
     return () => window.clearTimeout(timer);
   }, [brief, currentProject?.id, view]);
-
-  const modePreset = useMemo(() => {
-    if (!bootstrap || !brief) return null;
-    return bootstrap.modes.find((item) => item.value === brief.mode) ?? null;
-  }, [bootstrap, brief]);
 
   const filteredProjects = useMemo(() => {
     const needle = search.trim().toLocaleLowerCase("fr-FR");
@@ -524,21 +535,7 @@ export default function App() {
   const updateBrief = <K extends keyof Brief>(key: K, value: Brief[K]) => {
     setBrief((current) => {
       if (!current) return current;
-      const next = { ...current, [key]: value } as Brief;
-      if (key === "mode") {
-        const preset = bootstrap?.modes.find((item) => item.value === value);
-        if (preset && value === "instagram") {
-          next.target_width = preset.width;
-          next.target_height = preset.height;
-          next.aspect_ratio = preset.aspect_ratio;
-        }
-        if (value === "custom") {
-          next.target_width = null;
-          next.target_height = null;
-          next.aspect_ratio = "";
-        }
-      }
-      return next;
+      return { ...current, [key]: value } as Brief;
     });
   };
 
@@ -719,10 +716,35 @@ export default function App() {
   const saveSettings = async () => {
     setBusy(true);
     try {
-      const result = await api.saveSettings(settingsDir);
+      const result = await api.saveSettings({
+        projects_dir: settingsDir,
+        webhook_url: webhookUrl.trim(),
+        auth_header_name: authHeaderName.trim(),
+        webhook_secret: webhookSecret,
+        timeout_seconds: Number(timeoutSeconds),
+      });
       setSettingsDir(result.projects_dir);
+      setWebhookSecret("");
+      setConnectionTest(null);
       await refreshCatalog();
       showToast("success", "Paramètres enregistrés.");
+    } catch (error) {
+      showToast("error", errorMessage(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const testWebhook = async () => {
+    setBusy(true);
+    setConnectionTest(null);
+    try {
+      const outcome = await api.testWebhook();
+      setConnectionTest(outcome);
+      showToast(
+        outcome.status === "success" ? "success" : "warning",
+        outcome.message || "Test n8n terminé.",
+      );
     } catch (error) {
       showToast("error", errorMessage(error));
     } finally {
@@ -781,7 +803,7 @@ export default function App() {
             onClick={() => navigate("settings")}
           >
             <Settings size={19} />
-            <span>Paramètres</span>
+            <span>Administration</span>
           </button>
         </nav>
 
@@ -947,12 +969,9 @@ export default function App() {
                 <div className="format-banner">
                   <div className="format-banner__icon"><ImageIcon size={22} /></div>
                   <div>
-                    <strong>{modePreset?.label ?? "Format"}</strong>
+                    <strong>Instagram Feed</strong>
                     <span>
-                      {brief.mode === "instagram" ? "canal IA-Art" : "dimensions ou ratio à préciser"}
-                      {modePreset?.width && modePreset?.height
-                        ? ` • ${modePreset.width} × ${modePreset.height} • ${modePreset.aspect_ratio}`
-                        : ""}
+                      canal IA-Art • 1080 × 1350 • 4:5
                     </span>
                   </div>
                   <span className="format-pill">{brief.post_image_count} visuel{brief.post_image_count > 1 ? "s" : ""}</span>
@@ -970,14 +989,7 @@ export default function App() {
                     <div className="field-grid field-grid--two">
                       <label className="field">
                         <span>Sortie *</span>
-                        <select
-                          value={brief.mode}
-                          onChange={(event) => updateBrief("mode", event.target.value as Brief["mode"])}
-                        >
-                          {bootstrap.modes.map((mode) => (
-                            <option value={mode.value} key={mode.value}>{mode.label}</option>
-                          ))}
-                        </select>
+                        <input value="Instagram Feed" readOnly />
                       </label>
                       <label className="field">
                         <span>Nom du projet *</span>
@@ -1071,29 +1083,15 @@ export default function App() {
                       <div className="field-grid field-grid--three">
                         <label className="field">
                           <span>Largeur</span>
-                          <input
-                            type="number"
-                            disabled={brief.mode !== "custom"}
-                            value={brief.target_width ?? ""}
-                            onChange={(event) => updateBrief("target_width", event.target.value ? Number(event.target.value) : null)}
-                          />
+                          <input type="number" value={1080} readOnly />
                         </label>
                         <label className="field">
                           <span>Hauteur</span>
-                          <input
-                            type="number"
-                            disabled={brief.mode !== "custom"}
-                            value={brief.target_height ?? ""}
-                            onChange={(event) => updateBrief("target_height", event.target.value ? Number(event.target.value) : null)}
-                          />
+                          <input type="number" value={1350} readOnly />
                         </label>
                         <label className="field">
                           <span>Ratio</span>
-                          <input
-                            disabled={brief.mode !== "custom"}
-                            value={brief.aspect_ratio}
-                            onChange={(event) => updateBrief("aspect_ratio", event.target.value)}
-                          />
+                          <input value="4:5" readOnly />
                         </label>
                       </div>
                     </div>
@@ -1406,9 +1404,9 @@ export default function App() {
             {view === "settings" ? (
               <>
                 <PageTitle
-                  eyebrow="Configuration"
+                  eyebrow="Administration"
                   title="Paramètres"
-                  subtitle="Choisissez l’emplacement de stockage des projets dans le volume Docker."
+                  subtitle="Gérez le stockage local et la connexion n8n sans modifier le fichier .env."
                 />
                 <div className="settings-wrap">
                   <div className="panel settings-card">
@@ -1428,11 +1426,86 @@ export default function App() {
                       Les données restent dans le volume Docker monté sous {bootstrap.settings.storage_root}.
                     </div>
                   </div>
-                  <div className="settings-actions">
-                    <button type="button" className="button button--primary" onClick={() => void saveSettings()} disabled={busy}>
-                      Enregistrer
-                    </button>
+
+                  <div className="panel settings-card settings-card--admin">
+                    <div className="settings-icon settings-icon--cyan"><PlugZap size={26} /></div>
+                    <div className="settings-copy">
+                      <span className="eyebrow">Automatisation</span>
+                      <h2>Connexion n8n → Notion</h2>
+                      <p>Visual AI Studio envoie ici le paquet Instagram. Les flux suivants démarrent ensuite depuis Notion.</p>
+                    </div>
+                    <span className={`settings-status ${bootstrap.settings.webhook_configured ? "settings-status--ok" : "settings-status--off"}`}>
+                      <span />
+                      {bootstrap.settings.webhook_configured ? "Webhook configuré" : "Webhook non configuré"}
+                    </span>
+
+                    <div className="settings-form-grid">
+                      <label className="field">
+                        <span><Link2 size={13} /> URL du webhook n8n</span>
+                        <input
+                          type="url"
+                          value={webhookUrl}
+                          onChange={(event) => setWebhookUrl(event.target.value)}
+                          placeholder="http://192.168.x.x:5678/webhook/ia-art-import-notion-hub"
+                          autoComplete="url"
+                        />
+                      </label>
+                      <label className="field">
+                        <span><KeyRound size={13} /> Nom du header d’authentification</span>
+                        <input
+                          value={authHeaderName}
+                          onChange={(event) => setAuthHeaderName(event.target.value)}
+                          placeholder="X-Visual-AI-Token"
+                          autoComplete="off"
+                        />
+                      </label>
+                      <label className="field">
+                        <span><KeyRound size={13} /> Secret du webhook</span>
+                        <input
+                          type="password"
+                          value={webhookSecret}
+                          onChange={(event) => setWebhookSecret(event.target.value)}
+                          placeholder={webhookSecretConfigured ? "Laisser vide pour conserver le secret" : "Saisir le secret n8n"}
+                          autoComplete="new-password"
+                        />
+                        <small className="settings-field-note">
+                          {webhookSecret ? "Nouveau secret prêt à être enregistré." : webhookSecretConfigured ? "Un secret est déjà enregistré. Il n’est jamais affiché." : "Aucun secret enregistré."}
+                        </small>
+                      </label>
+                      <label className="field">
+                        <span><Timer size={13} /> Délai maximal (secondes)</span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={300}
+                          step={1}
+                          value={timeoutSeconds}
+                          onChange={(event) => setTimeoutSeconds(Number(event.target.value))}
+                        />
+                      </label>
+                    </div>
+
+                    {connectionTest ? (
+                      <div className={`submission-result ${connectionTest.status === "success" ? "submission-result--ok" : "submission-result--error"}`}>
+                        <strong>{connectionTest.status === "success" ? "Connexion n8n opérationnelle" : "Connexion n8n en échec"}</strong>
+                        <span>{connectionTest.message}</span>
+                        {connectionTest.http_status ? <span>HTTP {connectionTest.http_status}</span> : null}
+                      </div>
+                    ) : null}
+
+                    <div className="settings-hint">
+                      Enregistrez les valeurs avant de lancer le test. Elles sont conservées dans le volume de l’application, pas dans le fichier .env.
+                    </div>
+                    <div className="settings-actions settings-actions--inline">
+                      <button type="button" className="button button--soft" onClick={() => void testWebhook()} disabled={busy || !bootstrap.settings.webhook_configured}>
+                        <PlugZap size={17} /> Tester la connexion
+                      </button>
+                      <button type="button" className="button button--primary" onClick={() => void saveSettings()} disabled={busy}>
+                        Enregistrer la configuration
+                      </button>
+                    </div>
                   </div>
+
                 </div>
               </>
             ) : null}
