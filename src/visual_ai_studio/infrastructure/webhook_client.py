@@ -82,7 +82,7 @@ class WebhookClient:
         webhook_url: str,
         auth_header_name: str,
         secret: str,
-        timeout_seconds: float = 30.0,
+        timeout_seconds: float = 300.0,
         transport: httpx.BaseTransport | None = None,
     ) -> None:
         self.webhook_url = webhook_url
@@ -157,7 +157,14 @@ class WebhookClient:
                 message="La réponse JSON du webhook n'est pas un objet.",
                 http_status=response.status_code,
             )
-        remote_url = str(payload.get("remote_url") or "")
+        # The Notion import workflow returns `notion_page_url`; the generic
+        # webhook contract historically called the same result `remote_url`.
+        # Keep one UI/storage field while accepting both response contracts.
+        remote_url = str(
+            payload.get("notion_page_url")
+            or payload.get("remote_url")
+            or ""
+        )
         success_status = response.is_success and payload.get("status") in {
             "success",
             "duplicate",
@@ -194,16 +201,35 @@ class WebhookClient:
                 timeout=self.timeout_seconds,
                 transport=self.transport,
             ) as client:
-                response = client.get(
+                # The n8n entry point is POST-only.  The import workflow has a
+                # lightweight probe branch selected by this query parameter,
+                # so a probe must use the same HTTP method as a real import.
+                response = client.post(
                     self.webhook_url,
                     headers=headers,
                     params={"probe": "true"},
                 )
+            try:
+                payload = response.json()
+            except ValueError:
+                payload = {}
+            is_probe_success = (
+                response.is_success
+                and isinstance(payload, dict)
+                and payload.get("status") in {"success", "duplicate"}
+            )
             return SubmissionOutcome(
-                status="success" if response.is_success else "error",
+                status="success" if is_probe_success else "error",
                 retryable=response.status_code >= 500,
                 http_status=response.status_code,
-                message=f"Réponse webhook HTTP {response.status_code}.",
+                message=str(
+                    payload.get(
+                        "message",
+                        f"Réponse webhook HTTP {response.status_code}.",
+                    )
+                )
+                if isinstance(payload, dict)
+                else f"Réponse webhook HTTP {response.status_code}.",
             )
         except httpx.HTTPError as exc:
             return SubmissionOutcome(status="error", retryable=True, message=str(exc))
