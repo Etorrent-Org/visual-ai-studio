@@ -114,6 +114,76 @@ def test_multipart_payload_and_success(tmp_path: Path) -> None:
     assert b"local_path" not in captured["body"]
 
 
+def test_notion_page_url_is_exposed_as_remote_url(tmp_path: Path) -> None:
+    def handler(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "status": "success",
+                "execution_id": "exec-notion",
+                "notion_page_url": "https://www.notion.so/page-demo",
+            },
+        )
+
+    data = submission_data(tmp_path)
+
+    outcome = WebhookClient(
+        "https://automation.test/webhook",
+        "X-Token",
+        "",
+        transport=httpx.MockTransport(handler),
+    ).submit(*data)
+
+    assert outcome.status == "success"
+    assert outcome.execution_id == "exec-notion"
+    assert outcome.remote_url == "https://www.notion.so/page-demo"
+
+
+def test_connection_uses_post_probe() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.method == "POST"
+        assert request.url.params["probe"] == "true"
+        assert request.headers["X-Token"] == "secret-value"
+        return httpx.Response(
+            200,
+            json={"status": "success", "message": "Connexion n8n validée"},
+        )
+
+    outcome = WebhookClient(
+        "https://automation.test/webhook",
+        "X-Token",
+        "secret-value",
+        transport=httpx.MockTransport(handler),
+    ).test_connection()
+
+    assert outcome.status == "success"
+    assert outcome.message == "Connexion n8n validée"
+
+
+def test_connection_accepts_n8n_response_envelope() -> None:
+    def handler(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "body": {
+                    "probe": True,
+                    "message": "Connexion n8n validée",
+                }
+            },
+        )
+
+    outcome = WebhookClient(
+        "https://automation.test/webhook",
+        "X-Token",
+        "secret-value",
+        transport=httpx.MockTransport(handler),
+    ).test_connection()
+
+    assert outcome.status == "success"
+    assert outcome.http_status == 200
+    assert outcome.message == "Connexion n8n validée"
+
+
 def test_business_error_is_not_retryable(tmp_path: Path) -> None:
     def handler(_request: httpx.Request) -> httpx.Response:
         return httpx.Response(
