@@ -11,7 +11,7 @@ from uuid import UUID, uuid4
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, HttpUrl, TypeAdapter, ValidationError
 from starlette.background import BackgroundTask
 
 from visual_ai_studio.application import ApplicationContext, build_application
@@ -27,7 +27,7 @@ from visual_ai_studio.domain.output_modes import OUTPUT_MODE_PRESETS
 from visual_ai_studio.domain.statuses import ArtifactType, ProjectStatus
 from visual_ai_studio.domain.validators import validate_artifact_package
 from visual_ai_studio.infrastructure.automation_runs import AutomationRunRepository
-from visual_ai_studio.infrastructure.settings import AppSettings, SettingsStore
+from visual_ai_studio.infrastructure.settings import AppSettings
 from visual_ai_studio.infrastructure.webhook_client import WebhookClient
 from visual_ai_studio.services.export_service import export_project_bundle
 from visual_ai_studio.services.submission_service import SubmissionService, can_submit
@@ -46,7 +46,11 @@ class ApprovalRequest(BaseModel):
 
 
 class SettingsRequest(BaseModel):
-    projects_dir: str
+    projects_dir: str | None = None
+    webhook_url: str | None = None
+    auth_header_name: str | None = None
+    webhook_secret: str | None = None
+    timeout_seconds: float | None = Field(default=None, ge=1.0, le=300.0)
 
 
 def _is_within(path: Path, root: Path) -> bool:
@@ -91,6 +95,7 @@ def _report_payload(
 
 
 def _apply_environment_settings(context: ApplicationContext, data_root: Path) -> None:
+    settings_file_exists = context.settings_store.path.exists()
     values = context.settings.model_dump(mode="python")
 
     # Un chemin Windows enregistré par l'ancienne application n'est pas utilisable
@@ -112,7 +117,11 @@ def _apply_environment_settings(context: ApplicationContext, data_root: Path) ->
 
     for env_name, (field_name, converter) in env_mapping.items():
         raw_value = os.getenv(env_name, "").strip()
-        if raw_value:
+        current_value = values.get(field_name)
+        if raw_value and (
+            not settings_file_exists
+            or current_value in (None, "", AppSettings.model_fields[field_name].default)
+        ):
             values[field_name] = converter(raw_value)
 
     context.settings = AppSettings.model_validate(values)
@@ -128,14 +137,25 @@ def _apply_environment_settings(context: ApplicationContext, data_root: Path) ->
     context.settings_store.save(stored)
 
 
-def _webhook_secret() -> str:
-    from_env = os.getenv("VISUAL_AI_WEBHOOK_SECRET", "")
-    if from_env:
-        return from_env
-    try:
-        return SettingsStore.get_secret()
-    except Exception:
-        return ""
+def _webhook_secret(context: ApplicationContext) -> str:
+    stored = context.settings_store.get_secret()
+    if stored:
+        return stored
+    return os.getenv("VISUAL_AI_WEBHOOK_SECRET", "").strip()
+
+
+def _settings_payload(context: ApplicationContext, root: Path) -> dict[str, Any]:
+    return {
+        "projects_dir": str(context.settings.projects_dir),
+        "webhook_configured": bool(context.settings.webhook_url),
+        "webhook_url": str(context.settings.webhook_url or ""),
+        "auth_header_name": context.settings.auth_header_name,
+        "webhook_secret_configured": bool(_webhook_secret(context)),
+        "timeout_seconds": context.settings.timeout_seconds,
+        "agent_url": str(context.settings.agent_url or ""),
+        "max_file_size_mb": context.settings.max_file_size_mb,
+        "storage_root": str(root),
+    }
 
 
 def _prepare_collection(
@@ -292,13 +312,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
                 for item in context.project_service.collections()
             ],
             "styles": context.project_service.styles(),
-            "settings": {
-                "projects_dir": str(context.settings.projects_dir),
-                "webhook_configured": bool(context.settings.webhook_url),
-                "agent_url": str(context.settings.agent_url or ""),
-                "max_file_size_mb": context.settings.max_file_size_mb,
-                "storage_root": str(root),
-            },
+            "settings": _settings_payload(context, root),
             "statuses": [item.value for item in ProjectStatus],
             "modes": [
                 {
@@ -519,7 +533,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
         client = WebhookClient(
             str(context.settings.webhook_url),
             context.settings.auth_header_name,
-            _webhook_secret(),
+            _webhook_secret(context),
             context.settings.timeout_seconds,
         )
         service = SubmissionService(
@@ -554,7 +568,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
 
     @app.put("/api/settings")
     def save_settings(request: SettingsRequest) -> dict[str, Any]:
-        candidate = Path(request.projects_dir)
+        candidate = Path(request.projects_dir or context.settings.projects_dir)
         if not candidate.is_absolute():
             candidate = root / candidate
         candidate = candidate.resolve()
@@ -566,21 +580,69 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
         if not candidate.is_dir():
             raise HTTPException(status_code=400, detail="Le dossier sélectionné n'existe pas.")
 
+        updates: dict[str, Any] = {"projects_dir": candidate}
+        if request.webhook_url is not None:
+            raw_webhook_url = request.webhook_url.strip()
+            if raw_webhook_url:
+                try:
+                    updates["webhook_url"] = TypeAdapter(HttpUrl).validate_python(
+                        raw_webhook_url
+                    )
+                except ValidationError as exc:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="L’URL du webhook n’est pas valide.",
+                    ) from exc
+            else:
+                updates["webhook_url"] = None
+
+        if request.auth_header_name is not None:
+            header_name = request.auth_header_name.strip()
+            if not header_name or len(header_name) > 120 or any(
+                character.isspace() for character in header_name
+            ):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Le nom du header d’authentification est invalide.",
+                )
+            updates["auth_header_name"] = header_name
+
+        if request.timeout_seconds is not None:
+            updates["timeout_seconds"] = request.timeout_seconds
+
         try:
             stored = context.settings_store.load().model_copy(
-                update={"projects_dir": candidate},
+                update=updates,
                 deep=True,
             )
             context.settings_store.save(stored)
             context.settings = context.settings.model_copy(
-                update={"projects_dir": candidate},
+                update=updates,
                 deep=True,
             )
+            if request.webhook_secret is not None and request.webhook_secret.strip():
+                context.settings_store.set_secret(request.webhook_secret)
         except (OSError, ValidationError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
         context.artifact_service.projects_dir = candidate
-        return {"projects_dir": str(candidate)}
+        return {
+            "projects_dir": str(candidate),
+            "settings": _settings_payload(context, root),
+        }
+
+    @app.post("/api/settings/test-webhook")
+    def test_webhook() -> dict[str, Any]:
+        if not context.settings.webhook_url:
+            raise HTTPException(status_code=400, detail="Webhook non configuré.")
+
+        client = WebhookClient(
+            str(context.settings.webhook_url),
+            context.settings.auth_header_name,
+            _webhook_secret(context),
+            context.settings.timeout_seconds,
+        )
+        return client.test_connection().model_dump(mode="json")
 
     dist = Path(web_dist or os.getenv("VISUAL_AI_WEB_DIST", "").strip() or "/app/web-dist")
     assets = dist / "assets"
