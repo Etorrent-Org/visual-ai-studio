@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import os
 from pathlib import Path
 
 import keyring
@@ -24,7 +25,7 @@ class AppSettings(BaseModel):
     auth_header_name: str = DEFAULT_AUTH_HEADER
 
     timeout_seconds: float = Field(
-        default=30.0,
+        default=300.0,
         ge=1.0,
         le=300.0,
     )
@@ -85,30 +86,36 @@ class SettingsStore:
             encoding="utf-8",
         )
 
-    @staticmethod
-    def get_secret() -> str:
-        return (
-            keyring.get_password(
-                SERVICE_NAME,
-                SECRET_ACCOUNT,
-            )
-            or ""
-        )
+    @property
+    def secret_path(self) -> Path:
+        """Fallback secret file used when the container has no keyring."""
+        return self.path.with_name(".webhook-secret")
 
-    @staticmethod
-    def set_secret(
-        secret: str,
-    ) -> None:
+    def get_secret(self) -> str:
+        try:
+            secret = keyring.get_password(SERVICE_NAME, SECRET_ACCOUNT) or ""
+        except Exception:
+            secret = ""
         if secret:
-            keyring.set_password(
-                SERVICE_NAME,
-                SECRET_ACCOUNT,
-                secret,
-            )
+            return secret
+
+        try:
+            return self.secret_path.read_text(encoding="utf-8").strip()
+        except (OSError, UnicodeError):
+            return ""
+
+    def set_secret(self, secret: str) -> None:
+        secret = secret.strip()
+        if secret:
+            self.secret_path.parent.mkdir(parents=True, exist_ok=True)
+            self.secret_path.write_text(secret, encoding="utf-8")
+            with contextlib.suppress(OSError):
+                os.chmod(self.secret_path, 0o600)
+            with contextlib.suppress(Exception):
+                keyring.set_password(SERVICE_NAME, SECRET_ACCOUNT, secret)
             return
 
-        with contextlib.suppress(keyring.errors.PasswordDeleteError):
-            keyring.delete_password(
-                SERVICE_NAME,
-                SECRET_ACCOUNT,
-            )
+        with contextlib.suppress(Exception):
+            keyring.delete_password(SERVICE_NAME, SECRET_ACCOUNT)
+        with contextlib.suppress(FileNotFoundError):
+            self.secret_path.unlink()
