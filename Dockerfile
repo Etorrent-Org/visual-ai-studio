@@ -1,8 +1,8 @@
 FROM node:22-alpine AS frontend
 
 WORKDIR /frontend
-COPY web/package.json ./package.json
-RUN npm install
+COPY web/package*.json ./
+RUN npm ci
 COPY web/ ./
 RUN npm run build
 
