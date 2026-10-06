@@ -276,7 +276,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
     context = build_application(root)
     _apply_environment_settings(context, root)
 
-    app = FastAPI(title="Visual AI Studio", version="0.3.0")
+    app = FastAPI(title="IA Art Studio Pro", version="0.4.0")
     app.state.context = context
     app.state.data_root = root
     app.state.reports: dict[str, ValidationReport] = {}
@@ -656,7 +656,7 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
             return FileResponse(index)
         return HTMLResponse(
             "<main style='font-family:sans-serif;padding:3rem'>"
-            "<h1>Visual AI Studio</h1>"
+            "<h1>IA Art Studio Pro</h1>"
             "<p>Le frontend web n'est pas compilé dans cette image.</p>"
             "</main>",
             status_code=503,
