@@ -1,0 +1,46 @@
+name: Deploy IA Art Studio Free to OVH
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "free/**"
+      - ".github/workflows/deploy-free-ovh.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      OVH_FTP_SERVER: ${{ secrets.OVH_FTP_SERVER }}
+      OVH_FTP_USERNAME: ${{ secrets.OVH_FTP_USERNAME }}
+      OVH_FTP_PASSWORD: ${{ secrets.OVH_FTP_PASSWORD }}
+      OVH_FTP_TARGET: ${{ secrets.OVH_FTP_TARGET }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate static site
+        run: |
+          test -f free/index.html
+          test -f free/styles.css
+          test -f free/app.js
+
+      - name: Deployment not configured
+        if: ${{ env.OVH_FTP_SERVER == '' || env.OVH_FTP_USERNAME == '' || env.OVH_FTP_PASSWORD == '' || env.OVH_FTP_TARGET == '' }}
+        run: echo "OVH FTP secrets are not configured. Static build is valid; deployment skipped."
+
+      - name: Deploy to OVH by FTP
+        if: ${{ env.OVH_FTP_SERVER != '' && env.OVH_FTP_USERNAME != '' && env.OVH_FTP_PASSWORD != '' && env.OVH_FTP_TARGET != '' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.OVH_FTP_SERVER }}
+          username: ${{ secrets.OVH_FTP_USERNAME }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          local-dir: ./free/
+          server-dir: ${{ secrets.OVH_FTP_TARGET }}
+          dangerous-clean-slate: false

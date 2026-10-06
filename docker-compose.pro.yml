@@ -1,0 +1,36 @@
+services:
+  ia-art-studio-pro:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ia-art-studio-pro:0.4.0
+    container_name: ia-art-studio-pro
+    restart: unless-stopped
+    ports:
+      - "${IA_ART_PRO_PORT:-3093}:8000"
+    environment:
+      VISUAL_AI_DATA_DIR: /data
+      VISUAL_AI_WEB_DIST: /app/web-dist
+      VISUAL_AI_WEBHOOK_URL: ${VISUAL_AI_WEBHOOK_URL:-}
+      VISUAL_AI_WEBHOOK_SECRET: ${VISUAL_AI_WEBHOOK_SECRET:-}
+      VISUAL_AI_AUTH_HEADER: ${VISUAL_AI_AUTH_HEADER:-X-IA-Art-Studio-Token}
+      VISUAL_AI_AGENT_URL: ${VISUAL_AI_AGENT_URL:-}
+      VISUAL_AI_TIMEOUT_SECONDS: ${VISUAL_AI_TIMEOUT_SECONDS:-300}
+      VISUAL_AI_MAX_FILE_SIZE_MB: ${VISUAL_AI_MAX_FILE_SIZE_MB:-50}
+    volumes:
+      - "${IA_ART_PRO_DATA_DIR:-./data}:/data"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  backup:
+    image: alpine:3.22
+    profiles: ["backup"]
+    volumes:
+      - "${IA_ART_PRO_DATA_DIR:-./data}:/data:ro"
+      - "${IA_ART_PRO_BACKUP_DIR:-./backups}:/backups"
+      - "./scripts/backup-data.sh:/usr/local/bin/backup-data.sh:ro"
+    environment:
+      VISUAL_AI_DATA_DIR: /data
+      VISUAL_AI_BACKUP_DIR: /backups
+      VISUAL_AI_BACKUP_KEEP_DAYS: ${IA_ART_PRO_BACKUP_KEEP_DAYS:-14}
+    entrypoint: ["/bin/sh", "/usr/local/bin/backup-data.sh"]

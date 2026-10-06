@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="IA Art Studio Free transforme une idée en brief créatif structuré et en prompt prêt à copier, sans compte ni API." />
+  <title>IA Art Studio Free — Atelier 7S</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="IA Art Studio Free">
+      <span class="brand-mark">7S</span>
+      <span><strong>IA Art Studio</strong><small>FREE</small></span>
+    </a>
+    <span class="privacy-pill">Aucun compte · aucune donnée envoyée</span>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow">ATELIER 7S</p>
+      <h1>De l’idée au prompt,<br><span>sans friction.</span></h1>
+      <p class="hero-copy">Structure ton brief créatif, prépare un prompt complet et copie-le dans ton outil d’IA préféré. Cette version fonctionne entièrement dans ton navigateur.</p>
+      <div class="hero-badges">
+        <span>✓ Gratuit</span><span>✓ Sans compte</span><span>✓ Sans API</span><span>✓ Sans stockage serveur</span>
+      </div>
+    </section>
+
+    <section class="studio-grid">
+      <form id="brief-form" class="panel brief-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">01 — BRIEF</p><h2>Direction créative</h2></div>
+          <button type="button" id="reset-btn" class="text-button">Réinitialiser</button>
+        </div>
+
+        <div class="field-grid two">
+          <label class="field"><span>Nom du projet *</span><input id="title" required placeholder="Ex. Nuit japonaise" /></label>
+          <label class="field"><span>Collection / campagne</span><input id="collection" placeholder="Ex. Urban Noir" /></label>
+        </div>
+
+        <label class="field"><span>Idée / demande *</span><textarea id="raw_idea" required rows="5" placeholder="Décris l’image ou la série que tu veux créer…"></textarea></label>
+
+        <div class="field-grid two">
+          <label class="field">
+            <span>Sortie</span>
+            <select id="mode">
+              <option value="instagram">Instagram Feed — 4:5</option>
+              <option value="custom">Autre / personnalisé</option>
+            </select>
+          </label>
+          <label class="field"><span>Nombre de visuels</span><input id="post_image_count" type="number" min="1" max="10" value="1" /></label>
+        </div>
+
+        <div id="custom-format" class="field-grid three hidden">
+          <label class="field"><span>Largeur px</span><input id="target_width" type="number" min="1" placeholder="1920" /></label>
+          <label class="field"><span>Hauteur px</span><input id="target_height" type="number" min="1" placeholder="1080" /></label>
+          <label class="field"><span>Ratio</span><input id="aspect_ratio" placeholder="16:9" /></label>
+        </div>
+
+        <div class="field-grid two">
+          <label class="field"><span>Style</span><input id="style" placeholder="Cinématographique, sumi-e, éditorial…" /></label>
+          <label class="field"><span>Audience</span><input id="audience" placeholder="Instagram, portfolio, client…" /></label>
+          <label class="field"><span>Objectif</span><input id="intent" placeholder="Émotion, promotion, concept…" /></label>
+          <label class="field"><span>Sujet principal</span><input id="subject" placeholder="Personnage, objet, paysage…" /></label>
+          <label class="field"><span>Décor</span><input id="setting" placeholder="Tokyo nocturne, studio minimal…" /></label>
+          <label class="field"><span>Ambiance</span><input id="ambience" placeholder="Mystique, premium, énergique…" /></label>
+          <label class="field"><span>Palette</span><input id="palette" placeholder="Noir, rouge, ivoire…" /></label>
+          <label class="field"><span>Lumière</span><input id="lighting" placeholder="Néons, clair-obscur…" /></label>
+          <label class="field"><span>Matières</span><input id="materials" placeholder="Encre, métal, textile…" /></label>
+          <label class="field"><span>Composition</span><input id="composition" placeholder="Portrait serré, plan large…" /></label>
+          <label class="field"><span>Niveau de détail</span><input id="detail_level" placeholder="Minimal, détaillé…" /></label>
+          <label class="field"><span>Texte dans l’image</span><input id="text_overlay" placeholder="Aucun par défaut" /></label>
+        </div>
+
+        <label class="field"><span>Éléments obligatoires</span><textarea id="required_elements" rows="2" placeholder="Ce qui doit absolument être présent"></textarea></label>
+        <label class="field"><span>Éléments interdits</span><textarea id="forbidden_elements" rows="2" placeholder="Ce qu’il faut éviter"></textarea></label>
+        <label class="field"><span>Note de référence</span><input id="reference_note" placeholder="Décris une référence visuelle si tu en utilises une" /></label>
+        <label class="field"><span>Notes complémentaires</span><textarea id="notes" rows="3"></textarea></label>
+
+        <button class="primary-button" type="submit">Générer le prompt</button>
+        <p class="privacy-note">Rien n’est envoyé à Atelier 7S. Le prompt est construit localement dans ton navigateur.</p>
+      </form>
+
+      <aside class="panel prompt-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">02 — PROMPT</p><h2>Prêt à copier</h2></div>
+          <span id="prompt-state" class="state-pill">En attente</span>
+        </div>
+        <div id="empty-prompt" class="empty-prompt">
+          <div class="spark">✦</div>
+          <strong>Ton prompt apparaîtra ici.</strong>
+          <p>Renseigne au minimum le nom du projet et ton idée.</p>
+        </div>
+        <pre id="prompt-output" class="prompt-output hidden"></pre>
+        <div id="prompt-actions" class="prompt-actions hidden">
+          <button id="copy-btn" class="primary-button" type="button">Copier le prompt</button>
+          <button id="download-btn" class="secondary-button" type="button">Télécharger .txt</button>
+        </div>
+        <div class="upgrade-card">
+          <p class="eyebrow">IA ART STUDIO PRO</p>
+          <h3>Besoin de conserver et piloter tes créations ?</h3>
+          <p>La version Pro ajoute projets sauvegardés, historique, import des livrables, validation, export, Notion et automatisations n8n.</p>
+          <span class="coming">Bientôt disponible — Atelier 7S</span>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer>IA Art Studio Free · Atelier 7S · génération locale du prompt</footer>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -756,7 +756,7 @@ export default function App() {
     return (
       <div className="loading-screen">
         <div className="brand-orb"><Sparkles size={28} /></div>
-        <strong>Visual AI Studio</strong>
+        <strong>IA Art Studio Pro</strong>
         <span>Chargement de l’atelier visuel…</span>
       </div>
     );
@@ -1414,7 +1414,7 @@ export default function App() {
                     <div className="settings-copy">
                       <span className="eyebrow">Stockage local</span>
                       <h2>Dossier des projets</h2>
-                      <p>Emplacement utilisé par Visual AI Studio pour conserver les projets et leurs fichiers.</p>
+                      <p>Emplacement utilisé par IA Art Studio Pro pour conserver les projets et leurs fichiers.</p>
                     </div>
                     <div className="settings-field">
                       <input value={settingsDir} readOnly />
@@ -1432,7 +1432,7 @@ export default function App() {
                     <div className="settings-copy">
                       <span className="eyebrow">Automatisation</span>
                       <h2>Connexion n8n → Notion</h2>
-                      <p>Visual AI Studio envoie ici le paquet Instagram. Les flux suivants démarrent ensuite depuis Notion.</p>
+                      <p>IA Art Studio Pro envoie ici le paquet Instagram. Les flux suivants démarrent ensuite depuis Notion.</p>
                     </div>
                     <span className={`settings-status ${bootstrap.settings.webhook_configured ? "settings-status--ok" : "settings-status--off"}`}>
                       <span />
