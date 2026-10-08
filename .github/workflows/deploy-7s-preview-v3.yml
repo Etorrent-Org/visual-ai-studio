@@ -1,0 +1,53 @@
+name: Deploy 7S Preview V3
+
+on:
+  push:
+    branches:
+      - chore/preview-7s-v3
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview source
+        uses: actions/checkout@v4
+        with:
+          repository: Etorrent-Org/Etorrent-Org.github.io
+          ref: feature/refonte-7-sens-2026
+          path: site
+
+      - name: Validate preview
+        run: |
+          test -f site/index.html
+          test -f site/atelier-2026-v3.css
+          test -f site/assets/atelier7s/ia-art-studio.webp
+          test -f site/ia-art-studio/index.html
+
+      - name: Deploy preview to OVH
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.OVH_FTP_SERVER }}
+          username: ${{ secrets.OVH_FTP_USERNAME }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          local-dir: ./site/
+          server-dir: public_html/preview-v3/
+          dangerous-clean-slate: true
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            **/README.md
+            **/ARCHITECTURE.md
+            **/CHANGELOG.md
+            **/COMMIT_CONVENTION.md
+            **/CONTRIBUTING.md
+            **/PUBLICATION.md
+            **/SECURITY.md
+            ai-process-studio/**
+            h9-factory/**
+            visual-ai-studio/**
+            infographic-lab/**
