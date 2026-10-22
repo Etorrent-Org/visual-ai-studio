@@ -1,0 +1,177 @@
+/* Adaptateur visuel : ET Design System v0.1.0 -> Visual AI Studio.
+   Ne touche ni aux handlers, ni aux données, ni aux API.
+   Importer après styles.css ; aucune dépendance serveur. */
+
+.app-shell.et-root {
+  --bg: var(--et-background);
+  --bg-soft: var(--et-sidebar);
+  --panel: var(--et-card);
+  --panel-solid: var(--et-card);
+  --panel-border: var(--et-border);
+  --panel-border-strong: var(--et-input-border);
+  --text: var(--et-foreground);
+  --muted: var(--et-muted-foreground);
+  --muted-2: oklch(.58 .012 255);
+  --accent: var(--et-primary);
+  --accent-strong: var(--et-primary);
+  --green: var(--et-success);
+  --amber: var(--et-warning);
+  --red: var(--et-danger);
+  --radius: var(--et-radius-lg);
+  --radius-sm: var(--et-radius-md);
+  --shadow: 0 1px 0 rgba(255,255,255,.03) inset;
+  min-height: 100vh;
+  background: var(--et-background);
+  color: var(--et-foreground);
+  font-family: var(--et-font-sans);
+}
+
+body:has(.app-shell.et-root) {
+  background: var(--et-background-fallback, #20252a);
+  color: #e6e4e0;
+}
+
+.et-root .ambient { display: none; }
+.et-root .sidebar {
+  background: var(--et-sidebar);
+  border-color: var(--et-border);
+  backdrop-filter: none;
+}
+.et-root .brand-lockup { padding-bottom: 25px; }
+.et-root .brand-lockup strong {
+  color: var(--et-foreground);
+  letter-spacing: .15em;
+}
+.et-root .brand-lockup > div:last-child > span { color: var(--et-muted-foreground); }
+.et-root .et-seal-image {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border-radius: 5px;
+}
+.et-root .nav-item {
+  border-radius: var(--et-radius-sm);
+  min-height: 44px;
+  color: var(--et-muted-foreground);
+}
+.et-root .nav-item:hover { color: var(--et-foreground); background: var(--et-card-muted); }
+.et-root .nav-item--active {
+  color: var(--et-foreground);
+  background: color-mix(in srgb, var(--et-primary) 12%, transparent);
+  border-color: color-mix(in srgb, var(--et-primary) 24%, transparent);
+  box-shadow: inset 3px 0 0 var(--et-primary);
+}
+.et-root .sidebar-foot__dot {
+  background: var(--et-success);
+  box-shadow: none;
+}
+.et-root .sidebar-foot strong { color: var(--et-foreground); }
+.et-root .project-context {
+  background: var(--et-card);
+  border-color: var(--et-border);
+  backdrop-filter: none;
+}
+.et-root .workflow-step--active,
+.et-root .workflow-step--active .workflow-step__icon {
+  color: var(--et-primary);
+}
+.et-root .workflow-step--active .workflow-step__icon {
+  background: color-mix(in srgb, var(--et-primary) 12%, transparent);
+  border-color: color-mix(in srgb, var(--et-primary) 24%, transparent);
+}
+.et-root .workflow-step--active i { background: var(--et-primary); }
+.et-root .page-title-row h1 { color: var(--et-foreground); }
+.et-root .eyebrow { color: var(--et-muted-foreground); }
+.et-root .button { border-radius: var(--et-radius-sm); }
+.et-root .button--primary {
+  background: var(--et-primary);
+  color: var(--et-primary-foreground);
+  box-shadow: none;
+}
+.et-root .button--primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--et-primary) 85%, white);
+  box-shadow: none;
+}
+.et-root .button--soft,
+.et-root .button--ghost {
+  background: var(--et-card-muted);
+  color: var(--et-foreground);
+  border-color: var(--et-border);
+}
+.et-root .icon-button {
+  color: var(--et-muted-foreground);
+  border-color: var(--et-border);
+  background: var(--et-card-muted);
+}
+.et-root .icon-button:hover:not(:disabled) {
+  color: var(--et-foreground);
+  border-color: var(--et-primary);
+  background: var(--et-card);
+}
+.et-root .panel {
+  background: var(--et-card);
+  border-color: var(--et-border);
+  border-radius: var(--et-radius-lg);
+  box-shadow: 0 1px 0 rgba(255,255,255,.03) inset;
+  backdrop-filter: none;
+}
+.et-root .metric-card,
+.et-root .image-card {
+  border-color: var(--et-border);
+  border-radius: var(--et-radius-lg);
+  background: var(--et-card);
+  box-shadow: none;
+}
+.et-root .metric-card--violet .metric-card__glow,
+.et-root .metric-card--blue .metric-card__glow { background: var(--et-primary); }
+.et-root .project-title-button { color: var(--et-foreground); }
+.et-root .search-box,
+.et-root input:not([type="checkbox"]),
+.et-root select,
+.et-root textarea {
+  border-color: var(--et-input-border);
+}
+.et-root :is(button, input, select, textarea, summary, a):focus-visible {
+  outline: 2px solid var(--et-focus);
+  outline-offset: 2px;
+}
+.et-root .format-banner {
+  border-color: var(--et-border);
+  background: var(--et-card-muted);
+  border-radius: var(--et-radius-lg);
+}
+.et-root .format-banner__icon,
+.et-root .settings-icon {
+  color: var(--et-primary);
+  background: color-mix(in srgb, var(--et-primary) 12%, transparent);
+  border-color: var(--et-border);
+}
+.et-root .format-pill {
+  color: var(--et-primary);
+  background: color-mix(in srgb, var(--et-primary) 10%, transparent);
+  border-color: color-mix(in srgb, var(--et-primary) 24%, transparent);
+}
+.et-root .settings-icon--cyan { color: var(--et-primary); }
+.et-root .modal { background: var(--et-card); border-color: var(--et-border); }
+.et-root .toast { background: var(--et-card); border-color: var(--et-border); }
+.et-root .brand-japanese {
+  display: block;
+  font-family: var(--et-font-jp);
+  font-size: 11px;
+  color: var(--et-muted-foreground);
+  letter-spacing: .07em;
+  line-height: 1.6;
+}
+@media (max-width: 860px) {
+  .et-root .brand-lockup { padding-bottom: 0; }
+  .et-root .et-seal-image { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .et-root *,
+  .et-root *::before,
+  .et-root *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
