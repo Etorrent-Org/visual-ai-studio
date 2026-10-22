@@ -44,7 +44,7 @@ def main() -> None:
                 response = page.goto(BASE_URL, wait_until="domcontentloaded", timeout=30000)
                 assert response and response.status == 200, (
                     f"{name}: HTTP {response.status if response else 'no response'}"
-                )"
+                )
                 page.locator(".app-shell.et-root").wait_for(timeout=20000)
                 seal = page.locator(".et-seal-image")
                 assert seal.is_visible(), f"{name}: sceau absent"
