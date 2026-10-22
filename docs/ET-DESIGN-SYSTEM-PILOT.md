@@ -4,7 +4,7 @@
 Source graphique : Life Desk (Next.js/React, tokens couleur OKLCH),
 plus cartouche japonais rouge **エルワン**. Le paquet autonome
 `@et/design-system@0.1.0` est préparé hors du dépôt, sans publication
-GitHub autonome à ce stade.
+GitHub autonome à ce stade. La bibliothèque source est désormais sur `main`, commit `376111faab17410203fd743316ef8b9a82f7f8e3`.
 
 ## Périmètre de cette branche
 - CSS tokens copiés et figés dans `web/src/design-system/et-tokens.css`.
@@ -27,8 +27,8 @@ les modales, les uploads, les actions clavier et les formats
 des données de production durant la revue graphique.
 
 ## Limites et suite
-- À migrer vers une dépendance privée versionnée dès création de
-  `Etorrent-Org/et-design-system` pour supprimer la duplication des tokens.
+- À migrer vers une dépendance privée figée après mise en place d'un accès de build sûr au dépôt
+  `Etorrent-Org/et-design-system` pour supprimer la duplication des tokens. Ne jamais stocker de token GitHub dans un Dockerfile ; la copie actuelle est volontairement versionnée et embarquée localement.
 - Les nouvelles couleurs doivent être validées visuellement et avec
   contrôles d'accessibilité avant fusion.
 - **PR de revue uniquement**. Ne pas fusionner ni déployer
