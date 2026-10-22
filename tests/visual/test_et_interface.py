@@ -42,11 +42,15 @@ def main() -> None:
                     else None,
                 )
                 response = page.goto(BASE_URL, wait_until="domcontentloaded", timeout=30000)
-                assert response and response.status == 200, (\n                    f"{name}: HTTP {response.status if response else 'no response'}"\n                )"
+                assert response and response.status == 200, (
+                    f"{name}: HTTP {response.status if response else 'no response'}"
+                )"
                 page.locator(".app-shell.et-root").wait_for(timeout=20000)
                 seal = page.locator(".et-seal-image")
                 assert seal.is_visible(), f"{name}: sceau absent"
-                assert seal.evaluate("(img) => img.complete && img.naturalWidth > 0"), (\n                    f"{name}: image du sceau cassée"\n                )
+                assert seal.evaluate("(img) => img.complete && img.naturalWidth > 0"), (
+                    f"{name}: image du sceau cassée"
+                )
                 assert page.locator(".brand-japanese").inner_text() == "エルワン"
                 assert page.get_by_role("heading", name="Projets", exact=True).is_visible()
                 page.screenshot(
@@ -57,10 +61,13 @@ def main() -> None:
                 viewport = page.evaluate("""() => ({
                     innerWidth: window.innerWidth,
                     scrollWidth: document.documentElement.scrollWidth,
-                    background: getComputedStyle(\n                        document.querySelector('.app-shell')\n                    ).backgroundColor
+                    background: getComputedStyle(
+                        document.querySelector('.app-shell')
+                    ).backgroundColor
                 })""")
                 assert viewport["scrollWidth"] <= viewport["innerWidth"] + 2, (
-                    f"{name}: débordement horizontal de "\n                    f"{viewport['scrollWidth'] - viewport['innerWidth']}px"
+                    f"{name}: débordement horizontal de "
+                    f"{viewport['scrollWidth'] - viewport['innerWidth']}px"
                 )
                 page.get_by_role("button", name="Administration").click()
                 page.locator(".settings-card").first.wait_for(timeout=10000)
@@ -96,7 +103,9 @@ def main() -> None:
             browser.close()
 
     report_file = OUT / "report.json"
-    report_file.write_text(\n        json.dumps(reports, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"\n    )
+    report_file.write_text(
+        json.dumps(reports, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(json.dumps(reports, indent=2, ensure_ascii=False))
 
 
