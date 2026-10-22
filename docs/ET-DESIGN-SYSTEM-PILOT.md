@@ -3,8 +3,7 @@
 ## Origine
 Source graphique : Life Desk (Next.js/React, tokens couleur OKLCH),
 plus cartouche japonais rouge **エルワン**. Le paquet autonome
-`@et/design-system@0.1.0` est préparé hors du dépôt, sans publication
-GitHub autonome à ce stade. La bibliothèque source est désormais sur `main`, commit `376111faab17410203fd743316ef8b9a82f7f8e3`.
+`@et/design-system@0.1.0` est publié dans le dépôt privé `Etorrent-Org/et-design-system`, sur `main`, commit `376111faab17410203fd743316ef8b9a82f7f8e3`.
 
 ## Périmètre de cette branche
 - CSS tokens copiés et figés dans `web/src/design-system/et-tokens.css`.
