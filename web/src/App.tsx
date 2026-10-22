@@ -755,7 +755,7 @@ export default function App() {
   if (!bootstrap) {
     return (
       <div className="loading-screen">
-        <div className="brand-orb"><Sparkles size={28} /></div>
+        <img className="loading-et-seal" src="/brand/erwann-seal.svg" alt="Erwann — エルワン" width={56} height={56} />
         <strong>IA Art Studio Pro</strong>
         <span>Chargement de l’atelier visuel…</span>
       </div>
@@ -767,16 +767,17 @@ export default function App() {
     : "";
 
   return (
-    <div className="app-shell">
+    <div className="app-shell et-root">
       <div className="ambient ambient--one" />
       <div className="ambient ambient--two" />
 
       <aside className="sidebar">
         <div className="brand-lockup">
-          <div className="brand-mark"><Sparkles size={22} /></div>
+          <img className="et-seal-image" src="/brand/erwann-seal.svg" alt="Erwann en japonais : エルワン" width={42} height={42} />
           <div>
             <strong>VISUAL AI</strong>
             <span>STUDIO</span>
+            <span className="brand-japanese" lang="ja">エルワン</span>
           </div>
         </div>
 
