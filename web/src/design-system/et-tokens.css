@@ -1,5 +1,5 @@
 /* Copie figée des tokens Life Desk / ET Design System v0.1.0.
-   Source : ET Design System livré le 22/10/2026.
+   Source GitHub privée : Etorrent-Org/et-design-system\n   Révision immuable : 376111faab17410203fd743316ef8b9a82f7f8e3 (0.1.0).\n   Jeton GitHub non requis dans le Dockerfile.
    À remplacer par une dépendance versionnée quand le dépôt privé sera créé.
    Les variables sont isolées sous .et-root pour éviter toute fuite CSS. */
 .et-root {
