@@ -649,6 +649,13 @@ def create_app(data_root: Path | None = None, web_dist: Path | None = None) -> F
     if assets.is_dir():
         app.mount("/assets", StaticFiles(directory=assets), name="assets")
 
+    # Vite recopie les fichiers web/public/ directement dans dist/.
+    # La route SPA de repli retournerait index.html pour /brand/*.svg ;
+    # monter explicitement le sous-répertoire de signature.
+    brand = dist / "brand"
+    if brand.is_dir():
+        app.mount("/brand", StaticFiles(directory=brand), name="brand")
+
     @app.get("/{path:path}", include_in_schema=False, response_model=None)
     def spa(path: str) -> FileResponse | HTMLResponse:
         index = dist / "index.html"
