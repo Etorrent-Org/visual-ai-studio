@@ -784,6 +784,7 @@ export default function App() {
         <nav>
           <button
             type="button"
+            aria-label="Projets"
             className={view === "projects" ? "nav-item nav-item--active" : "nav-item"}
             onClick={() => navigate("projects")}
           >
@@ -792,6 +793,7 @@ export default function App() {
           </button>
           <button
             type="button"
+            aria-label="Créer"
             className={["brief", "prompt", "validation", "export"].includes(view) ? "nav-item nav-item--active" : "nav-item"}
             onClick={() => navigate("brief")}
           >
@@ -800,6 +802,7 @@ export default function App() {
           </button>
           <button
             type="button"
+            aria-label="Administration"
             className={view === "settings" ? "nav-item nav-item--active" : "nav-item"}
             onClick={() => navigate("settings")}
           >
