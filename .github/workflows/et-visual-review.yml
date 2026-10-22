@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      VISUAL_AI_DATA_DIR: ${{ runner.temp }}/et-visual-isolated-data
+      VISUAL_AI_DATA_DIR: /tmp/et-visual-isolated-data
       VISUAL_AI_WEB_DIST: ${{ github.workspace }}/web/dist
       ET_TEST_BASE_URL: http://127.0.0.1:8000
       ET_TEST_OUTPUT: artifacts/et-visual
