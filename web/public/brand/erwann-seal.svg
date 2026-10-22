@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="seal-title">
+  <title id="seal-title">Erwann — エルワン</title>
+  <rect width="128" height="128" rx="9" fill="#AC302B"/>
+  <rect x="7" y="7" width="114" height="114" rx="4" stroke="#F5E8DA" stroke-opacity=".65" stroke-width="2" fill="none"/>
+  <g fill="#FFF7ED" font-family="Noto Sans JP, Hiragino Kaku Gothic ProN, Yu Gothic, sans-serif" font-weight="700" font-size="41" text-anchor="middle">
+    <text x="42" y="57">エ</text><text x="86" y="57">ル</text>
+    <text x="42" y="101">ワ</text><text x="86" y="101">ン</text>
+  </g>
+</svg>

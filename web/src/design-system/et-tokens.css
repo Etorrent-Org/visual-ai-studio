@@ -1,0 +1,29 @@
+/* Copie figée des tokens Life Desk / ET Design System v0.1.0.
+   Source GitHub privée : Etorrent-Org/et-design-system
+   Révision immuable : 376111faab17410203fd743316ef8b9a82f7f8e3 (0.1.0).
+   Jeton GitHub non requis dans le Dockerfile.
+   À remplacer par une dépendance privée versionnée seulement quand l'authentification des builds sera sécurisée.
+   Les variables sont isolées sous .et-root pour éviter toute fuite CSS. */
+.et-root {
+  color-scheme: dark;
+  --et-background: oklch(0.17 0.008 255);
+  --et-foreground: oklch(0.92 0.006 90);
+  --et-card: oklch(0.215 0.009 255);
+  --et-card-muted: oklch(0.27 0.01 255);
+  --et-sidebar: oklch(0.155 0.008 255);
+  --et-border: oklch(1 0 0 / 8%);
+  --et-input-border: oklch(1 0 0 / 12%);
+  --et-muted-foreground: oklch(0.62 0.012 255);
+  --et-primary: oklch(0.63 0.17 24);
+  --et-primary-foreground: oklch(0.98 0.005 90);
+  --et-success: oklch(0.72 0.14 155);
+  --et-warning: oklch(0.7 0.13 60);
+  --et-danger: oklch(0.63 0.17 24);
+  --et-focus: oklch(0.72 0.14 155);
+  --et-radius-sm: 0.5rem;
+  --et-radius-md: 0.75rem;
+  --et-radius-lg: 1rem;
+  --et-radius-xl: 1.5rem;
+  --et-font-sans: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --et-font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+}
