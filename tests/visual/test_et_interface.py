@@ -78,7 +78,7 @@ def main() -> None:
                 )
                 page.get_by_role("button", name="Projets").click()
                 page.get_by_role("heading", name="Projets", exact=True).wait_for()
-                page.get_by_role("button", name="Nouveau projet").click()
+                page.locator(".page-actions .button--primary").click()
                 page.locator(".form-panel").first.wait_for(timeout=12000)
                 page.screenshot(
                     path=str(OUT / f"visual-ai-{name}-brief.png"),
